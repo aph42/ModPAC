@@ -1,0 +1,3187 @@
+{
+   "name": "camchem4_strat",
+   "version": "1.0.0",
+   "species": [
+      {
+         "name": "BR",
+         "molecular weight [kg mol-1]": 0.079904
+      },
+      {
+         "name": "CCL4",
+         "molecular weight [kg mol-1]": 0.153822
+      },
+      {
+         "name": "CF2CLBR",
+         "molecular weight [kg mol-1]": 0.165365
+      },
+      {
+         "name": "CF3BR",
+         "molecular weight [kg mol-1]": 0.14891
+      },
+      {
+         "name": "CFC11",
+         "molecular weight [kg mol-1]": 0.137368
+      },
+      {
+         "name": "CFC113",
+         "molecular weight [kg mol-1]": 0.187375
+      },
+      {
+         "name": "CFC114",
+         "molecular weight [kg mol-1]": 0.170921
+      },
+      {
+         "name": "CFC115",
+         "molecular weight [kg mol-1]": 0.154467
+      },
+      {
+         "name": "CFC12",
+         "molecular weight [kg mol-1]": 0.120913
+      },
+      {
+         "name": "CH2BR2",
+         "molecular weight [kg mol-1]": 0.173834
+      },
+      {
+         "name": "CH2O",
+         "molecular weight [kg mol-1]": 0.0300252,
+         "__description": "formaldehyde"
+      },
+      {
+         "name": "CH3BR",
+         "molecular weight [kg mol-1]": 0.0949372
+      },
+      {
+         "name": "CH3CN",
+         "molecular weight [kg mol-1]": 0.0410509,
+         "__description": "acetonitrile"
+      },
+      {
+         "name": "CH3O2",
+         "molecular weight [kg mol-1]": 0.047032,
+         "__description": "methylperoxy radical"
+      },
+      {
+         "name": "CH4",
+         "molecular weight [kg mol-1]": 0.0160406,
+         "__description": "methane"
+      },
+      {
+         "name": "CHBR3",
+         "molecular weight [kg mol-1]": 0.25273
+      },
+      {
+         "name": "CL",
+         "molecular weight [kg mol-1]": 0.0354527
+      },
+      {
+         "name": "CO",
+         "molecular weight [kg mol-1]": 0.0280104,
+         "__description": "carbon monoxide"
+      },
+      {
+         "name": "CO2",
+         "molecular weight [kg mol-1]": 0.0440098,
+         "__description": "carbon dioxide"
+      },
+      {
+         "name": "H",
+         "molecular weight [kg mol-1]": 0.0010074
+      },
+      {
+         "name": "H1202",
+         "molecular weight [kg mol-1]": 0.20982,
+         "is third body": false,
+         "__description": "dibromodifluoromethane"
+      },
+      {
+         "name": "H2",
+         "molecular weight [kg mol-1]": 0.0020148
+      },
+      {
+         "name": "H2402",
+         "molecular weight [kg mol-1]": 0.259824
+      },
+      {
+         "name": "H2O",
+         "molecular weight [kg mol-1]": 0.0180142
+      },
+      {
+         "name": "H2O2",
+         "molecular weight [kg mol-1]": 0.0340136,
+         "__description": "hydrogen peroxide"
+      },
+      {
+         "name": "HBR",
+         "molecular weight [kg mol-1]": 0.0809114
+      },
+      {
+         "name": "HCFC141B",
+         "molecular weight [kg mol-1]": 0.116948
+      },
+      {
+         "name": "HCFC142B",
+         "molecular weight [kg mol-1]": 0.100494
+      },
+      {
+         "name": "HCFC22",
+         "molecular weight [kg mol-1]": 0.0864679
+      },
+      {
+         "name": "HCL",
+         "molecular weight [kg mol-1]": 0.0364601
+      },
+      {
+         "name": "HCN",
+         "molecular weight [kg mol-1]": 0.0270251,
+         "__description": "hydrogen cyanide"
+      },
+      {
+         "name": "HNO3",
+         "molecular weight [kg mol-1]": 0.0630123,
+         "__description": "nitric acid"
+      },
+      {
+         "name": "HO2",
+         "molecular weight [kg mol-1]": 0.03307754409115893,
+         "__description": "hydroperoxyl radical"
+      },
+      {
+         "name": "HO2NO2",
+         "molecular weight [kg mol-1]": 0.0790117,
+         "__description": "pernitric acid"
+      },
+      {
+         "name": "M",
+         "is third body": true,
+         "__description": "third-body species"
+      },
+      {
+         "name": "N",
+         "molecular weight [kg mol-1]": 0.0140067
+      },
+      {
+         "name": "N2",
+         "molecular weight [kg mol-1]": 0.0
+      },
+      {
+         "name": "N2O",
+         "molecular weight [kg mol-1]": 0.0440129,
+         "__description": "nitrous oxide"
+      },
+      {
+         "name": "N2O5",
+         "molecular weight [kg mol-1]": 0.108023495904642,
+         "__description": "dinitrogen pentoxide"
+      },
+      {
+         "name": "NO",
+         "molecular weight [kg mol-1]": 0.0300061,
+         "__description": "nitric oxide"
+      },
+      {
+         "name": "NO2",
+         "molecular weight [kg mol-1]": 0.045803364407376784,
+         "__description": "nitrogen dioxide"
+      },
+      {
+         "name": "NO3",
+         "molecular weight [kg mol-1]": 0.06186298085408304,
+         "__description": "nitrate radical"
+      },
+      {
+         "name": "O",
+         "molecular weight [kg mol-1]": 0.0159994,
+         "__description": "ground state atomic oxygen"
+      },
+      {
+         "name": "O1D",
+         "molecular weight [kg mol-1]": 0.0159994,
+         "__description": "excited state atomic oxygen"
+      },
+      {
+         "name": "O2",
+         "molecular weight [kg mol-1]": 0.0
+      },
+      {
+         "name": "O3",
+         "molecular weight [kg mol-1]": 0.0479982,
+         "__description": "ozone"
+      },
+      {
+         "name": "OH",
+         "molecular weight [kg mol-1]": 0.0170068,
+         "__description": "hydroxyl radical"
+      }
+   ],
+   "reactions": [
+      {
+         "type": "ARRHENIUS",
+         "name": "O + O2 + M -> O3 + M",
+         "A": 5e-34,
+         "B": 2.4,
+         "C": 0.0,
+         "D": 300.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O + O3 -> 2*O2",
+         "A": 7e-12,
+         "B": 0.0,
+         "C": -2060.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O2",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O + O + M -> O2 + M",
+         "A": 1.76e-34,
+         "B": 0.0,
+         "C": 720.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 2.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + N2 -> O + N2",
+         "A": 2.15e-11,
+         "B": 0.0,
+         "C": 110.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "N2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "N2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + O2 -> O + O2",
+         "A": 3.3e-11,
+         "B": 0.0,
+         "C": 55.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + H2O -> 2*OH",
+         "A": 1.63e-10,
+         "B": 0.0,
+         "C": 60.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + N2O -> 2*NO",
+         "A": 7.25e-11,
+         "B": 0.0,
+         "C": 20.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "N2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + N2O -> N2 + O2",
+         "A": 4.63e-11,
+         "B": 0.0,
+         "C": 20.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "N2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "N2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + O3 -> O2 + O2",
+         "A": 1.2e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CFC11 -> 3*CL",
+         "A": 2.02e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CFC11",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 3.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CFC12 -> 2*CL",
+         "A": 1.2e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CFC12",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CFC113 -> 3*CL",
+         "A": 1.5e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CFC113",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 3.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CFC114 -> 2*CL",
+         "A": 9.75e-11,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CFC114",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CFC115 -> CL",
+         "A": 1.5e-11,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CFC115",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + HCFC22 -> CL",
+         "A": 7.2e-11,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HCFC22",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + HCFC141B -> 2*CL",
+         "A": 1.79e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HCFC141B",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + HCFC142B -> CL",
+         "A": 1.63e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HCFC142B",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CCL4 -> 4*CL",
+         "A": 2.84e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CCL4",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 4.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CH3BR -> BR",
+         "A": 1.67e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CH3BR",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CF2CLBR -> CL + BR",
+         "A": 9.6e-11,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CF2CLBR",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "BR",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CF3BR -> BR",
+         "A": 4.1e-11,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CF3BR",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + H1202 -> 2*BR",
+         "A": 1.01e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H1202",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + H2402 -> 2*BR",
+         "A": 1.2e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H2402",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CHBR3 -> 3*BR",
+         "A": 4.49e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CHBR3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 3.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CH2BR2 -> 2*BR",
+         "A": 2.57e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CH2BR2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CH4 -> CH3O2 + OH",
+         "A": 1.31e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CH4",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CH3O2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CH4 -> CH2O + H + HO2",
+         "A": 3.5e-11,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CH4",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CH2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + CH4 -> CH2O + H2",
+         "A": 9e-12,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CH4",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CH2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "H2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + H2 -> H + OH",
+         "A": 1.2e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + HCL -> CL + OH",
+         "A": 1.5e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HCL",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + HBR -> BR + OH",
+         "A": 1.2e-10,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HBR",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "O1D + HCN -> OH",
+         "A": 7.7e-11,
+         "B": 0.0,
+         "C": 100.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HCN",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "H + O3 -> OH + O2",
+         "A": 1.4e-10,
+         "B": 0.0,
+         "C": -470.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "H + HO2 -> 2*OH",
+         "A": 7.2e-11,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "H + HO2 -> H2 + O2",
+         "A": 6.9e-12,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "H + HO2 -> H2O + O",
+         "A": 1.6e-12,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "OH + O -> H + O2",
+         "A": 1.8e-11,
+         "B": 0.0,
+         "C": 180.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "OH + O3 -> HO2 + O2",
+         "A": 1.7e-12,
+         "B": 0.0,
+         "C": -940.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "OH + HO2 -> H2O + O2",
+         "A": 4.8e-11,
+         "B": 0.0,
+         "C": 250.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "OH + OH -> H2O + O",
+         "A": 1.8e-12,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "OH",
+               "coefficient": 2.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "OH + H2 -> H2O + H",
+         "A": 2.8e-12,
+         "B": 0.0,
+         "C": -1800.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "OH + H2O2 -> H2O + HO2",
+         "A": 1.8e-12,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H2O2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "H2 + O -> OH + H",
+         "A": 1.6e-11,
+         "B": 0.0,
+         "C": -4570.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "HO2 + O -> OH + O2",
+         "A": 3e-11,
+         "B": 0.0,
+         "C": 200.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "HO2 + O3 -> OH + 2*O2",
+         "A": 1e-14,
+         "B": 0.0,
+         "C": -490.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "H2O2 + O -> OH + HO2",
+         "A": 1.4e-12,
+         "B": 0.0,
+         "C": -2000.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "H2O2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "CH3CN + OH -> HO2",
+         "A": 7.8e-13,
+         "B": 0.0,
+         "C": -1050.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "CH3CN",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "N + O2 -> NO + O",
+         "A": 1.5e-11,
+         "B": 0.0,
+         "C": -3600.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "N",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "N + NO -> N2 + O",
+         "A": 2.1e-11,
+         "B": 0.0,
+         "C": 100.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "N",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "N2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "N + NO2 -> N2O + O",
+         "A": 2.9e-12,
+         "B": 0.0,
+         "C": 220.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "N",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "N2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "N + NO2 -> 2*NO",
+         "A": 1.45e-12,
+         "B": 0.0,
+         "C": 220.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "N",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "N + NO2 -> N2 + O2",
+         "A": 1.45e-12,
+         "B": 0.0,
+         "C": 220.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "N",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "N2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "NO + HO2 -> NO2 + OH",
+         "A": 3.3e-12,
+         "B": 0.0,
+         "C": 270.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "NO + O3 -> NO2 + O2",
+         "A": 3e-12,
+         "B": 0.0,
+         "C": -1500.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "NO2 + O -> NO + O2",
+         "A": 5.1e-12,
+         "B": 0.0,
+         "C": 210.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "NO2 + O3 -> NO3 + O2",
+         "A": 1.2e-13,
+         "B": 0.0,
+         "C": -2450.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "NO3 + NO -> 2*NO2",
+         "A": 1.5e-11,
+         "B": 0.0,
+         "C": 170.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "NO3 + O -> NO2 + O2",
+         "A": 1e-11,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "NO3 + OH -> HO2 + NO2",
+         "A": 2.2e-11,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "NO3 + HO2 -> OH + NO2 + O2",
+         "A": 3.5e-12,
+         "B": 0.0,
+         "C": 0.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "HO2NO2 + OH -> H2O + NO2 + O2",
+         "A": 1.3e-12,
+         "B": 0.0,
+         "C": 380.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HO2NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "H + O2 + M -> HO2 + M",
+         "k0_A": 4.4e-32,
+         "k0_B": 1.3,
+         "k0_C": 0.0,
+         "kinf_A": 7.5e-11,
+         "kinf_B": -0.2,
+         "kinf_C": 0.0,
+         "Fc": 0.6,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "OH + OH + M -> H2O2 + M",
+         "k0_A": 6.9e-31,
+         "k0_B": 1.0,
+         "k0_C": 0.0,
+         "kinf_A": 2.6e-11,
+         "kinf_B": 0.0,
+         "kinf_C": 0.0,
+         "Fc": 0.6,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 2.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2O2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "HCN + OH + M -> HO2 + M",
+         "k0_A": 4.28e-33,
+         "k0_B": 0.0,
+         "k0_C": 0.0,
+         "kinf_A": 9.3e-15,
+         "kinf_B": -4.42,
+         "kinf_C": 0.0,
+         "Fc": 0.8,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "HCN",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "NO + O + M -> NO2 + M",
+         "k0_A": 9e-32,
+         "k0_B": 1.5,
+         "k0_C": 0.0,
+         "kinf_A": 3e-11,
+         "kinf_B": 0.0,
+         "kinf_C": 0.0,
+         "Fc": 0.6,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "NO2 + O + M -> NO3 + M",
+         "k0_A": 2.5e-31,
+         "k0_B": 1.8,
+         "k0_C": 0.0,
+         "kinf_A": 2.2e-11,
+         "kinf_B": 0.7,
+         "kinf_C": 0.0,
+         "Fc": 0.6,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "NO2 + NO3 + M -> N2O5 + M",
+         "k0_A": 2e-30,
+         "k0_B": 4.4,
+         "k0_C": 0.0,
+         "kinf_A": 1.4e-12,
+         "kinf_B": 0.7,
+         "kinf_C": 0.0,
+         "Fc": 0.6,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "N2O5",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "NO2 + OH + M -> HNO3 + M",
+         "k0_A": 1.8e-30,
+         "k0_B": 3.0,
+         "k0_C": 0.0,
+         "kinf_A": 2.8e-11,
+         "kinf_B": 0.0,
+         "kinf_C": 0.0,
+         "Fc": 0.6,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "HNO3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "NO2 + HO2 + M -> HO2NO2 + M",
+         "k0_A": 2e-31,
+         "k0_B": 3.4,
+         "k0_C": 0.0,
+         "kinf_A": 2.9e-12,
+         "kinf_B": 1.1,
+         "kinf_C": 0.0,
+         "Fc": 0.6,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "HO2NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jO2->2.0O",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jO3->O1D",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jO3->O",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "O3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jN2O->O1D",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "N2O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "N2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jNO->N",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "N",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jNO2->NO",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jN2O5->NO2",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "N2O5",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jN2O5->NO",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "N2O5",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jHNO3->NO2",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "HNO3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jNO3->NO2",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jNO3->NO",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jHO2NO2->OH",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "HO2NO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jHO2NO2->NO2",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "HO2NO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jH2O->OH",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jH2O->H2",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jH2O->2.0H",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H",
+               "coefficient": 2.0
+            },
+            {
+               "species name": "O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jH2O2->2.0OH",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "H2O2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "OH",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jHCL->H",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "HCL",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jHBR->BR",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "HBR",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCCL4->4.0CL",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CCL4",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 4.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCFC11->3.0CL",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CFC11",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 3.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCFC12->2.0CL",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CFC12",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCFC113->3.0CL",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CFC113",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 3.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jHCFC22->CL",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "HCFC22",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCFC114->2.0CL",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CFC114",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCFC115->CL",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CFC115",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jHCFC141B->2.0CL",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "HCFC141B",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jHCFC142B->CL",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "HCFC142B",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCH3BR->BR",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CH3BR",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "CH3O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCF3BR->BR",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CF3BR",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jH1202->2.0BR",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "H1202",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jH2402->2.0BR",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "H2402",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCF2CLBR->BR",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CF2CLBR",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "CL",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCHBR3->3.0BR",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CHBR3",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 3.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCH2BR2->2.0BR",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CH2BR2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "BR",
+               "coefficient": 2.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCH4->H",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CH4",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "CH3O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jCH4->1.44H2",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "CH4",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2",
+               "coefficient": 1.44
+            },
+            {
+               "species name": "CH2O",
+               "coefficient": 0.18
+            },
+            {
+               "species name": "O",
+               "coefficient": 0.18
+            },
+            {
+               "species name": "OH",
+               "coefficient": 0.33
+            },
+            {
+               "species name": "H",
+               "coefficient": 0.33
+            },
+            {
+               "species name": "CO2",
+               "coefficient": 0.44
+            },
+            {
+               "species name": "CO",
+               "coefficient": 0.38
+            },
+            {
+               "species name": "H2O",
+               "coefficient": 0.05
+            }
+         ],
+         "gas phase": "gas"
+      }
+   ],
+   "phases": [
+      {
+         "name": "gas",
+         "species": [
+            {
+               "name": "BR"
+            },
+            {
+               "name": "CCL4"
+            },
+            {
+               "name": "CF2CLBR"
+            },
+            {
+               "name": "CF3BR"
+            },
+            {
+               "name": "CFC11"
+            },
+            {
+               "name": "CFC113"
+            },
+            {
+               "name": "CFC114"
+            },
+            {
+               "name": "CFC115"
+            },
+            {
+               "name": "CFC12"
+            },
+            {
+               "name": "CH2BR2"
+            },
+            {
+               "name": "CH2O"
+            },
+            {
+               "name": "CH3BR"
+            },
+            {
+               "name": "CH3CN"
+            },
+            {
+               "name": "CH3O2"
+            },
+            {
+               "name": "CH4"
+            },
+            {
+               "name": "CHBR3"
+            },
+            {
+               "name": "CL"
+            },
+            {
+               "name": "CO"
+            },
+            {
+               "name": "CO2"
+            },
+            {
+               "name": "H"
+            },
+            {
+               "name": "H1202"
+            },
+            {
+               "name": "H2"
+            },
+            {
+               "name": "H2402"
+            },
+            {
+               "name": "H2O"
+            },
+            {
+               "name": "H2O2"
+            },
+            {
+               "name": "HBR"
+            },
+            {
+               "name": "HCFC141B"
+            },
+            {
+               "name": "HCFC142B"
+            },
+            {
+               "name": "HCFC22"
+            },
+            {
+               "name": "HCL"
+            },
+            {
+               "name": "HCN"
+            },
+            {
+               "name": "HNO3"
+            },
+            {
+               "name": "HO2"
+            },
+            {
+               "name": "HO2NO2"
+            },
+            {
+               "name": "M"
+            },
+            {
+               "name": "N"
+            },
+            {
+               "name": "N2"
+            },
+            {
+               "name": "N2O"
+            },
+            {
+               "name": "N2O5"
+            },
+            {
+               "name": "NO"
+            },
+            {
+               "name": "NO2"
+            },
+            {
+               "name": "NO3"
+            },
+            {
+               "name": "O"
+            },
+            {
+               "name": "O1D"
+            },
+            {
+               "name": "O2"
+            },
+            {
+               "name": "O3"
+            },
+            {
+               "name": "OH"
+            }
+         ]
+      }
+   ]
+}

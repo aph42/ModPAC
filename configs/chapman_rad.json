@@ -12,7 +12,7 @@
   "grid": {
       "Nz"       :  200,
       "spacing"  : "log_pressure_equal",
-      "p_top"    :    0.01
+      "p_top"    :    0.001
   },
   "radiation": {
       "scon" :  1368.22,
