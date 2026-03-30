@@ -36,9 +36,13 @@ rate_pattern = r'(?P<A>[E.0-9+-]*)' \
 
 #tern_pattern = r'(?P<A>[E.0-9+-]*)'
 
-def parse_rate(rate):
+def parse_rate(rate, n):
 # {{{
    params = {}
+   # concentrations moved from molecule cm-3 to mol m-3; 
+   # need to multiply A coefficients by factor of (1e6 * Av-1)**(nreactants - 1)
+   rfactor = (6.022e23 / 1e6) ** (n - 1)
+   # also, temperature ratio term is flipped in implementation, so powers (B) need to be multiplied by -1
 
    if 'ko' in rate and 'rate' not in rate: 
       rtype = 'Ternary'
@@ -51,14 +55,14 @@ def parse_rate(rate):
 
       komtch = re.fullmatch(rate_pattern, rts['ko'])
       gd = komtch.groupdict()
-      params['k0_A'] = float(get_param(gd, 'A', 1.))
-      params['k0_B'] = float(get_param(gd, 'B', 0.))
+      params['k0_A'] = rfactor * float(get_param(gd, 'A', 1.))
+      params['k0_B'] = -float(get_param(gd, 'B', -0.))
       params['k0_C'] = float(get_param(gd, 'C', 0.))
 
       kimtch = re.fullmatch(rate_pattern, rts['ki'])
       gd = kimtch.groupdict()
-      params['kinf_A'] = float(get_param(gd, 'A', 1.))
-      params['kinf_B'] = float(get_param(gd, 'B', 0.))
+      params['kinf_A'] = rfactor * float(get_param(gd, 'A', 1.))
+      params['kinf_B'] = -float(get_param(gd, 'B', -0.))
       params['kinf_C'] = float(get_param(gd, 'C', 0.))
 
       fmtch = re.fullmatch(rate_pattern, rts['f'])
@@ -79,8 +83,8 @@ def parse_rate(rate):
       else: 
          rtype = 'Arrhenius'
          gd = match.groupdict()
-         params['A'] = float(get_param(gd, 'A', 1.))
-         params['B'] = float(get_param(gd, 'B', 0.))
+         params['A'] = rfactor * float(get_param(gd, 'A', 1.))
+         params['B'] = -float(get_param(gd, 'B', -0.))
          params['D'] = float(get_param(gd, 'D', 1.))
          params['C'] = float(get_param(gd, 'C', 0.))
          #params['E'] = float(get_param(gd, 'E', 0.))
@@ -125,7 +129,7 @@ def parse_reactions(filename, categories = 0):
          outputs = outputs.union(products)
 
          try:
-            rtype, params = parse_rate(rate)
+            rtype, params = parse_rate(rate, np.sum(rccoeffs))
          except Exception as e:
             print(f'{reaction}\n Parsing failed: {rate}', e)
 
@@ -193,6 +197,7 @@ def make_mechanism():
    phinputs, phoutputs, phreactions = parse_photolysis('tilmes.photolysis.txt', inputs)
 
    print('Excess species:')
+   print('Inputs alone: ', inputs - outputs)
    print('Outputs: ', outputs - inputs)
    print('Photolysis inputs: ', phinputs - inputs)
    print('Photolysis outputs:', phoutputs - inputs)
@@ -290,6 +295,49 @@ def write_json(name, filename, version = '1.0.0', overwrite = False):
       json.dump(mechanism, f, indent = '   ')
 # }}}
 
+def species_list_to_string(components):
+   cs = []
+   for rc in components:
+      if rc.coefficient == 1.:
+         c = rc.species_name 
+      else:
+         c = f'{rc.coefficient}*{rc.species_name}'
+      cs.append(c)
+   return ' + '.join(cs)
+
+def mechanism_to_text(mc, filename):
+# {{{
+
+
+   rcs = []
+   rts = []
+
+
+
+
+   for rct in mc.reactions.arrhenius:
+      react = species_list_to_string(rct.reactants)
+      prod  = species_list_to_string(rct.products)
+
+      rate_text = f'{rct.A:.4E}'
+
+      if rct.B != 0.: rate_text += f'(T/{rct.D})**{rct.B}'
+      if rct.C != 0.: rate_text += f'*exp ( {rct.C}/t )'
+
+      reaction_text = f'{react} {to} {prod}'
+
+      rcs.append(reaction_text)
+      rts.append(rate_text)
+   
+   nwidth = 0
+   for rc in rcs:
+      if len(rc) > nwidth: nwidth = len(rc)
+
+   ind = np.argsort(rcs)
+
+   for i in ind:
+      print(f'{rcs[i]:<{nwidth}}  ; {rts[i]}') 
+# }}}
 
    # Need to convert reaction rate units for A coefficients
    # Trickier reactions: 
