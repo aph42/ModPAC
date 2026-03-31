@@ -1,0 +1,550 @@
+# Odd Oxygen; 3 reactions
+2*O + M → O2 + M    ; 2.76013E-34*exp ( 720.0/t )
+O + O3 → 2*O2       ; 8.00019E-12*exp ( -2060.0/t )
+O2 + O + M → O3 + M ; 6.00028E-34(300.0/T)**2.4
+
+# Odd Oxygen (O1D); 33 reactions
+CFC113 + O1D → 2*CL + COFCL + COF2 ; 2.08805E-10
+CFC114 + O1D → 2*CL + 2*COF2       ; 1.17003E-10
+CFC115 + O1D → CL + F + 2*COF2     ; 4.64411E-11
+CFC12 + O1D → 2*CL + COF2          ; 1.20403E-10
+CH2BR2 + O1D → 2*BR                ; 2.57006E-10
+CH3BR + O1D → BR                   ; 1.80004E-10
+CH4 + O1D → CH2O + H + HO2         ; 3.50008E-11
+CH4 + O1D → CH2O + H2              ; 9.00021E-12
+CH4 + O1D → CH3O2 + OH             ; 1.31003E-10
+CHBR3 + O1D → 3*BR                 ; 4.62011E-10
+COF2 + O1D → 2*F                   ; 2.14005E-11
+H2402 + O1D → 2*BR + 2*COF2        ; 1.20003E-10
+H2O + O1D → 2*OH                   ; 1.63004E-10*exp ( 60.0/t )
+HCL + O1D → CL + OH                ; 9.90023E-11
+HCL + O1D → CLO + H                ; 3.30008E-12
+HCN + O1D → OH                     ; 1.08003E-10*exp ( 105.0/t )
+N2O + O1D → 2*NO                   ; 7.26017E-11*exp ( 20.0/t )
+N2O + O1D → N2 + O2                ; 4.64011E-11*exp ( 20.0/t )
+O1D + CCL4 → 4*CL                  ; 2.60706E-10
+O1D + CF2CLBR → CL + BR + COF2     ; 9.75023E-11
+O1D + CF3BR → BR + F + COF2        ; 4.50011E-11
+O1D + CFC11 → 2*CL + COFCL         ; 2.07005E-10
+O1D + COFCL → F + CL               ; 1.90004E-10
+O1D + H2 → H + OH                  ; 1.20003E-10
+O1D + HBR → BR + OH                ; 9.00021E-11
+O1D + HBR → BRO + H                ; 3.00007E-11
+O1D + HCFC141B → CL + COFCL        ; 1.79404E-10
+O1D + HCFC142B → CL + COF2         ; 1.30003E-10
+O1D + HCFC22 → CL + COF2           ; 7.65018E-11
+O1D + N2 → O + N2                  ; 2.15005E-11*exp ( 110.0/t )
+O1D + O2 → O + O2                  ; 3.30008E-11*exp ( 55.0/t )
+O3 + O1D → O2                      ; 1.20003E-10
+O3 + O1D → O2 + 2*O                ; 1.20003E-10
+
+# Odd Hydrogen; 176 reactions
+2*HO2 + H2O + M → H2O2 + O2 + H2O + M                                                   ; 2.94021E-54*exp ( 3120.0/t )
+2*HO2 + H2O → H2O2 + O2 + H2O                                                           ; 4.2002E-34*exp ( 2660.0/t )
+2*HO2 + M → H2O2 + O2 + M                                                               ; 2.1001E-33*exp ( 920.0/t )
+2*HO2 → H2O2 + O2                                                                       ; 3.00007E-13*exp ( 460.0/t )
+2*OH → H2O + O                                                                          ; 1.80004E-12
+2*OH → H2O2                                                                             ; ko=4.15537E-13(300.0/T)**1.0, ki=2.60006E-11, f=0.60
+ACBZO2 + HO2 → 0*C6H5O2 + 0*OH                                                          ; 4.3001E-13*exp ( 1040.0/t )
+ALKO2 + HO2 → ALKOOH                                                                    ; 7.50018E-13*exp ( 700.0/t )
+BCARY + OH → BCARY + OH + BCARYO2VBS                                                    ; 2.00005E-10
+BCARY + OH → TERPO2                                                                     ; 2.00005E-10
+BCARYO2VBS + HO2 → HO2 + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                ; 2.75006E-13*exp ( 1300.0/t )
+BENZENE + OH → 0.53*PHENOL + 0*BEPOMUC + 0.65*HO2 + 0*BENZO2                            ; 2.30005E-12*exp ( -193.0/t )
+BENZENE + OH → BENZENE + OH + BENZO2VBS                                                 ; 2.30005E-12*exp ( -193.0/t )
+BENZO2 + HO2 → BENZOOH                                                                  ; 7.50018E-13*exp ( 700.0/t )
+BENZO2VBS + HO2 → HO2 + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                 ; 7.50018E-13*exp ( 700.0/t )
+BENZOOH + OH → BENZO2                                                                   ; 3.80009E-12*exp ( 200.0/t )
+BIGALK + OH → ALKO2                                                                     ; 3.50008E-12
+BIGENE + OH → ENEO2                                                                     ; 5.40013E-11
+BR + HO2 → HBR + O2                                                                     ; 4.80011E-12*exp ( -310.0/t )
+BRO + HO2 → HOBR + O2                                                                   ; 4.50011E-12*exp ( 460.0/t )
+BZALD + OH → ACBZO2                                                                     ; 5.90014E-12*exp ( 225.0/t )
+BZOO + HO2 → BZOOH                                                                      ; 7.50018E-13*exp ( 700.0/t )
+C2H2 + OH → 0.65*GLYOXAL + 0.65*OH + 0*HCOOH + 0*HO2 + 0*CO                             ; ko=3.31225E-12, ki=8.30019E-13(300.0/T)**-2.0, f=0.60
+C2H4 + OH → EO2                                                                         ; ko=5.17916E-11(300.0/T)**3.1, ki=9.00021E-12(300.0/T)**0.85, f=0.48
+C2H5O2 + HO2 → C2H5OOH + O2                                                             ; 7.50018E-13*exp ( 700.0/t )
+C2H5OH + OH → HO2 + CH3CHO                                                              ; 6.90016E-12*exp ( -230.0/t )
+C2H5OOH + OH → 0*C2H5O2 + 0*CH3CHO + 0*OH                                               ; 3.80009E-12*exp ( 200.0/t )
+C2H6 + OH → C2H5O2 + H2O                                                                ; 7.66018E-12*exp ( -1020.0/t )
+C3H7O2 + HO2 → C3H7OOH + O2                                                             ; 7.50018E-13*exp ( 700.0/t )
+C3H7OOH + OH → H2O + C3H7O2                                                             ; 3.80009E-12*exp ( 200.0/t )
+C6H5O2 + HO2 → C6H5OOH                                                                  ; 7.50018E-13*exp ( 700.0/t )
+CH2BR2 + OH → 2*BR + H2O                                                                ; 2.00005E-12*exp ( -840.0/t )
+CH2O + HO2 → HOCH2OO                                                                    ; 9.70023E-15*exp ( 625.0/t )
+CH3BR + OH → BR + H2O + HO2                                                             ; 1.42003E-12*exp ( -1150.0/t )
+CH3CCL3 + OH → H2O + 3*CL                                                               ; 1.64004E-12*exp ( -1520.0/t )
+CH3CL + OH → CL + H2O + HO2                                                             ; 1.96005E-12*exp ( -1200.0/t )
+CH3CN + OH → HO2                                                                        ; 7.80018E-13*exp ( -1050.0/t )
+CH3CO3 + HO2 → 0*CH3COOOH + 0*CH3COOH + 0*O3 + 0*OH + 0*CH3O2                           ; 4.3001E-13*exp ( 1040.0/t )
+CH3COCH3 + OH → RO2 + H2O                                                               ; 1.33003E-13
+CH3COCH3 + OH → RO2 + H2O                                                               ; 3.82009E-11*exp ( -2000.0/t )
+CH3COOOH + OH → 0*CH3CO3 + 0*CH2O + 0*CO2 + H2O                                         ; 1.00002E-12
+CH3O2 + HO2 → CH3OOH + O2                                                               ; 4.1001E-13*exp ( 750.0/t )
+CH3OH + OH → HO2 + CH2O                                                                 ; 2.90007E-12*exp ( -345.0/t )
+CH4 + OH → CH3O2 + H2O                                                                  ; 2.45006E-12*exp ( -1775.0/t )
+CHBR3 + OH → 3*BR                                                                       ; 9.00021E-13*exp ( -360.0/t )
+CL + H2 → HCL + H                                                                       ; 3.05007E-11*exp ( -2270.0/t )
+CL + H2O2 → HCL + HO2                                                                   ; 1.10003E-11*exp ( -980.0/t )
+CL + HO2 → HCL + O2                                                                     ; 1.40003E-11*exp ( 270.0/t )
+CL + HO2 → OH + CLO                                                                     ; 3.60008E-11*exp ( -375.0/t )
+CLO + HO2 → O2 + HOCL                                                                   ; 2.60006E-12*exp ( 290.0/t )
+CLONO2 + OH → HOCL + NO3                                                                ; 1.20003E-12*exp ( -330.0/t )
+CRESOL + OH → 0*PHENO2 + 0.73*HO2 + 0*PHENO                                             ; 4.70011E-11
+DICARBO2 + HO2 → 0*OH + 0*HO2 + 0*CH3COCHO + 0*CO + 0*CH3O2                             ; 4.3001E-13*exp ( 1040.0/t )
+EO2 + HO2 → EOOH                                                                        ; 7.50018E-13*exp ( 700.0/t )
+F + H2 → HF + H                                                                         ; 1.40003E-10*exp ( -500.0/t )
+GLYOXAL + OH → HO2 + CO + CO2                                                           ; 1.15003E-11
+H + HO2 → 2*OH                                                                          ; 7.20017E-11
+H + HO2 → H2 + O2                                                                       ; 6.90016E-12
+H + HO2 → H2O + O                                                                       ; 1.60004E-12
+H + O3 → OH + O2                                                                        ; 1.40003E-10*exp ( -470.0/t )
+HCL + OH → H2O + CL                                                                     ; 1.80004E-12*exp ( -250.0/t )
+HCOOH + OH → HO2 + CO2 + H2O                                                            ; 4.00009E-13
+HNO3 + OH → NO3 + H2O                                                                   ; ko=3.91448E-16*exp ( 1335.0/t ), ki=2.70006E-17*exp ( 2199.0/t ), f=1.00
+HNO3 + OH → NO3 + H2O                                                                   ; 2.40006E-14*exp ( 460.0/t )
+HO2NO2 + OH → H2O + NO2 + O2                                                            ; 4.50011E-13*exp ( 610.0/t )
+HOCH2OO + HO2 → HCOOH                                                                   ; 7.50018E-13*exp ( 700.0/t )
+HONITR + OH → ONITR + HO2                                                               ; 2.00005E-12
+ISOP + OH → 0.6*ISOPAO2 + 0*ISOPBO2                                                     ; 2.54006E-11*exp ( 410.0/t )
+ISOP + OH → ISOP + OH + ISOPO2VBS                                                       ; 2.54006E-11*exp ( 410.0/t )
+ISOPAO2 + HO2 → ISOPOOH                                                                 ; 8.00019E-13*exp ( 700.0/t )
+ISOPBO2 + HO2 → ISOPOOH                                                                 ; 8.00019E-13*exp ( 700.0/t )
+ISOPNITB + OH → 0*HYAC + 0*GLYALD + 0*NOA + HO2 + 0*HONITR                              ; 4.00009E-11
+ISOPNO3 + HO2 → ISOPNOOH                                                                ; 8.00019E-13*exp ( 700.0/t )
+ISOPNOOH + OH → NOA + HO2                                                               ; 4.00009E-11
+ISOPO2VBS + HO2 → HO2 + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                 ; 2.12005E-13*exp ( 1300.0/t )
+IVOC + OH → OH + IVOCO2VBS                                                              ; 1.34003E-11
+IVOCO2VBS + HO2 → HO2 + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                 ; 7.50018E-13*exp ( 700.0/t )
+MACRO2 + HO2 → MACROOH                                                                  ; 8.00019E-13*exp ( 700.0/t )
+MACROOH + OH → 0*MCO3 + 0*MACRO2 + 0*OH + 0*HO2                                         ; 2.30005E-11*exp ( 200.0/t )
+MALO2 + HO2 → 0*GLYOXAL + 0*HO2 + 0*CO                                                  ; 4.3001E-13*exp ( 1040.0/t )
+MCO3 + HO2 → 0*O3 + 0*CH3COOH + 0*CH3COOOH + 0*OH + 0*CO2 + 0*CH2O + 0*CH3CO3           ; 4.3001E-13*exp ( 1040.0/t )
+MDIALO2 + HO2 → 0*OH + 0*HO2 + 0*CH3COCHO + 0*CO + 0*CH3O2 + 0*GLYOXAL                  ; 4.3001E-13*exp ( 1040.0/t )
+MEK + OH → MEKO2                                                                        ; 2.30005E-12*exp ( -170.0/t )
+MEKO2 + HO2 → 0.8*MEKOOH + 0*OH + 0*CH3CHO + 0*CH3CO3                                   ; 7.50018E-13*exp ( 700.0/t )
+MEKOOH + OH → MEKO2                                                                     ; 3.80009E-12*exp ( 200.0/t )
+MTERPO2VBS + HO2 → HO2 + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                ; 2.60006E-13*exp ( 1300.0/t )
+NH3 + OH → H2O                                                                          ; 1.70004E-12*exp ( -710.0/t )
+NO + HO2 → NO2 + OH                                                                     ; 3.44008E-12*exp ( 260.0/t )
+NO2 + HO2 → HO2NO2                                                                      ; ko=1.14423E-13(300.0/T)**3.4, ki=4.00009E-12(300.0/T)**0.3, f=0.60
+NO3 + HO2 → OH + NO2 + O2                                                               ; 3.50008E-12
+NO3 + OH → HO2 + NO2                                                                    ; 2.20005E-11
+NTERPO2 + HO2 → NTERPOOH                                                                ; 7.50018E-13*exp ( 700.0/t )
+NTERPOOH + OH → NTERPO2                                                                 ; 2.00005E-11
+O + H2 → OH + H                                                                         ; 1.60004E-11*exp ( -4570.0/t )
+O + H2O2 → OH + HO2                                                                     ; 1.40003E-12*exp ( -2000.0/t )
+O + HO2 → OH + O2                                                                       ; 3.00007E-11*exp ( 200.0/t )
+O2 + H → HO2                                                                            ; ko=3.19181E-14(300.0/T)**1.8, ki=9.50022E-11(300.0/T)**-0.4, f=0.60
+O3 + HO2 → OH + 2*O2                                                                    ; 1.00002E-14*exp ( -490.0/t )
+OH + ALKNIT → 0*CH2O + 0.8*CH3CHO + 0.8*CH3COCH3 + NO2                                  ; 1.60004E-12
+OH + ALKOOH → ALKO2                                                                     ; 3.80009E-12*exp ( 200.0/t )
+OH + BRO → BR + HO2                                                                     ; 1.70004E-11*exp ( 250.0/t )
+OH + BZOOH → BZOO                                                                       ; 3.80009E-12*exp ( 200.0/t )
+OH + C3H6 → PO2                                                                         ; ko=4.81783E-09(300.0/T)**3.5, ki=3.00007E-11, f=0.50
+OH + C3H8 → C3H7O2 + H2O                                                                ; 9.19021E-12*exp ( -630.0/t )
+OH + C6H5OOH → C6H5O2                                                                   ; 3.80009E-12*exp ( 200.0/t )
+OH + CH2O → CO + H2O + H                                                                ; 5.50013E-12*exp ( 125.0/t )
+OH + CH3CHO → CH3CO3 + H2O                                                              ; 4.63011E-12*exp ( 350.0/t )
+OH + CH3COCHO → CH3CO3 + CO + H2O                                                       ; 8.4002E-13*exp ( 830.0/t )
+OH + CH3COOH → CH3O2 + CO2 + H2O                                                        ; 3.15007E-14*exp ( 920.0/t )
+OH + CH3OOH → 0.7*CH3O2 + 0*OH + 0*CH2O + H2O                                           ; 3.80009E-12*exp ( 200.0/t )
+OH + CLO → CL + HO2                                                                     ; 7.40017E-12*exp ( 270.0/t )
+OH + CLO → HCL + O2                                                                     ; 6.00014E-13*exp ( 230.0/t )
+OH + DMS → SO2                                                                          ; 1.10003E-11*exp ( -280.0/t )
+OH + GLYALD → HO2 + 0*GLYOXAL + 0.8*CH2O + 0.8*CO2                                      ; 1.00002E-11
+OH + H2 → H2O + H                                                                       ; 2.80007E-12*exp ( -1800.0/t )
+OH + H2O2 → H2O + HO2                                                                   ; 1.80004E-12
+OH + HBR → BR + H2O                                                                     ; 5.50013E-12*exp ( 200.0/t )
+OH + HCFC141B → CL + COFCL                                                              ; 1.25003E-12*exp ( -1600.0/t )
+OH + HCFC142B → CL + COF2                                                               ; 1.30003E-12*exp ( -1770.0/t )
+OH + HCFC22 → H2O + CL + COF2                                                           ; 9.20022E-13*exp ( -1560.0/t )
+OH + HCN → HO2                                                                          ; ko=3.67359E-15(300.0/T)**1.5, ki=9.80023E-15(300.0/T)**-4.6, f=0.80
+OH + HO2 → H2O + O2                                                                     ; 4.80011E-11*exp ( 250.0/t )
+OH + HOCL → H2O + CLO                                                                   ; 3.00007E-12*exp ( -500.0/t )
+OH + HPALD → XO2                                                                        ; 1.86004E-11*exp ( 175.0/t )
+OH + HYAC → CH3COCHO + HO2                                                              ; 3.00007E-12
+OH + HYDRALD → XO2                                                                      ; 1.86004E-11*exp ( 175.0/t )
+OH + IEPOX → XO2                                                                        ; 1.30003E-11
+OH + ISOPNITA → 0.7*HYAC + 0.7*GLYALD + 0.7*NO2 + 0*CH2O + 0*HONITR + 0*HO2             ; 4.00009E-11
+OH + ISOPOOH → 0*XO2 + 0.6*IEPOX + 0.6*OH                                               ; 1.52004E-11*exp ( 200.0/t )
+OH + MACR → 0*MACRO2 + 0*H2O + 0*MCO3                                                   ; 9.60022E-12*exp ( 360.0/t )
+OH + MPAN → 0*HYAC + 0*NO3 + 0*CH2O + 0*HO2 + 0*CO2                                     ; ko=4.81783E-09(300.0/T)**3.5, ki=3.00007E-11, f=0.50
+OH + MTERP → MTERP + OH + MTERPO2VBS                                                    ; 1.20003E-11*exp ( 440.0/t )
+OH + MTERP → TERPO2                                                                     ; 1.20003E-11*exp ( 440.0/t )
+OH + MVK → MACRO2                                                                       ; 4.1301E-12*exp ( 452.0/t )
+OH + N → NO + H                                                                         ; 5.00012E-11
+OH + NC4CH2OH → GLYALD + NOA + HO2                                                      ; 7.00016E-11
+OH + NC4CHO → GLYOXAL + NOA + HO2                                                       ; 1.00002E-10
+OH + NO2 → HNO3                                                                         ; ko=1.08401E-12(300.0/T)**3.0, ki=2.80007E-11, f=0.60
+OH + NOA → NO2 + CH3COCHO                                                               ; 6.70016E-13
+OH + O → H + O2                                                                         ; 1.80004E-11*exp ( 180.0/t )
+OH + O3 → HO2 + O2                                                                      ; 1.70004E-12*exp ( -940.0/t )
+OH + OCS → SO2 + CO + H                                                                 ; 7.20017E-14*exp ( -1070.0/t )
+OH + PHENOL → 0*PHENO2 + 0.8*HO2 + 0*PHENO                                              ; 4.70011E-13*exp ( 1220.0/t )
+OH + PHENOOH → PHENO2                                                                   ; 3.80009E-12*exp ( 200.0/t )
+OH + POOH → 0*PO2 + 0*OH + 0*HYAC + H2O                                                 ; 3.80009E-12*exp ( 200.0/t )
+OH + ROOH → RO2 + H2O                                                                   ; 3.80009E-12*exp ( 200.0/t )
+OH + S → SO + H                                                                         ; 6.60015E-11
+OH + TERPNIT → NO2 + TERPROD1                                                           ; 2.00005E-11
+OH + TERPOOH → TERPO2                                                                   ; 3.30008E-11
+OH + TERPROD1 → TERP2O2                                                                 ; 5.70013E-11
+OH + TERPROD2 → 0*RO2 + 0.68*CH2O + 1.8*CO2 + 0*CH3COCH3 + 0.65*CH3CO3 + 0*HO2 + 0.7*CO ; 3.40008E-11
+OH + TOLOOH → TOLO2                                                                     ; 3.80009E-12*exp ( 200.0/t )
+OH + XOOH → 0*XO2 + 0*OH                                                                ; 1.52004E-12*exp ( 200.0/t )
+OH + XYLENES → 0*XYLOL + 0*TEPOMUC + 0*BZOO + 0.56*XYLENO2 + 0*HO2                      ; 1.70004E-11
+OH + XYLENES → XYLENES + OH + XYLEO2VBS                                                 ; 1.70004E-11
+OH + XYLOL → 0*XYLOLO2 + 0.63*HO2 + 0*PHENO                                             ; 8.4002E-11
+OH + XYLOLOOH → XYLOLO2                                                                 ; 3.80009E-12*exp ( 200.0/t )
+PAN + OH → CH2O + NO3                                                                   ; 4.00009E-14
+PHENO2 + HO2 → PHENOOH                                                                  ; 7.50018E-13*exp ( 700.0/t )
+PO2 + HO2 → POOH + O2                                                                   ; 7.50018E-13*exp ( 700.0/t )
+RO2 + HO2 → 0.85*ROOH + 0*OH + 0*CH2O + 0*CH3CO3                                        ; 8.6002E-13*exp ( 700.0/t )
+SO + OH → SO2 + H                                                                       ; 2.60006E-11*exp ( 330.0/t )
+SO2 + OH → SO3 + HO2                                                                    ; ko=1.74646E-13(300.0/T)**4.1, ki=1.70004E-12(300.0/T)**-0.2, f=0.60
+SVOC + OH → OH + 0.5931004999999999*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4       ; 1.34003E-11
+TERP2O2 + HO2 → TERP2OOH                                                                ; 7.50018E-13*exp ( 700.0/t )
+TERP2OOH + OH → TERP2O2                                                                 ; 2.30005E-11
+TERPO2 + HO2 → TERPOOH                                                                  ; 7.50018E-13*exp ( 700.0/t )
+TOLO2 + HO2 → TOLOOH                                                                    ; 7.50018E-13*exp ( 700.0/t )
+TOLUENE + OH → 0*CRESOL + 0*TEPOMUC + 0*BZOO + 0.65*TOLO2 + 0*HO2                       ; 1.70004E-12*exp ( 352.0/t )
+TOLUENE + OH → TOLUENE + OH + TOLUO2VBS                                                 ; 1.70004E-12*exp ( 352.0/t )
+TOLUO2VBS + HO2 → HO2 + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                 ; 7.50018E-13*exp ( 700.0/t )
+XO2 + HO2 → XOOH                                                                        ; 8.00019E-13*exp ( 700.0/t )
+XYLENO2 + HO2 → XYLENOOH                                                                ; 7.50018E-13*exp ( 700.0/t )
+XYLENOOH + OH → XYLENO2                                                                 ; 3.80009E-12*exp ( 200.0/t )
+XYLEO2VBS + HO2 → HO2 + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                 ; 7.50018E-13*exp ( 700.0/t )
+XYLOLO2 + HO2 → XYLOLOOH                                                                ; 7.50018E-13*exp ( 700.0/t )
+
+# Odd Nitrogen; 87 reactions
+ACBZO2 + NO2 → PBZNIT                                                                                       ; ko=5.84161E-11(300.0/T)**5.6, ki=9.30022E-12(300.0/T)**1.5, f=0.60
+ALKO2 + NO → 0*CH3CHO + 0*CH2O + 0*CH3COCH3 + HO2 + 0.8*MEK + NO2                                           ; 6.70016E-12
+ALKO2 + NO → ALKNIT                                                                                         ; 5.40013E-14*exp ( 870.0/t )
+BCARY + NO3 → BCARY + NO3 + 0*SOAG3 + 0.5901905*SOAG4                                                       ; 1.90004E-11
+BCARY + NO3 → NTERPO2                                                                                       ; 1.90004E-11
+BCARYO2VBS + NO → NO + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                                      ; 2.70006E-12*exp ( 360.0/t )
+BIGENE + NO3 → NO2 + CH3CHO + 0*CH2O + 0*CH3COCH3                                                           ; 3.50008E-13
+BRO + NO2 → BRONO2                                                                                          ; ko=3.13159E-13(300.0/T)**3.2, ki=6.90016E-12(300.0/T)**2.9, f=0.60
+BZOO + NO → BZALD + NO2 + HO2                                                                               ; 2.60006E-12*exp ( 365.0/t )
+C6H5O2 + NO → PHENO + NO2                                                                                   ; 2.60006E-12*exp ( 365.0/t )
+CH3CO3 + NO2 → PAN                                                                                          ; ko=4.39627E-11(300.0/T)**4.1, ki=9.50022E-12(300.0/T)**1.6, f=0.60
+CH3O2 + NO → CH2O + NO2 + HO2                                                                               ; 2.80007E-12*exp ( 300.0/t )
+CLO + NO2 → CLONO2                                                                                          ; ko=1.08401E-13(300.0/T)**3.4, ki=1.50004E-11(300.0/T)**1.9, f=0.60
+DICARBO2 + NO2 → sink                                                                                       ; ko=5.84161E-11(300.0/T)**5.6, ki=9.30022E-12(300.0/T)**1.5, f=0.60
+HOCH2OO + NO → HCOOH + NO2 + HO2                                                                            ; 2.60006E-12*exp ( 265.0/t )
+ISOP + NO3 → ISOP + NO3 + 0*SOAG3 + 0*SOAG4                                                                 ; 3.03007E-12*exp ( -446.0/t )
+ISOP + NO3 → ISOPNO3                                                                                        ; 3.03007E-12*exp ( -446.0/t )
+ISOPAO2 + NO → 0*ISOPNITA + 0.92*NO2 + 0*MACR + 0.56*MVK + 0.92*CH2O + 0.92*HO2                             ; 4.4001E-12*exp ( 180.0/t )
+ISOPAO2 + NO3 → NO2 + 0*MACR + 0.6*MVK + CH2O + HO2                                                         ; 2.40006E-12
+ISOPNO3 + NO → NC4CHO + NO2 + HO2                                                                           ; 2.70006E-12*exp ( 360.0/t )
+ISOPNO3 + NO3 → NC4CHO + NO2 + HO2                                                                          ; 2.40006E-12
+ISOPO2VBS + NO → NO + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                                       ; 2.70006E-12*exp ( 350.0/t )
+MALO2 + NO → 0*GLYOXAL + 0*HO2 + 0*CO + NO2                                                                 ; 7.50018E-12*exp ( 290.0/t )
+MALO2 + NO2 → sink                                                                                          ; ko=5.84161E-11(300.0/T)**5.6, ki=9.30022E-12(300.0/T)**1.5, f=0.60
+MCO3 + NO2 → MPAN                                                                                           ; ko=5.84161E-11(300.0/T)**5.6, ki=9.30022E-12(300.0/T)**1.5, f=0.60
+MDIALO2 + NO2 → sink                                                                                        ; ko=5.84161E-11(300.0/T)**5.6, ki=9.30022E-12(300.0/T)**1.5, f=0.60
+N + NO2 → 2*NO                                                                                              ; 1.45003E-12*exp ( 220.0/t )
+N + NO2 → N2 + O2                                                                                           ; 1.45003E-12*exp ( 220.0/t )
+N + NO2 → N2O + O                                                                                           ; 2.90007E-12*exp ( 220.0/t )
+N + O2 → NO + O                                                                                             ; 3.30008E-12*exp ( -3150.0/t )
+N2O5 → NO2 + NO3                                                                                            ; ko=2.49192E+14(300.0/T)**3.0*exp ( -10840.0/t ), ki=2.75862E+14(300.0/T)**-0.1*exp ( -10840.0/t ), f=0.60
+NO + ACBZO2 → C6H5O2 + NO2                                                                                  ; 7.50018E-12*exp ( 290.0/t )
+NO + BENZO2 → NO2 + GLYOXAL + 0*BIGALD1 + HO2                                                               ; 2.60006E-12*exp ( 365.0/t )
+NO + BENZO2VBS → NO + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                                       ; 2.60006E-12*exp ( 365.0/t )
+NO + BRO → BR + NO2                                                                                         ; 8.80021E-12*exp ( 260.0/t )
+NO + C2H5O2 → CH3CHO + HO2 + NO2                                                                            ; 2.60006E-12*exp ( 365.0/t )
+NO + C3H7O2 → 0.82*CH3COCH3 + NO2 + HO2 + 0*CH3CHO                                                          ; 4.2001E-12*exp ( 180.0/t )
+NO + CH3CO3 → CH3O2 + CO2 + NO2                                                                             ; 8.10019E-12*exp ( 270.0/t )
+NO + CLO → NO2 + CL                                                                                         ; 6.40015E-12*exp ( 290.0/t )
+NO + DICARBO2 → NO2 + 0*HO2 + 0*CH3COCHO + 0*CO + 0.83*CH3O2                                                ; 7.50018E-12*exp ( 290.0/t )
+NO + ENEO2 → CH3CHO + 0*CH2O + 0*CH3COCH3 + HO2 + NO2                                                       ; 4.80011E-12*exp ( 120.0/t )
+NO + ENEO2 → HONITR                                                                                         ; 5.10012E-14*exp ( 693.0/t )
+NO + EO2 → 0*CH2O + 0*HO2 + 0.75*EO + NO2                                                                   ; 4.2001E-12*exp ( 180.0/t )
+NO + ISOPBO2 → 0.87*HYDRALD + 0*ISOPNITB + 0.92*NO2 + 0.92*HO2 + 0*GLYOXAL + 0*GLYALD + 0*CH3COCHO + 0*HYAC ; 4.4001E-12*exp ( 180.0/t )
+NO + IVOCO2VBS → NO + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                                       ; 2.60006E-12*exp ( 365.0/t )
+NO + MACRO2 → HONITR                                                                                        ; 1.30003E-13*exp ( 360.0/t )
+NO + MACRO2 → NO2 + 0*HO2 + 0*CH2O + 0.53*GLYALD + 0*CH3COCHO + 0.53*CH3CO3 + 0*HYAC + 0*CO                 ; 2.70006E-12*exp ( 360.0/t )
+NO + MCO3 → NO2 + CH2O + CH3CO3                                                                             ; 5.30012E-12*exp ( 360.0/t )
+NO + MDIALO2 → NO2 + 0.83*HO2 + 0*CH3COCHO + 0*CO + 0*CH3O2 + 0*GLYOXAL                                     ; 7.50018E-12*exp ( 290.0/t )
+NO + MEKO2 → CH3CO3 + CH3CHO + NO2                                                                          ; 4.2001E-12*exp ( 180.0/t )
+NO + MTERPO2VBS → NO + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                                      ; 2.70006E-12*exp ( 360.0/t )
+NO + N → N2 + O                                                                                             ; 2.10005E-11*exp ( 100.0/t )
+NO + NTERPO2 → 0*TERPNIT + 1.6*NO2 + 0.8*TERPROD1                                                           ; 4.2001E-12*exp ( 180.0/t )
+NO + O → NO2                                                                                                ; ko=5.42005E-14(300.0/T)**1.5, ki=3.00007E-11, f=0.60
+NO + O3 → NO2 + O2                                                                                          ; 3.00007E-12*exp ( -1500.0/t )
+NO + PO2 → CH3CHO + CH2O + HO2 + NO2                                                                        ; 4.2001E-12*exp ( 180.0/t )
+NO + RO2 → CH3CO3 + CH2O + NO2                                                                              ; 2.90007E-12*exp ( 300.0/t )
+NO + TERPO2 → 0*TERPNIT + 0.8*NO2 + 0*CH2O + 0*CH3COCH3 + 0.8*TERPROD1 + 0.8*HO2                            ; 4.2001E-12*exp ( 180.0/t )
+NO + TOLUO2VBS → NO + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                                       ; 2.60006E-12*exp ( 365.0/t )
+NO + XO2 → NO2 + HO2 + 0*CO + 0*CH2O + 0*GLYOXAL + 0*CH3COCHO + 0*HYAC + 0*GLYALD                           ; 2.70006E-12*exp ( 360.0/t )
+NO + XYLENO2 → NO2 + HO2 + 0*GLYOXAL + 0.54*CH3COCHO + 0*BIGALD1 + 0*BIGALD2 + 0*BIGALD3 + 0*BIGALD4        ; 2.60006E-12*exp ( 365.0/t )
+NO + XYLEO2VBS → NO + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                                       ; 2.60006E-12*exp ( 365.0/t )
+NO + XYLOLO2 → HO2 + NO2 + 0*GLYOXAL + 0.51*CH3COCHO                                                        ; 2.60006E-12*exp ( 365.0/t )
+NO2 + O → NO3                                                                                               ; ko=1.50557E-13(300.0/T)**1.8, ki=2.20005E-11(300.0/T)**0.7, f=0.60
+NO3 + C3H6 → NOA                                                                                            ; 4.60011E-13*exp ( -1156.0/t )
+NO3 + CH2O → CO + HO2 + HNO3                                                                                ; 6.00014E-13*exp ( -2058.0/t )
+NO3 + CH3CHO → CH3CO3 + HNO3                                                                                ; 1.40003E-12*exp ( -1900.0/t )
+NO3 + CH3COCHO → HNO3 + CO + CH3CO3                                                                         ; 1.40003E-12*exp ( -1860.0/t )
+NO3 + DMS → SO2 + HNO3                                                                                      ; 1.90004E-13*exp ( 520.0/t )
+NO3 + ISOPBO2 → NO2 + 0.95*HYDRALD + HO2 + 0*GLYOXAL + 0*GLYALD + 0*CH3COCHO + 0*HYAC                       ; 2.40006E-12
+NO3 + MACRO2 → NO2 + 0*HO2 + 0*CH2O + 0*CH3COCHO + 0*CO + 0.53*GLYALD + 0*HYAC + 0.53*CH3CO3                ; 2.40006E-12
+NO3 + MCO3 → NO2 + CH2O + CH3CO3                                                                            ; 5.00012E-12
+NO3 + MTERP → MTERP + NO3 + 0*SOAG3 + 0.5901905*SOAG4                                                       ; 1.20003E-12*exp ( 490.0/t )
+NO3 + MTERP → NTERPO2                                                                                       ; 1.20003E-12*exp ( 490.0/t )
+NO3 + NO → 2*NO2                                                                                            ; 1.70004E-11*exp ( 125.0/t )
+NO3 + NO2 → N2O5                                                                                            ; ko=1.44535E-12(300.0/T)**3.0, ki=1.60004E-12(300.0/T)**-0.1, f=0.60
+NO3 + NTERPO2 → 2*NO2 + TERPROD1                                                                            ; 2.40006E-12
+NO3 + O → NO2 + O2                                                                                          ; 1.30003E-11
+NO3 + TERPROD1 → 0*TERP2O2 + 0*NTERPO2                                                                      ; 1.00002E-12
+NO3 + XO2 → NO2 + HO2 + 0*CO + 0*HYAC + 0*GLYOXAL + 0*CH3COCHO + 0*GLYALD                                   ; 2.40006E-12
+O + NO2 → NO + O2                                                                                           ; 5.10012E-12*exp ( 210.0/t )
+O3 + NO2 → NO3 + O2                                                                                         ; 1.20003E-13*exp ( -2450.0/t )
+PHENO + NO2 → sink                                                                                          ; 2.10005E-12
+PHENO2 + NO → HO2 + 0.7*GLYOXAL + NO2                                                                       ; 2.60006E-12*exp ( 365.0/t )
+SO + NO2 → SO2 + NO                                                                                         ; 1.40003E-11
+TERP2O2 + NO → 0*ONITR + 0.9*NO2 + 0*CH2O + 0*CH3COCH3 + 0*CO + 0.9*CO2 + 0.9*TERPROD2 + 0.9*HO2 + 0*GLYALD ; 4.2001E-12*exp ( 180.0/t )
+TOLO2 + NO → NO2 + 0.6*GLYOXAL + 0*CH3COCHO + HO2 + 0*BIGALD1 + 0*BIGALD2 + 0*BIGALD3                       ; 2.60006E-12*exp ( 365.0/t )
+
+# Odd Chlorine; 27 reactions
+2*CLO → 2*CL + O2             ; 3.00007E-11*exp ( -2450.0/t )
+2*CLO → CL + OCLO             ; 3.50008E-13*exp ( -1370.0/t )
+2*CLO → CL2 + O2              ; 1.00002E-12*exp ( -1590.0/t )
+2*CLO → CL2O2                 ; ko=1.14423E-14(300.0/T)**3.6, ki=3.70009E-12(300.0/T)**1.6, f=0.60
+BRO + CLO → BR + CL + O2      ; 2.30005E-12*exp ( 260.0/t )
+BRO + CLO → BR + OCLO         ; 9.50022E-13*exp ( 550.0/t )
+BRO + CLO → BRCL + O2         ; 4.1001E-13*exp ( 290.0/t )
+C2H2 + CL → CL                ; ko=3.13159E-12(300.0/T)**2.4, ki=2.20005E-10(300.0/T)**0.7, f=0.60
+C2H4 + CL → CL                ; ko=9.63565E-12(300.0/T)**3.3, ki=3.10007E-10(300.0/T)**1.0, f=0.60
+C2H6 + CL → HCL + C2H5O2      ; 7.20017E-11*exp ( -70.0/t )
+CH2BR2 + CL → 2*BR + HCL      ; 6.30015E-12*exp ( -800.0/t )
+CH3BR + CL → HCL + HO2 + BR   ; 1.46003E-11*exp ( -1040.0/t )
+CH3CL + CL → HO2 + CO + 2*HCL ; 2.03005E-11*exp ( -1100.0/t )
+CH3O2 + CLO → CL + HO2 + CH2O ; 3.30008E-12*exp ( -115.0/t )
+CH4 + CL → CH3O2 + HCL        ; 7.10017E-12*exp ( -1270.0/t )
+CHBR3 + CL → 3*BR + HCL       ; 4.85011E-12*exp ( -850.0/t )
+CL + CH2O → HCL + HO2 + CO    ; 8.10019E-11*exp ( -30.0/t )
+CL2O2 → 2*CLO                 ; ko=5.29725E+12(300.0/T)**3.6*exp ( -8537.0/t ), ki=1.71296E+15(300.0/T)**1.6*exp ( -8537.0/t ), f=0.60
+CLONO2 + CL → CL2 + NO3       ; 6.50015E-12*exp ( 135.0/t )
+CLONO2 + O → CLO + NO3        ; 3.60008E-12*exp ( -840.0/t )
+HCL + O → CL + OH             ; 1.00002E-11*exp ( -3300.0/t )
+HOCL + CL → HCL + CLO         ; 3.40008E-12*exp ( -130.0/t )
+O + CLO → CL + O2             ; 2.80007E-11*exp ( 85.0/t )
+O + HOCL → CLO + OH           ; 1.70004E-13
+O3 + CL → CLO + O2            ; 2.30005E-11*exp ( -200.0/t )
+SO + CLO → SO2 + CL           ; 2.80007E-11
+SO + OCLO → SO2 + CLO         ; 1.90004E-12
+
+# Odd Bromine; 8 reactions
+2*BRO → 2*BR + O2          ; 1.50004E-12*exp ( 230.0/t )
+BR + CH2O → HBR + HO2 + CO ; 1.70004E-11*exp ( -800.0/t )
+BR + O3 → BRO + O2         ; 1.60004E-11*exp ( -780.0/t )
+HOBR + O → BRO + OH        ; 1.20003E-10*exp ( -430.0/t )
+O + BRO → BR + O2          ; 1.90004E-11*exp ( 230.0/t )
+O + BRONO2 → BRO + NO3     ; 1.90004E-11*exp ( 215.0/t )
+O + HBR → BR + OH          ; 5.80014E-12*exp ( -1500.0/t )
+SO + BRO → SO2 + BR        ; 5.70013E-11
+
+# Other Reactions; 58 reactions
+2*C2H5O2 → 1.6*CH3CHO + 1*HO2 + 0*C2H5OH                                                                                                             ; 6.80016E-14
+2*CH3CO3 → 2*CH3O2 + 2*CO2                                                                                                                           ; 2.90007E-12*exp ( 500.0/t )
+2*CH3O2 → 2*CH2O + 2*HO2                                                                                                                             ; 5.00012E-13*exp ( -424.0/t )
+2*CH3O2 → CH2O + CH3OH                                                                                                                               ; 1.90004E-14*exp ( 706.0/t )
+2*H2O + SO3 → H2SO4 + H2O                                                                                                                            ; 8.5004E-41*exp ( 6540.0/t )
+2*MCO3 → 2*CO2 + 2*CH2O + 2*CH3CO3                                                                                                                   ; 2.30005E-12*exp ( 530.0/t )
+BCARY + O3 → 0*TERPROD1 + 0*TERPROD2 + 0.63*OH + 0.57*HO2 + 0*CO + 0*CO2 + 0.52*CH3COCH3 + 0*CH2O + 0*BIGALD + 0*HCOOH + 0*BIGALK + 0*CH3CO3 + 0*RO2 ; 1.20003E-14
+BCARY + O3 → BCARY + O3 + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                                                                            ; 1.20003E-14
+C2H4 + O3 → 0.63*CO + 0*OH + 0*HO2 + 0*HCOOH + CH2O                                                                                                  ; 1.20003E-14*exp ( -2630.0/t )
+CH3O2 + C2H5O2 → 0.7*CH2O + 0.8*CH3CHO + HO2 + 0*CH3OH + 0*C2H5OH                                                                                    ; 2.00005E-13
+CH3O2 + C3H7O2 → CH2O + HO2 + 0.82*CH3COCH3                                                                                                          ; 3.75009E-13*exp ( -40.0/t )
+CH3O2 + CH3CO3 → 0.9*CH3O2 + CH2O + 0.9*HO2 + 0.9*CO2 + 0*CH3COOH                                                                                    ; 2.00005E-12*exp ( 500.0/t )
+CH3O2 + ISOPBO2 → 0*CH3OH + HO2 + 0.75*CH2O + 0.75*HYDRALD                                                                                           ; 5.00012E-13*exp ( 400.0/t )
+CH3O2 + MACRO2 → 0.73*HO2 + 0.88*CH2O + 0*CO + 0*CH3COCHO + 0*GLYALD + 0*CH3CO3 + 0*CH3OH + 0*HYAC                                                   ; 5.00012E-13*exp ( 400.0/t )
+CH3O2 + MCO3 → 2*CH2O + HO2 + CO2 + CH3CO3                                                                                                           ; 2.00005E-12*exp ( 500.0/t )
+CH3O2 + NTERPO2 → 0*TERPNIT + 0.75*CH2O + 0*CH3OH + 0*HO2 + 0*TERPROD1 + 0*NO2                                                                       ; 2.00005E-12*exp ( 500.0/t )
+CH3O2 + RO2 → 0*CH3CO3 + 0.8*CH2O + 0*HO2 + 0*HYAC + 0*CH3COCHO + 0*CH3OH                                                                            ; 7.10017E-13*exp ( 500.0/t )
+CH3O2 + TERPO2 → TERPROD1 + 0.95*CH2O + 0*CH3OH + HO2 + 0*CH3COCH3                                                                                   ; 2.00005E-12*exp ( 500.0/t )
+CH3O2 + XO2 → 0*CH3OH + 0.8*HO2 + 0.8*CH2O + 0*CO + 0*GLYOXAL + 0*CH3COCHO + 0*HYAC + 0*GLYALD                                                       ; 5.00012E-13*exp ( 400.0/t )
+CH4 + F → HF + CH3O2                                                                                                                                 ; 1.60004E-10*exp ( -260.0/t )
+E90 → sink                                                                                                                                           ; 1.29E-07
+EO + O2 → GLYALD + HO2                                                                                                                               ; 1.00002E-14
+EO → 2*CH2O + HO2                                                                                                                                    ; 1.6E+11*exp ( -4150.0/t )
+H2O + F → HF + OH                                                                                                                                    ; 1.40003E-11
+HNO3 + F → HF + NO3                                                                                                                                  ; 6.00014E-12*exp ( 400.0/t )
+HO2NO2 → HO2 + NO2                                                                                                                                   ; ko=5.4486E+13(300.0/T)**3.4*exp ( -10900.0/t ), ki=1.90476E+15(300.0/T)**0.3*exp ( -10900.0/t ), f=0.60
+HOCH2OO → CH2O + HO2                                                                                                                                 ; 2.4E+12*exp ( -7000.0/t )
+ISOP + O3 → 0*MACR + 0*MVK + 0*HCOOH + 0.62*CO + 0*OH + 0*HO2 + 0.91*CH2O + 0*CH3CO3 + 0*C3H6 + 0*CH3O2                                              ; 1.05002E-14*exp ( -2000.0/t )
+ISOP + O3 → ISOP + O3 + 0*SOAG3                                                                                                                      ; 1.05002E-14*exp ( -2000.0/t )
+ISOPAO2 + CH3CO3 → CH3O2 + HO2 + CH2O + 0*MACR + 0.61*MVK + CO2                                                                                      ; 1.40003E-11
+ISOPAO2 + CH3O2 → 0*CH3OH + HO2 + 1.5*CH2O + 0*MACR + 0*MVK                                                                                          ; 5.00012E-13*exp ( 400.0/t )
+ISOPBO2 + CH3CO3 → HYDRALD + CH3O2 + HO2                                                                                                             ; 1.40003E-11
+ISOPBO2 → HPALD + HO2                                                                                                                                ; 1.6E+09*exp ( -8300.0/t )
+ISOPNO3 + CH3CO3 → NC4CHO + CH3O2 + HO2                                                                                                              ; 1.40003E-11
+ISOPNO3 + CH3O2 → 0.8*NC4CHO + 1*HO2 + 0.8*CH2O + 0*CH3OH + 0*NC4CH2OH                                                                               ; 5.00012E-13*exp ( 400.0/t )
+MACRO2 + CH3CO3 → 0*CH3COCHO + CH3O2 + 0*CO + 0*HO2 + 0.53*GLYALD + 0*HYAC + 0*CH2O + 0.53*CH3CO3                                                    ; 1.40003E-11
+MCO3 + CH3CO3 → 2*CO2 + CH3O2 + CH2O + CH3CO3                                                                                                        ; 4.60011E-12*exp ( 530.0/t )
+MPAN → MCO3 + NO2                                                                                                                                    ; ko=6.48988E+17(300.0/T)**5.6*exp ( -14000.0/t ), ki=1.03323E+17(300.0/T)**1.5*exp ( -14000.0/t ), f=0.60
+NH4 → sink                                                                                                                                           ; 6.34E-08
+NH_5 → sink                                                                                                                                          ; 2.31E-06
+NH_50 → sink                                                                                                                                         ; 2.31E-07
+O + CH2O → HO2 + OH + CO                                                                                                                             ; 3.40008E-11*exp ( -1600.0/t )
+O + OCS → SO + CO                                                                                                                                    ; 2.10005E-11*exp ( -2200.0/t )
+O3 + C3H6 → 0*CH2O + 0*HCOOH + 0*CH3COOH + 0*CH3CHO + 0.56*CO + 0*CH3O2 + 0*CH4 + 0*CO2 + 0*HO2 + 0*OH                                               ; 6.50015E-15*exp ( -1900.0/t )
+O3 + MACR → 0*CH2O + 0*OH + 0.65*CO + 0*CH3CO3 + 0.88*CH3COCHO + 0*HCOOH + 0*HO2                                                                     ; 1.50004E-15*exp ( -2100.0/t )
+O3 + MTERP → 0*TERPROD1 + 0*TERPROD2 + 0.63*OH + 0.57*HO2 + 0*CO + 0*CO2 + 0.52*CH3COCH3 + 0*CH2O + 0*BIGALD + 0*HCOOH + 0*BIGALK + 0*CH3CO3 + 0*RO2 ; 6.30015E-16*exp ( -580.0/t )
+O3 + MTERP → MTERP + O3 + 0*SOAG0 + 0*SOAG1 + 0*SOAG2 + 0*SOAG3 + 0*SOAG4                                                                            ; 6.30015E-16*exp ( -580.0/t )
+O3 + MVK → 0.6*CH2O + 0.56*CO + 0*CH3CHO + 0*CO2 + 0*CH3CO3 + 0*CH3COCHO + 0*HO2 + 0*OH + 0*HCOOH                                                    ; 8.5002E-16*exp ( -1520.0/t )
+O3 + S → SO + O2                                                                                                                                     ; 1.20003E-11
+PAN → CH3CO3 + NO2                                                                                                                                   ; ko=4.88414E+17(300.0/T)**4.1*exp ( -14000.0/t ), ki=1.05545E+17(300.0/T)**1.6*exp ( -14000.0/t ), f=0.60
+PBZNIT → ACBZO2 + NO2                                                                                                                                ; ko=6.48988E+17(300.0/T)**5.6*exp ( -14000.0/t ), ki=1.03323E+17(300.0/T)**1.5*exp ( -14000.0/t ), f=0.60
+PHENO + O3 → C6H5O2                                                                                                                                  ; 2.80007E-13
+S + O2 → SO + O                                                                                                                                      ; 2.30005E-12
+SO + O2 → SO2 + O                                                                                                                                    ; 1.60004E-13*exp ( -2280.0/t )
+SO + O3 → SO2 + O2                                                                                                                                   ; 3.40008E-12*exp ( -1100.0/t )
+ST80_25 → sink                                                                                                                                       ; 4.63E-07
+TERP2O2 + CH3O2 → TERPROD2 + 0.93*CH2O + 0*CH3OH + HO2 + 0*CO2 + 0*CO + 0*GLYALD + 0*CH3COCH3                                                        ; 2.00005E-12*exp ( 500.0/t )
+XO2 + CH3CO3 → 0*CO + 0*CH2O + 0*GLYOXAL + CH3O2 + HO2 + 0*CH3COCHO + 0*HYAC + 0*GLYALD + CO2                                                        ; 1.30003E-12*exp ( 640.0/t )
+
+# Photolysis; 142 reactions
+ALKNIT + hv → NO2 + 0*CH3CHO + 0*CH2O + 0*CH3COCH3 + HO2 + 0.8*MEK                                  
+ALKOOH + hv → 0*CH3CHO + 0*CH2O + 0*CH3COCH3 + 0.9*HO2 + 0.8*MEK + OH                               
+BENZOOH + hv → OH + GLYOXAL + 0*BIGALD1 + HO2                                                       
+BEPOMUC + hv → BIGALD1 + 1.5*HO2 + 1.5*CO                                                           
+BIGALD + hv → 0*CO + 0*GLYOXAL + 0.56*HO2 + 0*CH3CO3 + 0*CH3COCHO                                   
+BIGALD1 + hv → 0.6*MALO2 + HO2                                                                      
+BIGALD2 + hv → 0.6*HO2 + 0.6*DICARBO2                                                               
+BIGALD3 + hv → 0.6*HO2 + 0.6*CO + 0.6*MDIALO2                                                       
+BIGALD4 + hv → HO2 + CO + CH3COCHO + CH3CO3                                                         
+BRCL + hv → BR + CL                                                                                 
+BRO + hv → BR + O                                                                                   
+BRONO2 + hv → BR + NO3                                                                              
+BRONO2 + hv → BRO + NO2                                                                             
+BRONO2 + hv → HOBR + HNO3                                                                           
+BRONO2 + hv → HOBR + HNO3                                                                           
+BRONO2 + hv → HOBR + HNO3                                                                           
+BZOOH + hv → BZALD + OH + HO2                                                                       
+C2H5OOH + hv → CH3CHO + HO2 + OH                                                                    
+C3H7OOH + hv → 0.82*CH3COCH3 + OH + HO2                                                             
+C6H5OOH + hv → PHENO + OH                                                                           
+CCL4 + hv → 4*CL                                                                                    
+CF2CLBR + hv → BR + CL + COF2                                                                       
+CF3BR + hv → BR + F + COF2                                                                          
+CFC11 + hv → 2*CL + COFCL                                                                           
+CFC113 + hv → 2*CL + COFCL + COF2                                                                   
+CFC114 + hv → 2*CL + 2*COF2                                                                         
+CFC115 + hv → CL + F + 2*COF2                                                                       
+CFC12 + hv → 2*CL + COF2                                                                            
+CH2BR2 + hv → 2*BR                                                                                  
+CH2O + hv → CO + 2*H                                                                                
+CH2O + hv → CO + H2                                                                                 
+CH3BR + hv → BR + CH3O2                                                                             
+CH3CCL3 + hv → 3*CL                                                                                 
+CH3CHO + hv → CH3O2 + CO + HO2                                                                      
+CH3CL + hv → CL + CH3O2                                                                             
+CH3COCH3 + hv → CH3CO3 + CH3O2                                                                      
+CH3COCHO + hv → CH3CO3 + CO + HO2                                                                   
+CH3COOOH + hv → CH3O2 + OH + CO2                                                                    
+CH3OOH + hv → CH2O + H + OH                                                                         
+CH4 + hv → 1*H2 + 0*CH2O + 0*O + 0*OH + 0*H + 0*CO2 + 0*CO + 0*H2O                                  
+CH4 + hv → H + CH3O2                                                                                
+CHBR3 + hv → 3*BR                                                                                   
+CL2 + hv → 2*CL                                                                                     
+CL2O2 + hv → 2*CL                                                                                   
+CLO + hv → CL + O                                                                                   
+CLONO2 + HCL + hv → CL2 + HNO3                                                                      
+CLONO2 + HCL + hv → CL2 + HNO3                                                                      
+CLONO2 + HCL + hv → CL2 + HNO3                                                                      
+CLONO2 + hv → CL + NO3                                                                              
+CLONO2 + hv → CLO + NO2                                                                             
+CLONO2 + hv → HOCL + HNO3                                                                           
+CLONO2 + hv → HOCL + HNO3                                                                           
+CLONO2 + hv → HOCL + HNO3                                                                           
+CO2 + hv → CO + O                                                                                   
+COF2 + hv → 2*F                                                                                     
+COFCL + hv → F + CL                                                                                 
+EOOH + hv → EO + OH                                                                                 
+GLYALD + hv → 2*HO2 + CO + CH2O                                                                     
+GLYOXAL + hv → 2*CO + 2*HO2                                                                         
+H2402 + hv → 2*BR + 2*COF2                                                                          
+H2O + hv → 2*H + O                                                                                  
+H2O + hv → H2 + O1D                                                                                 
+H2O + hv → OH + H                                                                                   
+H2O2 + hv → 2*OH                                                                                    
+H2SO4 + hv → SO3 + H2O                                                                              
+HBR + hv → BR + H                                                                                   
+HCFC141B + hv → CL + COFCL                                                                          
+HCFC142B + hv → CL + COF2                                                                           
+HCFC22 + hv → CL + COF2                                                                             
+HCL + HOCL + hv → CL2 + H2O                                                                         
+HCL + HOCL + hv → CL2 + H2O                                                                         
+HCL + HOCL + hv → CL2 + H2O                                                                         
+HCL + hv → H + CL                                                                                   
+HF + hv → H + F                                                                                     
+HNO3 + hv → NO2 + OH                                                                                
+HO2NO2 + hv → NO2 + HO2                                                                             
+HO2NO2 + hv → OH + NO3                                                                              
+HOBR + HCL + hv → BRCL + H2O                                                                        
+HOBR + HCL + hv → BRCL + H2O                                                                        
+HOBR + hv → BR + OH                                                                                 
+HOCL + hv → OH + CL                                                                                 
+HONITR + hv → NO2 + 0.67*HO2 + 0*CH3CHO + 0*CH2O + 0*CO + 0*GLYALD + 0*CH3CO3 + 0*HYAC + 0*CH3COCH3 
+HPALD + hv → BIGALD3 + OH + HO2                                                                     
+HYAC + hv → CH3CO3 + HO2 + CH2O                                                                     
+ISOPNOOH + hv → NO2 + HO2 + ISOPOOH                                                                 
+ISOPOOH + hv → 0.7*MVK + 0*MACR + OH + CH2O + HO2                                                   
+MACR + hv → 0.66*HO2 + 1*CO                                                                         
+MACR + hv → 1*HO2 + 0.66*MCO3 + 1*CH2O + 1*CH3CO3                                                   
+MEK + hv → CH3CO3 + C2H5O2                                                                          
+MEKOOH + hv → OH + CH3CO3 + CH3CHO                                                                  
+MPAN + hv → MCO3 + NO2                                                                              
+MVK + hv → 0.7*C3H6 + 0.7*CO + 0*CH3O2 + 0*CH3CO3                                                   
+N2O + hv → O1D + N2                                                                                 
+N2O5 + hv → 2*HNO3                                                                                  
+N2O5 + hv → 2*HNO3                                                                                  
+N2O5 + hv → 2*HNO3                                                                                  
+N2O5 + hv → NO + O + NO3                                                                            
+N2O5 + hv → NO2 + NO3                                                                               
+NC4CHO + hv → BIGALD3 + NO2 + HO2                                                                   
+NO + hv → N + O                                                                                     
+NO2 + hv → NO + O                                                                                   
+NO3 + hv → NO + O2                                                                                  
+NO3 + hv → NO2 + O                                                                                  
+NOA + hv → NO2 + CH2O + CH3CO3                                                                      
+NTERPOOH + hv → TERPROD1 + NO2 + OH                                                                 
+O2 + hv → 2*O                                                                                       
+O2 + hv → O + O1D                                                                                   
+O3 + hv → O + O2                                                                                    
+O3 + hv → O1D + O2                                                                                  
+OCLO + hv → O + CLO                                                                                 
+OCS + hv → S + CO                                                                                   
+OH + CO + hv → CO2 + HO2                                                                            
+OH + DMS + hv → 0*SO2 + 0*HO2                                                                       
+ONITR + hv → NO2                                                                                    
+PAN + hv → 0.6*CH3CO3 + 0.6*NO2 + 0*CH3O2 + 0*NO3 + 0*CO2                                           
+PHENOOH + hv → OH + HO2 + 0.7*GLYOXAL                                                               
+POOH + hv → CH3CHO + CH2O + HO2 + OH                                                                
+ROOH + hv → CH3CO3 + CH2O + OH                                                                      
+SF6 + hv → sink                                                                                     
+SO + hv → S + O                                                                                     
+SO2 + hv → SO + O                                                                                   
+SO3 + hv → SO2 + O                                                                                  
+TEPOMUC + hv → 0*CH3CO3 + HO2 + 1.5*CO                                                              
+TERP2OOH + hv → OH + 0*CH2O + 0*CH3COCH3 + 0*CO + CO2 + TERPROD2 + HO2 + 0*GLYALD                   
+TERPNIT + hv → TERPROD1 + NO2 + HO2                                                                 
+TERPOOH + hv → 0*CH2O + 0*CH3COCH3 + TERPROD1 + HO2 + OH                                            
+TERPROD1 + hv → HO2 + CO + TERPROD2                                                                 
+TERPROD2 + hv → 0*RO2 + 0.68*CH2O + 0.8*CO2 + 0*CH3COCH3 + 0.65*CH3CO3 + 1*HO2 + 1.7*CO             
+TOLOOH + hv → OH + 0.6*GLYOXAL + 0*CH3COCHO + HO2 + 0*BIGALD1 + 0*BIGALD2 + 0*BIGALD3               
+XOOH + hv → OH                                                                                      
+XYLENOOH + hv → OH + HO2 + 0*GLYOXAL + 0.54*CH3COCHO + 0*BIGALD1 + 0*BIGALD2 + 0*BIGALD3 + 0*BIGALD4
+XYLOLOOH + hv → OH + 0*GLYOXAL + 0.51*CH3COCHO + HO2                                                
+soa1_a1 + hv → sink                                                                                 
+soa1_a2 + hv → sink                                                                                 
+soa2_a1 + hv → sink                                                                                 
+soa2_a2 + hv → sink                                                                                 
+soa3_a1 + hv → sink                                                                                 
+soa3_a2 + hv → sink                                                                                 
+soa4_a1 + hv → sink                                                                                 
+soa4_a2 + hv → sink                                                                                 
+soa5_a1 + hv → sink                                                                                 
+soa5_a2 + hv → sink                                                                                 
+

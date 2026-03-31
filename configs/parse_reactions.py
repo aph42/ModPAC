@@ -295,48 +295,145 @@ def write_json(name, filename, version = '1.0.0', overwrite = False):
       json.dump(mechanism, f, indent = '   ')
 # }}}
 
-def species_list_to_string(components):
+def species_list_to_string(components, inputs = False):
+# {{{
    cs = []
    for rc in components:
       if rc.coefficient == 1.:
          c = rc.species_name 
       else:
-         c = f'{rc.coefficient}*{rc.species_name}'
+         coef = rc.coefficient
+         if (np.round(coef, 0) - coef) / coef < 0.01:
+            coef = int(rc.coefficient)
+         c = f'{coef}*{rc.species_name}'
       cs.append(c)
-   return ' + '.join(cs)
 
-def mechanism_to_text(mc, filename):
+   # Punt 3rd bodies to the end
+   if 'M' in cs:
+      cs = [c for c in cs if c != 'M'] + ['M']
+
+   if len(cs) == 0:
+      if inputs: return 'source'
+      else: return 'sink'
+
+   return ' + '.join(cs)
+# }}}
+
+def arrhenius_rate_to_string(A, B = 0., C = 0., D = 300., n = 1, to_molecule_per_cm3 = False):
+# {{{
+   if to_molecule_per_cm3:
+      rfactor = (1e6 / 6.022e23) ** (n - 1)
+   else:
+      rfactor = 1
+
+   rate_text = f'{A * rfactor:G}'
+
+   if B != 0.: rate_text += f'({D}/T)**{-B}'
+   if C != 0.: rate_text += f'*exp ( {C}/t )'
+
+   return rate_text
+# }}}
+
+def identify_category(inputs, outputs):
+# {{{
+   input_species = [i.species_name for i in inputs]
+   output_species = [o.species_name for o in outputs]
+
+   # Odd Oxygen
+   if all([i in ['O', 'O2', 'O3', 'M'] for i in input_species]):
+      return 'O'
+
+   if any([i == 'O1D' for i in input_species]):
+      return 'O1D'
+
+   if any([i in ['H', 'OH', 'H2', 'H2O2', 'HO2'] for i in input_species]):
+      return 'H'
+
+   if any([i in ['N', 'NO', 'NO2', 'NO3', 'N2O5'] for i in input_species]):
+      return 'N'
+
+   if any([i.find('CL') > -1 for i in input_species]):
+      return 'Cl'
+
+   if any([i.find('BR') > -1 for i in input_species]):
+      return 'Br'
+
+   return 'Other'
+# }}}
+
+def mechanism_to_text(mc, filename, to_molecule_per_cm3 = False, overwrite = False):
 # {{{
 
+   if os.path.exists(filename):
+      if not overwrite:
+         print(f'{filename} exists; aborting.')
+         return
+      else:
+         print(f'{filename} exists; overwriting.')
 
-   rcs = []
-   rts = []
+   cats = dict(O = [], O1D = [], H = [], N = [], Cl = [], Br = [], Other = [], Photolysis = [])
 
-
-
+   category_title = {'O': 'Odd Oxygen',
+                     'O1D': 'Odd Oxygen (O1D)',
+                     'H': 'Odd Hydrogen',
+                     'N': 'Odd Nitrogen',
+                     'Cl': 'Odd Chlorine',
+                     'Br': 'Odd Bromine',
+                     'Other': 'Other Reactions',
+                     'Photolysis': 'Photolysis'}
 
    for rct in mc.reactions.arrhenius:
-      react = species_list_to_string(rct.reactants)
-      prod  = species_list_to_string(rct.products)
-
-      rate_text = f'{rct.A:.4E}'
-
-      if rct.B != 0.: rate_text += f'(T/{rct.D})**{rct.B}'
-      if rct.C != 0.: rate_text += f'*exp ( {rct.C}/t )'
-
+      react = species_list_to_string(rct.reactants, inputs = True)
+      prod  = species_list_to_string(rct.products, inputs = False)
       reaction_text = f'{react} {to} {prod}'
 
-      rcs.append(reaction_text)
-      rts.append(rate_text)
-   
-   nwidth = 0
-   for rc in rcs:
-      if len(rc) > nwidth: nwidth = len(rc)
+      n = np.sum([r.coefficient for r in rct.reactants])
+      rate_text = arrhenius_rate_to_string(rct.A, rct.B, rct.C, rct.D, n, to_molecule_per_cm3)
 
-   ind = np.argsort(rcs)
+      cat = identify_category(rct.reactants, rct.products)
+      cats[cat].append((reaction_text, rate_text))
 
-   for i in ind:
-      print(f'{rcs[i]:<{nwidth}}  ; {rts[i]}') 
+   for rct in mc.reactions.troe + mc.reactions.ternary_chemical_activation:
+      react = species_list_to_string(rct.reactants, inputs = True)
+      prod  = species_list_to_string(rct.products, inputs = False)
+      reaction_text = f'{react} {to} {prod}'
+
+      n = np.sum([r.coefficient for r in rct.reactants])
+      ko = arrhenius_rate_to_string(rct.k0_A, rct.k0_B, rct.k0_C, 300., n, to_molecule_per_cm3)
+      ki = arrhenius_rate_to_string(rct.kinf_A, rct.kinf_B, rct.kinf_C, 300., n, to_molecule_per_cm3)
+      f = f'{rct.Fc:0.2f}'
+
+      rate_text = f'ko={ko}, ki={ki}, f={f}'
+
+      cat = identify_category(rct.reactants, rct.products)
+      cats[cat].append((reaction_text, rate_text))
+
+   for rct in mc.reactions.photolysis + mc.reactions.user_defined:
+      react = species_list_to_string(rct.reactants, inputs = True)
+      prod  = species_list_to_string(rct.products, inputs = False)
+      reaction_text = f'{react} + hv {to} {prod}'
+
+      rate_text = ''
+
+      cats['Photolysis'].append((reaction_text, rate_text))
+
+   with open(filename, 'w') as f:
+      for cat, reactions in cats.items():
+         nwidth = 0
+         for rc, rt in reactions:
+            if len(rc) > nwidth: nwidth = len(rc)
+
+         f.write(f"# {category_title[cat]}; {len(reactions)} reactions\n")
+
+         ind = np.argsort([rc for rc, rt in reactions])
+
+         for i in ind:
+            if reactions[i][1] == '':
+               f.write(f'{reactions[i][0]:<{nwidth}}\n') 
+            else:
+               f.write(f'{reactions[i][0]:<{nwidth}} ; {reactions[i][1]}\n') 
+
+         f.write('\n')
 # }}}
 
    # Need to convert reaction rate units for A coefficients
