@@ -215,7 +215,6 @@ class Column():
 
       # Initialize photolysis 
       self.initialize_photolysis(**self.cfg.photolysis)
-       
    # }}} 
 
    def __setattr__(self, name, value):
@@ -367,10 +366,6 @@ class Column():
 
       self.initialize_scalar('omega', 'd-1', 2 * np.pi / (86400. * 840.))
 
-      R = 8.314 # J mol-1 K-1  # TO DO: set this variable correctly
-      self.initialize_var('nafull', 'mol m-3', self.Nz, self.pfull * 100/ (R * self.T[:]))
-      self.initialize_var('nahalf', 'mol m-3', self.Nz+1, self.phalf * 100/ (R * np.interp(self.phalf,self.pfull,self.T[:])))
-
       # Reference grid for semi-lagrangian advection interpolation
       #self.__dict__['zadv'] = np.concatenate([[z_bot], zfull[::-1], [z_top]])
       self.__dict__['zadv'] = self.zfull[::-1]
@@ -478,10 +473,11 @@ class Column():
 
    def advect_quantity(self, C, D, Del, X):
    # {{{
-      ''' Carry out advection of a given field X, given the components
-      of the weights matrix C, D, and Del from build_advection_matrix().
-      Calculates shape-preserving modifications for this field, applies
-      normalization and boundary conditions. The array X is oriented in increasing
+      ''' Carry out advection of a given field X, given the components of the
+      weights matrix C, D, and Del from build_advection_matrix().  Calculates
+      shape-preserving modifications for this field. Normalization (mass
+      conservation) is turned off for accuracy reasons. Flux boundary
+      conditions are not yet implemented. The array X is oriented in increasing
       height.'''
 
       # Compute shape-preserving modifications
@@ -498,9 +494,6 @@ class Column():
       m[0] = d0[0]
       m[-1] = d0[-1]
 
-      #print('d: ' + fmt(d0*1e3))
-      #print('m: ' + fmt(m*1e3))
-
       # Find indices of local extrema, and indices of complement.
       # Adjacent indices are tested for overshoot, so last element is omitted in latter.
       ext = (d0[1:] * d0[:-1] <= 0.)
@@ -512,75 +505,60 @@ class Column():
       T[exti] = 0.
 
       # Where the quantity tau < 1, we need to rescale the slopes
-      #anz = m[extn] / d0[extn]
-      #bnz = m[extn + 1] / d0[extn]
-      #tau = 3 / np.sqrt(anz**2 + bnz**2)
-      #tau = 3 * np.abs(d0[extn]) / np.sqrt(m[extn]**2 + m[extn + 1]**2 + 1e-16)
       tau = 3 * np.abs(d0) / np.sqrt(m[:-1]**2 + m[1:]**2 + 1e-32)
-      #print('tau: ' + fmt(tau))
-
       nmt = np.where(tau < 1)[0]
-      #m[extn[nmt]]     *= tau[nmt]
-      #m[extn[nmt] + 1] *= tau[nmt]
-      #T[extn[nmt]]     *= tau[nmt]
-      #T[extn[nmt] + 1] *= tau[nmt]
+
       T[nmt]     *= tau[nmt]
       T[nmt + 1] *= tau[nmt]
 
-      #print('z  : ' + fmt(self.zadv*1e-4))
-      #print('X  : ' + fmt(X))
-      #print('m  : ' + fmt(m*1e4))
-      #print('T  : ' + fmt(T))
-
-      # Calculate Weights
+      # Convert to matrix to incorporate into interpolation operator
       T = sparse.diags_array([T], offsets = [0], shape = (self.Nz,self.Nz), format = 'csr')
 
-      #print(D @ Del)
-      #print(D @ T @ Del)
+      # Compute full interpolation operator
       L = (C + D @ T @ Del)
-      #L = (C + D @ Del)
 
-      #print('L: ')
-      #print(L.tocsc())
-
-      # Normalize weights
+      # Normalize weights (this would enforce mass conservation, but 
+      # comes at the cost of significant loss of accuracy, so its left off)
       #N = L.sum(0)
       #iN = np.where(N > 0.3)[0]
-      #print('N: ' + fmt(N[1:-1]))
       #L[1:-1, :] = L[1:-1, :] / N[1:-1].reshape(-1, 1)
 
       # Apply interpolation
       return L @ X
    # }}}
 
-   def step_advection(self, state, z_org, j_now, j_new, dt):
+   def step_advection(self, state, z_org, j_old, j_now, dt):
    # {{{
       C, D, Del = self.build_advection_matrix(z_org[::-1])
 
+      # Construct interpolation matrix for potential temperature 
+      # (no shape-preserving adjustments are made, though we could think about that)
       L = C + D @ Del
 
       # Convert temperature to potential temperature
-      Theta = state.T[j_now, :] * self.Exner
+      Theta = state.T[j_old, :] * self.Exner
 
       # Advect potential temperature then convert back to temperature
-      state.T[j_new, :] = (L @ Theta[::-1])[::-1] / self.Exner
+      state.T[j_now, :] = (L @ Theta[::-1])[::-1] / self.Exner
 
       for s in self.advected:
          v = state.columns[s]
-         v[j_new, :] = self.advect_quantity(C, D, Del, v[j_now, ::-1])[::-1]
+         v[j_now, :] = self.advect_quantity(C, D, Del, v[j_old, ::-1])[::-1]
    # }}}
 
 ### Methods related to radiative transfer
    def initialize_radiation(self, *, scon = 1368.22, active = True, **kwargs):
    # {{{
-      self.__dict__['scon'] = scon
       self.__dict__['do_radiation'] = active       
+
+      # Solar constant
+      self.__dict__['scon'] = scon
 
       self.initialize_scalar('Tsfc', 'K', 300.)
       self.initialize_scalar('Emissivity', '1', 0.99)
       #self.initialize_scalar('Latitude', 'deg', 0.)
       #self.initialize_scalar('Declination', 'deg', 0.)
-      self.initialize_scalar('cosz', '1', 0.9)
+      self.initialize_scalar('solar_zenith_angle', '1', np.pi / 2)
       self.initialize_scalar('Albedo', '1', 0.3)
 
       self.add_output('lw_uflx', 'W m-2', self.Nz + 1) 
@@ -596,16 +574,16 @@ class Column():
       self.initialize_var('dyn_hr', 'K d-1', self.Nz, 0.)
    # }}}
 
-   def compute_radiation(self, state, output, i_state, i_out):
+   def compute_radiation(self, state, output, j_now, i_out):
    # {{{
       # Helper function to reshape grid arrays
       def _g(v): return np.asfortranarray(v.reshape(1, -1).copy(), 'd')
 
       # Helper function to reshape column arrays
-      def _c(v): return np.asfortranarray(v[i_state, :].reshape(1, -1).copy(), 'd')
+      def _c(v): return np.asfortranarray(v[j_now, :].reshape(1, -1).copy(), 'd')
 
       # Helper function to reshape scalar quantities
-      def _s(v): return np.asfortranarray(np.array(v[i_state:i_state + 1]), 'd')
+      def _s(v): return np.asfortranarray(np.array(v[j_now:j_now + 1]), 'd')
 
       pfull = _g(self.pfull)
       phalf = _g(self.phalf)
@@ -614,7 +592,6 @@ class Column():
       CO2 = _c(state.CO2)
       O3  = _c(state.O3 )
       H2O = _c(state.H2O)
-      #H2Or = _c(state.H2Or)
 
       TSfc = _s(state.Tsfc)
       Emis = _s(state.Emissivity)
@@ -644,23 +621,18 @@ class Column():
       output.sw_uflx[i_out, :] = sw['uflxsw'][0, :]
       output.sw_dflx[i_out, :] = sw['dflxsw'][0, :]
       output.sw_hr[i_out, :]   = sw['swhr'][0, :]
-
-      #cl = 20.
-      #output.lw_hr           = np.clip(output.lw_hr, -cl, cl)
-      #output.sw_hr           = np.clip(output.ls_hr, -cl, cl)
    # }}}
 
 ### Methods related to chemistry
    def initialize_chemistry(self, *, mechanism, active = True, **kwargs):
    # {{{  
       self.__dict__['do_chemistry'] = active
+
+      # Regardless of whether chemistry is active, read in the mechanism
+      # to initialize species
       parser = mc.Parser()
-
       mechanism_file = self.cfg.config_path + mechanism + '.json'
-
       self.__dict__['mechanism'] = parser.parse(mechanism_file)
-      self.__dict__['MICMsolver'] = musica.MICM(mechanism = self.mechanism, solver_type = musica.SolverType.rosenbrock_standard_order)
-      self.__dict__['MICMstate'] = self.MICMsolver.create_state(self.Nz)
 
       species_list = []
       advected_list = []
@@ -686,46 +658,60 @@ class Column():
 
       self.__dict__['species'] = species_list
       self.__dict__['advected'] = advected_list
+
+      if active:
+         # We only need the solver if chemistry is active
+         self.__dict__['MICMsolver'] = musica.MICM(mechanism = self.mechanism, solver_type = musica.SolverType.rosenbrock_standard_order)
+         self.__dict__['MICMstate'] = self.MICMsolver.create_state(self.Nz)
    # }}}
 
-   def step_chemistry(self, state, z_org, j_new, dt):
+   def step_chemistry(self, state, z_org, j_now, dt):
    # {{{
       # Update MICM state object with temperatures and pressures
       p_org = self.cfg.p0 * np.exp(-z_org / self.cfg.H)
-      self.MICMstate.set_conditions(state.T[j_new, :], 100.*p_org)
+      self.MICMstate.set_conditions(state.T[j_now, :], 100.*p_org)
+
+      nafull = p_org * 100 / (self.cfg.R * state.T[j_now, :])
 
       # For now update the concentrations manually
+
       # This will be more efficient if we structure the column
       # state vector to have a compatible memory structure
+
       mstate = self.MICMstate.get_internal_state()
       stride = mstate.concentration_strides()[0]
       sp = self.MICMstate.get_species_ordering()
       for s, i in sp.items():
-          # convert from vmr to mol m-3
-         v = musica._musica.VectorDouble(state.columns[s][j_new, :]*self.nafull[:])
+         # convert from vmr to mol m-3
+         v = musica._musica.VectorDouble(state.columns[s][j_now, :] * nafull)
          mstate.concentrations[i::stride] = v
          
       self.MICMsolver.solve(self.MICMstate, dt)
 
       # Read out resulting concentrations
       for s, i in sp.items():
-          # convert back from mol m-3 to vmr
-         state.columns[s][j_new, :] = mstate.concentrations[i::stride] / self.nafull[:]
+         # convert back from mol m-3 to vmr
+         state.columns[s][j_now, :] = mstate.concentrations[i::stride] / nafull
    # }}}
 
-   def initialize_photolysis(self, *, mechanism, active=True):
+   def initialize_photolysis(self, *, mechanism, mapping = {}, active=True):
+# {{{
       # tuv-x height coordinates are bottom up
       self.__dict__['do_photolysis'] = active
-      self.__dict__['micm_to_tuvx'] = {'jO2':'jo2_b','jO3->O':'jo3_b','jO3->O1D':'jo3_a'}
+
+      if not active: 
+         # Nothing to initialize
+         return
+
+      self.__dict__['micm_to_tuvx'] = mapping.copy()
+      #{'jO2':'jo2_b','jO3->O':'jo3_b','jO3->O1D':'jo3_a'}
 
       for key in self.micm_to_tuvx:
           self.add_output(self.micm_to_tuvx[key], 's-1', self.Nz) 
        
       # initialize photolysis 
-      mechanism_file = musica.utils.find_config_path() + '/tuvx/' + mechanism + '.json'
+      self.__dict__['tuvx_mechanism_file'] = musica.utils.find_config_path() + '/tuvx/' + mechanism + '.json'
 
-      print(mechanism_file)
-       
       # Set up grids
       grids = musica.tuvx.GridMap()
         
@@ -753,53 +739,58 @@ class Column():
        
       # Create TUV-x instance with v5.4 configuration file
       self.__dict__['tuvx'] = musica.tuvx.TUVX(
-            grid_map=grids,
-            profile_map=profiles,
-            radiator_map=radiators,
-            config_path=mechanism_file,
+            grid_map     = grids,
+            profile_map  = profiles,
+            radiator_map = radiators,
+            config_path  = self.tuvx_mechanism_file,
         )
-
+# }}}
         
-   def update_photolysis(self, state, output, z_org, j_new, dt,i_out):
+   def compute_photolysis(self, state, output, z_org, j_new, i_out):
+# {{{
       # update ozone and temperature, then calculate photolysis rates using TUV-x
       # TUV-x height coordinates are bottom-up  
+
+      def full_to_half(v): return np.interp(self.zhalf, self.zfull, v)
     
       # get the vertical profiles
       grids = self.tuvx.get_grid_map()
       profiles = self.tuvx.get_profile_map()
-      
-      Av = 6.022e23 # Avogadro's number, DEBUG: move this
-      
-      # update the ozone profile
-      o3_profile = profiles["O3", "molecule cm-3"]
-      o3_profile.midpoint_values = state.O3[j_new,::-1] * self.nafull[::-1] * Av * 1e-6 # molec cm-3
-      o3_profile.edge_values = np.interp(self.zhalf[::-1],self.zfull[::-1],state.O3[j_new,::-1]) * self.nahalf[::-1] * Av * 1e-6 # molec cm-3
-      o3_profile.calculate_layer_densities(grids["height", "km"]) # provide the height grid for layer thicknesses
+
       
       # update the temperature profile
       T_profile = profiles["temperature", "K"]
       T_profile.midpoint_values =  state.T[j_new,::-1] 
-      T_profile.edge_values = np.interp(self.zhalf[::-1],self.zfull[::-1],state.T[j_new,::-1]) 
+      T_profile.edge_values = full_to_half(state.T[j_new,:])[::-1] 
+      
+      # convert from vmr to molecules cm-3
+      n_air = self.pfull * 100 / (self.cfg.R * state.T[j_new,:])
+      o3_mid = state.O3[j_new,:] * n_air * self.cfg.Av * 1e-6
+
+      # update the ozone profile
+      o3_profile = profiles["O3", "molecule cm-3"]
+      o3_profile.midpoint_values = o3_mid[::-1]
+      o3_profile.edge_values = full_to_half(o3_mid)[::-1]
+      #o3_profile.edge_values = full_to_half(state.O3[j_new,:])[::-1] * self.nahalf[::-1] * self.cfg.Av * 1e-6 # molec cm-3
+      o3_profile.calculate_layer_densities(grids["height", "km"]) # provide the height grid for layer thicknesses
       
       # calculate photolysis rates
       sza = np.acos(self.cosz) # sza: Solar zenith angle in radians
       tuvx_output = self.tuvx.run(sza=sza, earth_sun_distance=1.0)
-
-      # profiles = self.tuvx.get_profile_map()
-      # print(profiles['O3','molecule cm-3'].midpoint_values)
        
-      self.update_micm_tuvx_photolysis(output,tuvx_output,i_out)
-        
-   def update_micm_tuvx_photolysis(self,output,tuvx_output,i_out):
-      
+      # update photolysis rates
       for micm_reaction in self.micm_to_tuvx.keys():
-          micm_key = 'PHOTO.{0}'.format(micm_reaction)
-          tuvx_key = self.micm_to_tuvx[micm_reaction]
-          jval = tuvx_output['photolysis_rate_constants'].sel(reaction=tuvx_key).interp(vertical_edge=self.zfull/1000.).values
+         micm_key = f'PHOTO.{micm_reaction}'
+         tuvx_key = self.micm_to_tuvx[micm_reaction]
+         jval = tuvx_output['photolysis_rate_constants'].sel(reaction=tuvx_key)
+         jval = jval.interp(vertical_edge = z_org/1000.).values
 
-          getattr(output,tuvx_key)[i_out, :] = jval
-          self.MICMstate.set_user_defined_rate_parameters({micm_key:jval})
+         # Set rates in MICM
+         self.MICMstate.set_user_defined_rate_parameters({micm_key:jval})
 
+         # Save rates for output
+         getattr(output,tuvx_key)[i_out, :] = jval
+# }}}
 
 ### Methods related to solver
    def get_internal_state(self, n = 1):
@@ -823,7 +814,10 @@ class Column():
 
    def update_externals(self, state, j, t):
    # {{{
+      # Update periodic component of upwelling
       state.w[j, :] = self.w + np.real(self.wp * np.exp(1j * self.omega * t))
+
+      # Update zenith angle
    # }}}
 
    def solve(self, nsteps, dt, output_freq = 1):
@@ -832,22 +826,28 @@ class Column():
       nout   = int(nsteps / output_freq) + 1
       times  = np.arange(nout) * dt * output_freq
 
-      s0 = self.get_internal_state(n = 3)
+      s0 = self.get_internal_state(n = 2)
       o0 = self.create_output_state(nout)
 
       i = 0
       i_step = 0
       i_out = 0
 
-      i_out += 1
-
       j_old, j_now = 0, 1
-      #j_old, j_now, j_new = 0, 1, 2
 
-      self.update_externals(s0, j_old, 0.)
+      # Calculate relevant rates for initial conditions
+      # (only used for output)
+      self.update_externals(s0, j_old, 0. * dt)
 
-      #self.compute_radiation(s0, o0, 0, i_out)
+      if self.do_photolysis:
+         self.compute_photolysis(s0, o0, self.zfull, j_old, i_out)
+
+      if self.do_radiation:
+         self.compute_radiation(s0, o0, j_old, i_out)
+
       self.save_state(s0, o0, j_old, i_out)
+
+      i_out += 1
 
       for i in range(nsteps):
          # Update externally varying parameters
@@ -861,7 +861,7 @@ class Column():
 
          if self.do_photolysis:
              # Diagnose photolysis rates
-             self.update_photolysis(s0, o0, z_org, j_now, dt, i_out)
+             self.compute_photolysis(s0, o0, z_org, j_now, i_out)
               
          # Run chemistry for the time step
          if self.do_chemistry:
@@ -880,7 +880,6 @@ class Column():
             i_out += 1
             i_step = 0
 
-         #j_old, j_now, j_new = j_now, j_new, j_old
          j_old, j_now = j_now, j_old
 
       return times, o0
