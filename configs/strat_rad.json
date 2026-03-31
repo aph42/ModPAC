@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "name": "Stratospheric Gas-Phase Ozone Radiative-Photochemical Equilibrium",
+  "constants": {
+      "T0Cel":  273.15,
+      "p0"   :  1000,
+      "H"    :  7000,
+      "cp"   :  1004,
+      "Rd"   :  287,
+      "R"    :  8.314,
+      "Av"   :  6.022e23,
+      "g0"   :  9.81
+  },
+  "grid": {
+      "Nz"       :  200,
+      "spacing"  : "log_pressure_equal",
+      "p_top"    :    0.001
+  },
+  "radiation": {
+      "scon"         :  1368.22,
+      "astronomy"    : {
+         "zenith"       : "fixed",
+         "initial_date" : "2000-03-01T00:00",
+         "lat"          :  22.3
+      }
+  },
+  "chemistry": {
+     "mechanism" : "strat"
+  },
+  "photolysis": {
+     "mechanism" :"ts1_tsmlt",
+     "mapping": {
+        "jO2->2.0O"    : "jo2_b",
+        "jO3->O1D"     : "jo3_a",
+        "jO3->O"       : "jo3_b",
+        "jN2O->O1D"    : "jn2o",
+        "jNO->N"       : "",
+        "jNO2->NO"     : "jno2",
+        "jN2O5->NO2"   : "jn2o5_a",
+        "jN2O5->NO"    : "jn2o5_b",
+        "jHNO3->NO2"   : "jhno3",
+        "jNO3->NO2"    : "jno3_a",
+        "jNO3->NO"     : "jno3_b",
+        "jHO2NO2->OH"  : "jho2no2_a",
+        "jHO2NO2->NO2" : "jho2no2_b",
+        "jH2O->OH"     : "jh2o_a",
+        "jH2O->H2"     : "jh2o_b",
+        "jH2O->2.0H"   : "jh2o_c",
+        "jH2O2->2.0OH" : "jh2o2",
+        "jHCL->H"      : "jhcl",
+        "jHBR->BR"     : "jhbr"
+     }
+  },
+  "dynamics": {
+  }
+}
