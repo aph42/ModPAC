@@ -549,17 +549,18 @@ class Column():
 ### Methods related to radiative transfer
    def initialize_radiation(self, *, scon = 1368.22, active = True, **kwargs):
    # {{{
-      self.__dict__['do_radiation'] = active       
+      self.__dict__['do_radiation'] = active
 
       # Solar constant
       self.__dict__['scon'] = scon
 
       self.initialize_scalar('Tsfc', 'K', 300.)
-      self.initialize_scalar('Emissivity', '1', 0.99)
+      self.initialize_scalar('emissivity', '1', 0.99)
+      self.initialize_scalar('albedo', '1', 0.3)
+      self.initialize_scalar('solar_zenith_angle', 'deg', 0.)
+
       #self.initialize_scalar('Latitude', 'deg', 0.)
       #self.initialize_scalar('Declination', 'deg', 0.)
-      self.initialize_scalar('solar_zenith_angle', '1', np.pi / 2)
-      self.initialize_scalar('Albedo', '1', 0.3)
 
       self.add_output('lw_uflx', 'W m-2', self.Nz + 1) 
       self.add_output('lw_dflx', 'W m-2', self.Nz + 1) 
@@ -594,11 +595,9 @@ class Column():
       H2O = _c(state.H2O)
 
       TSfc = _s(state.Tsfc)
-      Emis = _s(state.Emissivity)
-      alb  = _s(state.Albedo)
-      #lat  = _s(state.Latitude)
-      #dec  = _s(state.Declination)
-      cosz  = _s(state.cosz)
+      Emis = _s(state.emissivity)
+      alb  = _s(state.albedo)
+      cosz = _s(np.cos(np.deg2rad(state.solar_zenith_angle)))
 
       lw = rrtmg.rrtmg_lw(pfull, phalf, \
                           T, TSfc, Emis, \
@@ -756,7 +755,6 @@ class Column():
       # get the vertical profiles
       grids = self.tuvx.get_grid_map()
       profiles = self.tuvx.get_profile_map()
-
       
       # update the temperature profile
       T_profile = profiles["temperature", "K"]
@@ -775,8 +773,8 @@ class Column():
       o3_profile.calculate_layer_densities(grids["height", "km"]) # provide the height grid for layer thicknesses
       
       # calculate photolysis rates
-      sza = np.acos(self.cosz) # sza: Solar zenith angle in radians
-      tuvx_output = self.tuvx.run(sza=sza, earth_sun_distance=1.0)
+      tuvx_output = self.tuvx.run(sza = np.deg2rad(state.solar_zenith_angle[j_new]), \
+                                  earth_sun_distance = 1.0)
        
       # update photolysis rates
       for micm_reaction in self.micm_to_tuvx.keys():
@@ -816,8 +814,6 @@ class Column():
    # {{{
       # Update periodic component of upwelling
       state.w[j, :] = self.w + np.real(self.wp * np.exp(1j * self.omega * t))
-
-      # Update zenith angle
    # }}}
 
    def solve(self, nsteps, dt, output_freq = 1):

@@ -419,7 +419,7 @@ def test_radiation_profile():
    col.Tsfc = dsr.tsfc[()]
    col.Emissivity = dsr.emis[()]
    col.Albedo = dsr.alb[()]
-   col.cosz = dsr.cosz[()]
+   col.solar_zenith_angle = np.arccos(dsr.cosz[()]) * 180. / np.pi
    #col.Latitude = dsr.lat[()]
    #col.Declination = 4.631605247595053
 
@@ -461,6 +461,8 @@ def test_chapman(Nz=200):
    #col.w[5:] = 0.001
    col.wp[:] =  0.
    col.M[:] = 1.
+   col.solar_zenith_angle = 0.
+
    #col.TSfc = 300.
 
    # dst = pyg.open('/local1/storage1/alm334/tuv-x/sample_photolysis_rate_constants.nc')(time=0)
