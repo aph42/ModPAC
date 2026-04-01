@@ -547,21 +547,38 @@ class Column():
    # }}}
 
 ### Methods related to radiative transfer
-   def initialize_radiation(self, *, scon = 1368.22, active = True, **kwargs):
+   def initialize_radiation(self, *, active = True, scon = 1368.22, zenith = 'fixed', **kwargs):
    # {{{
       self.__dict__['do_radiation'] = active
 
-      # Solar constant
+      # Astronomical settings
       self.__dict__['scon'] = scon
+      self.__dict__['zenith'] = zenith
 
       self.initialize_scalar('Tsfc', 'K', 300.)
       self.initialize_scalar('emissivity', '1', 0.99)
       self.initialize_scalar('albedo', '1', 0.3)
       self.initialize_scalar('solar_zenith_angle', 'deg', 0.)
 
-      #self.initialize_scalar('Latitude', 'deg', 0.)
-      #self.initialize_scalar('Declination', 'deg', 0.)
+      # Initialize zenith angle
+      if zenith == 'fixed_specified':
+         # Zenith angle fixed and explicitly set
+         if 'solar_zenith_angle' not in kwargs:
+            raise ValueError('With zenith option "fixed_specified", "solar_zenith_angle" must be set (in degrees).')
 
+         self.solar_zenith_angle = kwargs['solar_zenith_angle']
+      elif zenith == 'fixed_computed':
+         # Zenith angle fixed, computed from latitude and initial date and time
+         raise NotImplemented("'fixed_computed' zenith option not yet implemented'")
+
+      elif zenith == 'diurnal_cycle':
+         # Zenith angle goes through fixed diurnal cycle, appropriate to given latitude and initial date
+         raise NotImplemented("'diurnal_cycle' zenith option not yet implemented'")
+
+      else:
+         raise ValueError(f"Zenith option '{zenith}' unrecognized.")
+
+      # Set up output options from radiation
       self.add_output('lw_uflx', 'W m-2', self.Nz + 1) 
       self.add_output('lw_dflx', 'W m-2', self.Nz + 1) 
       self.add_output('sw_uflx', 'W m-2', self.Nz + 1) 
@@ -570,6 +587,7 @@ class Column():
       self.add_output('lw_hr', 'K d-1', self.Nz) 
       self.add_output('sw_hr', 'K d-1', self.Nz) 
 
+      # Initialize rrtmg
       rrtmg.init(self.cfg.cp)
 
       self.initialize_var('dyn_hr', 'K d-1', self.Nz, 0.)
@@ -621,6 +639,10 @@ class Column():
       output.sw_dflx[i_out, :] = sw['dflxsw'][0, :]
       output.sw_hr[i_out, :]   = sw['swhr'][0, :]
    # }}}
+
+   def set_zenith_angle(self, state, j_now, t):
+      # {{{
+      # }}}
 
 ### Methods related to chemistry
    def initialize_chemistry(self, *, mechanism, active = True, **kwargs):
@@ -814,6 +836,9 @@ class Column():
    # {{{
       # Update periodic component of upwelling
       state.w[j, :] = self.w + np.real(self.wp * np.exp(1j * self.omega * t))
+
+      # Update zenith angle
+      if self.
    # }}}
 
    def solve(self, nsteps, dt, output_freq = 1):

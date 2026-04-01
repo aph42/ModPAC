@@ -18,17 +18,15 @@
   },
   "radiation": {
       "scon"         :  1368.22,
-      "astronomy"    : {
-         "zenith"       : "fixed",
-         "initial_date" : "2000-03-01T00:00",
-         "lat"          :  22.3
-      }
+      "zenith"       : "fixed",
+      "initial_date" : "2000-01-01",
+      "lat"          :  22.3
   },
   "chemistry": {
      "mechanism" : "chapman"
   },
   "photolysis": {
-     "mechanism" :"ts1_tsmlt",
+     "mechanism" : "ts1_tsmlt",
      "mapping": {
         "jO2"          : "jo2_b",
         "jO3->O1D"     : "jo3_a",
