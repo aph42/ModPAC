@@ -18,9 +18,9 @@
   },
   "radiation": {
       "scon"         :  1368.22,
-      "zenith"       : "fixed",
+      "zenith"       : "diurnal_cycle",
       "initial_date" : "2000-01-01",
-      "lat"          :  22.3
+      "latitude"     :  22.3
   },
   "chemistry": {
      "mechanism" : "chapman"

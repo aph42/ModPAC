@@ -1,4 +1,6 @@
 import json
+import datetime
+
 import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
@@ -8,6 +10,8 @@ from rrtm import rrtmg
 import musica
 import musica.mechanism_configuration as mc
 import musica.tuvx.vTS1
+
+import astr
 
 class Configuration():
    def __init__(self, config_file, config_path):
@@ -547,7 +551,7 @@ class Column():
    # }}}
 
 ### Methods related to radiative transfer
-   def initialize_radiation(self, *, active = True, scon = 1368.22, zenith = 'fixed', **kwargs):
+   def initialize_radiation(self, *, active = True, scon = 1368.22, zenith = 'fixed_specified', **kwargs):
    # {{{
       self.__dict__['do_radiation'] = active
 
@@ -563,18 +567,28 @@ class Column():
       # Initialize zenith angle
       if zenith == 'fixed_specified':
          # Zenith angle fixed and explicitly set
-         if 'solar_zenith_angle' not in kwargs:
-            raise ValueError('With zenith option "fixed_specified", "solar_zenith_angle" must be set (in degrees).')
+         self.solar_zenith_angle = kwargs.get('solar_zenith_angle', 0.)
 
-         self.solar_zenith_angle = kwargs['solar_zenith_angle']
       elif zenith == 'fixed_computed':
-         # Zenith angle fixed, computed from latitude and initial date and time
-         raise NotImplemented("'fixed_computed' zenith option not yet implemented'")
+         # Zenith angle fixed, computed from latitude and initial date and (local) time
+
+         self.__dict__['initial_date'] = kwargs.get('initial_date', '2000-01-01')
+         self.__dict__['local_hour'] = kwargs.get('local_hour', 12.)
+         self.__dict__['latitude'] = kwargs.get('latitude', 0.)
+
+         n = astr.date_to_n(self.initial_date)
+         declination = astr.declination(n)
+
+         self.solar_zenith_angle = astr.zenith_from_declination(self.latitude, declination, local_hour)
 
       elif zenith == 'diurnal_cycle':
          # Zenith angle goes through fixed diurnal cycle, appropriate to given latitude and initial date
-         raise NotImplemented("'diurnal_cycle' zenith option not yet implemented'")
+         self.__dict__['initial_date'] = kwargs.get('initial_date', '2000-01-01')
+         self.__dict__['latitude'] = kwargs.get('latitude', 0.)
 
+         n = astr.date_to_n(self.initial_date)
+         declination = astr.declination(n)
+         self.__dict__['declination'] = declination
       else:
          raise ValueError(f"Zenith option '{zenith}' unrecognized.")
 
@@ -615,7 +629,9 @@ class Column():
       TSfc = _s(state.Tsfc)
       Emis = _s(state.emissivity)
       alb  = _s(state.albedo)
-      cosz = _s(np.cos(np.deg2rad(state.solar_zenith_angle)))
+
+      cosz = np.cos(np.deg2rad(state.solar_zenith_angle[j_now]))
+      cosz = np.asfortranarray(np.min([0., cosz]))
 
       lw = rrtmg.rrtmg_lw(pfull, phalf, \
                           T, TSfc, Emis, \
@@ -641,8 +657,11 @@ class Column():
    # }}}
 
    def set_zenith_angle(self, state, j_now, t):
-      # {{{
-      # }}}
+   # {{{
+      if self.zenith == 'diurnal_cycle':
+         local_hour = np.mod(t / 3600., 24.)
+         state.solar_zenith_angle[j_now] = astr.zenith_from_declination(self.latitude, self.declination, local_hour)
+   # }}}
 
 ### Methods related to chemistry
    def initialize_chemistry(self, *, mechanism, active = True, **kwargs):
@@ -832,13 +851,13 @@ class Column():
          output.scalars[s][i_out] = state.scalars[s][j_state]
    # }}}
 
-   def update_externals(self, state, j, t):
+   def update_externals(self, state, j_now, t):
    # {{{
       # Update periodic component of upwelling
-      state.w[j, :] = self.w + np.real(self.wp * np.exp(1j * self.omega * t))
+      state.w[j_now, :] = self.w + np.real(self.wp * np.exp(1j * self.omega * t))
 
       # Update zenith angle
-      if self.
+      self.set_zenith_angle(state, j_now, t)
    # }}}
 
    def solve(self, nsteps, dt, output_freq = 1):
@@ -927,6 +946,12 @@ def to_pyg(col, ts, out, init = None):
       v.units = unit
       return v
 
+   def add_scalar(name, values, unit):
+      axs = (time, )
+      v = pyg.Var(axs, name = name, values = values[:].copy())
+      v.units = unit
+      return v
+
    vs = []
    for name, vals in out.columns.items():
       if init is None:
@@ -935,6 +960,14 @@ def to_pyg(col, ts, out, init = None):
          v = vals - init.columns[name][:]
 
       vs.append(add_var(name, v, ''))#col.variables[name].unit))
+
+   for name, vals in out.scalars.items():
+      if init is None:
+         v = vals
+      else:
+         v = vals - init.columns[name][:]
+
+      vs.append(add_scalar(name, v, ''))
 
    #for name, var in col.output_variables.items():
       #vs.append(add_var(name, var))

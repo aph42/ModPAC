@@ -461,7 +461,7 @@ def test_chapman(Nz=200):
    #col.w[5:] = 0.001
    col.wp[:] =  0.
    col.M[:] = 1.
-   col.solar_zenith_angle = 0.
+   #col.solar_zenith_angle = 0.
 
    #col.TSfc = 300.
 
@@ -470,13 +470,13 @@ def test_chapman(Nz=200):
    #dss = []
    #for c in [400e-6]:
    col.CO2[:] = 400e-6
-   ts, o0 = col.solve(2500, 3*3600)
+   ts, o0 = col.solve(250, 3600)
 
    ds = column.to_pyg(col, ts, o0)
    #dss.append(ds)
 
    #pyg.showvar(ds.T, fig=3)
-   return col, ds
+   return col, ds, o0
 # }}}
 
 def compare_chapman_rates():

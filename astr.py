@@ -63,12 +63,25 @@ def zenith(lat, lon, h, n):
    ''' Returns the solar zenith angle (in degrees) at a given latitude, 
    longitude, hour (UTC), and date (days since 2000-01-01).'''
    # h is hour of the day, UTC
-   dc = d2r * declination(n)
-   lt = d2r * lat
-   hr = h2r * h + d2r * lon
+   dec = declination(n)
+   h = h + d2r * lon / h2r
 
-   cosz = np.sin(dc) * np.sin(lt) - np.cos(dc) * np.cos(lt) * np.cos(hr)
+   return zenith_from_declination(lat, dec, h)
+   #lt = d2r * lat
+   #hr = h2r * h + d2r * lon
+
+   #cosz = np.sin(dc) * np.sin(lt) - np.cos(dc) * np.cos(lt) * np.cos(hr)
    #return cosz
 
    return np.arccos(cosz) / d2r
 
+def zenith_from_declination(lat, dec, h):
+   ''' Returns the solar zenith angle (in degrees) at a given latitude and 
+   local hour for fixed declination (in degrees). '''
+
+   dc = d2r * dec
+   lt = d2r * lat
+   hr = h2r * h
+
+   cosz = np.sin(dc) * np.sin(lt) - np.cos(dc) * np.cos(lt) * np.cos(hr)
+   return np.arccos(cosz) / d2r
