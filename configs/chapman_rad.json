@@ -20,7 +20,7 @@
       "scon"         :  1368.22,
       "zenith"       : "diurnal_cycle",
       "initial_date" : "2000-01-01",
-      "latitude"     :  22.3
+      "latitude"     :  0
   },
   "chemistry": {
      "mechanism" : "chapman"
