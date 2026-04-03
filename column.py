@@ -631,7 +631,7 @@ class Column():
       alb  = _s(state.albedo)
 
       cosz = np.cos(np.deg2rad(state.solar_zenith_angle[j_now]))
-      cosz = np.asfortranarray(np.min([0., cosz]))
+      cosz = np.asfortranarray(cosz)
 
       lw = rrtmg.rrtmg_lw(pfull, phalf, \
                           T, TSfc, Emis, \
@@ -648,7 +648,7 @@ class Column():
 
       sw = rrtmg.rrtmg_sw(pfull, phalf, \
             T, TSfc,  self.scon, \
-            alb, cosz, \
+            cosz, alb, \
             CO2, H2O, O3)
 
       output.sw_uflx[i_out, :] = sw['uflxsw'][0, :]
@@ -814,7 +814,8 @@ class Column():
       o3_profile.calculate_layer_densities(grids["height", "km"]) # provide the height grid for layer thicknesses
       
       # calculate photolysis rates
-      tuvx_output = self.tuvx.run(sza = np.deg2rad(state.solar_zenith_angle[j_new]), \
+      sza = np.deg2rad(state.solar_zenith_angle[j_new])
+      tuvx_output = self.tuvx.run(sza = sza, \
                                   earth_sun_distance = 1.0)
        
       # update photolysis rates
@@ -890,6 +891,8 @@ class Column():
       i_out += 1
 
       for i in range(nsteps):
+         if i % 500 == 0: print(f"Step {i}, day {(i + 1) * dt / 86400}.")
+
          # Update externally varying parameters
          self.update_externals(s0, j_now, (i + 1) * dt)
 
@@ -919,6 +922,10 @@ class Column():
             self.save_state(s0, o0, j_now, i_out)
             i_out += 1
             i_step = 0
+
+         # Test for instabilities
+         if np.max(s0.T[j_now]) > 1000.:
+            raise ValueError(f'Temperatures exceeding 1000K produced (step {i}, time {(i + 1) * dt}); instability developing?')
 
          j_old, j_now = j_now, j_old
 

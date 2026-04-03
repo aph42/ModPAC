@@ -473,7 +473,7 @@ def test_chapman(Nz=200):
    #dss = []
    #for c in [400e-6]:
    col.CO2[:] = 400e-6
-   ts, o0 = col.solve(2500, 3600)
+   ts, o0 = col.solve(3000, 3600)
 
    ds = column.to_pyg(col, ts, o0)
    #dss.append(ds)

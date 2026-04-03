@@ -110,7 +110,8 @@
       },
       {
          "name": "O2",
-         "molecular weight [kg mol-1]": 0.0
+         "molecular weight [kg mol-1]": 0.0,
+         "__tracer type": "CONSTANT"
       },
       {
          "name": "O3",
@@ -121,6 +122,12 @@
          "name": "OH",
          "molecular weight [kg mol-1]": 0.0170068,
          "__description": "hydroxyl radical"
+      },
+      {
+         "name": "CO2",
+         "molecular weight [kg mol-1]": 0.044,
+         "__absolute tolerance": 1e-12,
+         "__long name": "carbon dioxide"
       }
    ],
    "reactions": [
