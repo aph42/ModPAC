@@ -197,8 +197,8 @@ def make_mechanism():
    phinputs, phoutputs, phreactions = parse_photolysis('tilmes.photolysis.txt', inputs)
 
    print('Excess species:')
-   print('Inputs alone: ', inputs - outputs)
-   print('Outputs: ', outputs - inputs)
+   print('Inputs alone: ', inputs - outputs - phoutputs)
+   print('Outputs: ', outputs - inputs - phinputs)
    print('Photolysis inputs: ', phinputs - inputs)
    print('Photolysis outputs:', phoutputs - inputs)
 

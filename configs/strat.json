@@ -3,19 +3,6 @@
    "version": "1.0.0",
    "species": [
       {
-         "name": "BR",
-         "molecular weight [kg mol-1]": 0.079904
-      },
-      {
-         "name": "CH3CN",
-         "molecular weight [kg mol-1]": 0.0410509,
-         "__description": "acetonitrile"
-      },
-      {
-         "name": "CL",
-         "molecular weight [kg mol-1]": 0.0354527
-      },
-      {
          "name": "H",
          "molecular weight [kg mol-1]": 0.0010074
       },
@@ -25,25 +12,13 @@
       },
       {
          "name": "H2O",
-         "molecular weight [kg mol-1]": 0.0180142
+         "molecular weight [kg mol-1]": 0.0180142,
+         "__do advect": true
       },
       {
          "name": "H2O2",
          "molecular weight [kg mol-1]": 0.0340136,
          "__description": "hydrogen peroxide"
-      },
-      {
-         "name": "HBR",
-         "molecular weight [kg mol-1]": 0.0809114
-      },
-      {
-         "name": "HCL",
-         "molecular weight [kg mol-1]": 0.0364601
-      },
-      {
-         "name": "HCN",
-         "molecular weight [kg mol-1]": 0.0270251,
-         "__description": "hydrogen cyanide"
       },
       {
          "name": "HNO3",
@@ -76,22 +51,26 @@
       {
          "name": "N2O",
          "molecular weight [kg mol-1]": 0.0440129,
-         "__description": "nitrous oxide"
+         "__description": "nitrous oxide",
+         "__do advect": true
       },
       {
          "name": "N2O5",
          "molecular weight [kg mol-1]": 0.108023495904642,
-         "__description": "dinitrogen pentoxide"
+         "__description": "dinitrogen pentoxide",
+         "__do advect": true
       },
       {
          "name": "NO",
          "molecular weight [kg mol-1]": 0.0300061,
-         "__description": "nitric oxide"
+         "__description": "nitric oxide",
+         "__do advect": true
       },
       {
          "name": "NO2",
          "molecular weight [kg mol-1]": 0.045803364407376784,
-         "__description": "nitrogen dioxide"
+         "__description": "nitrogen dioxide",
+         "__do advect": true
       },
       {
          "name": "NO3",
@@ -110,13 +89,13 @@
       },
       {
          "name": "O2",
-         "molecular weight [kg mol-1]": 0.0,
-         "__tracer type": "CONSTANT"
+         "molecular weight [kg mol-1]": 0.0
       },
       {
          "name": "O3",
          "molecular weight [kg mol-1]": 0.0479982,
-         "__description": "ozone"
+         "__description": "ozone",
+         "__do advect": true
       },
       {
          "name": "OH",
@@ -416,92 +395,6 @@
                "species name": "H",
                "coefficient": 1.0
             },
-            {
-               "species name": "OH",
-               "coefficient": 1.0
-            }
-         ],
-         "gas phase": "gas"
-      },
-      {
-         "type": "ARRHENIUS",
-         "name": "O1D + HCL -> CL + OH",
-         "A": 90330000.0,
-         "B": 0.0,
-         "C": 0.0,
-         "D": 1.0,
-         "E": 0.0,
-         "reactants": [
-            {
-               "species name": "HCL",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "O1D",
-               "coefficient": 1.0
-            }
-         ],
-         "products": [
-            {
-               "species name": "CL",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "OH",
-               "coefficient": 1.0
-            }
-         ],
-         "gas phase": "gas"
-      },
-      {
-         "type": "ARRHENIUS",
-         "name": "O1D + HBR -> BR + OH",
-         "A": 72264000.0,
-         "B": 0.0,
-         "C": 0.0,
-         "D": 1.0,
-         "E": 0.0,
-         "reactants": [
-            {
-               "species name": "HBR",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "O1D",
-               "coefficient": 1.0
-            }
-         ],
-         "products": [
-            {
-               "species name": "BR",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "OH",
-               "coefficient": 1.0
-            }
-         ],
-         "gas phase": "gas"
-      },
-      {
-         "type": "ARRHENIUS",
-         "name": "O1D + HCN -> OH",
-         "A": 46369400.0,
-         "B": 0.0,
-         "C": 100.0,
-         "D": 1.0,
-         "E": 0.0,
-         "reactants": [
-            {
-               "species name": "HCN",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "O1D",
-               "coefficient": 1.0
-            }
-         ],
-         "products": [
             {
                "species name": "OH",
                "coefficient": 1.0
@@ -893,6 +786,66 @@
       },
       {
          "type": "ARRHENIUS",
+         "name": "HO2 + HO2 + M -> H2O2 + O2 + M",
+         "A": 761.554164,
+         "B": 0.0,
+         "C": 920.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HO2",
+               "coefficient": 2.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2O2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
+         "name": "HO2 + HO2 -> H2O2 + O2",
+         "A": 180660.0,
+         "B": 0.0,
+         "C": 460.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HO2",
+               "coefficient": 2.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "H2O2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "O2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
          "name": "H2O2 + O -> OH + HO2",
          "A": 843080.0,
          "B": 0.0,
@@ -914,32 +867,6 @@
                "species name": "OH",
                "coefficient": 1.0
             },
-            {
-               "species name": "HO2",
-               "coefficient": 1.0
-            }
-         ],
-         "gas phase": "gas"
-      },
-      {
-         "type": "ARRHENIUS",
-         "name": "CH3CN + OH -> HO2",
-         "A": 469716.0,
-         "B": 0.0,
-         "C": -1050.0,
-         "D": 1.0,
-         "E": 0.0,
-         "reactants": [
-            {
-               "species name": "CH3CN",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "OH",
-               "coefficient": 1.0
-            }
-         ],
-         "products": [
             {
                "species name": "HO2",
                "coefficient": 1.0
@@ -1215,6 +1142,36 @@
       },
       {
          "type": "ARRHENIUS",
+         "name": "HNO3 + OH -> NO3 + H2O",
+         "A": 14453.161320000001,
+         "B": 0.0,
+         "C": 460.0,
+         "D": 1.0,
+         "E": 0.0,
+         "reactants": [
+            {
+               "species name": "HNO3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "ARRHENIUS",
          "name": "NO3 + NO -> 2*NO2",
          "A": 9033000.0,
          "B": 0.0,
@@ -1439,43 +1396,6 @@
       },
       {
          "type": "TERNARY_CHEMICAL_ACTIVATION",
-         "name": "HCN + OH + M -> HO2 + M",
-         "k0_A": 1552.1199152,
-         "k0_B": 0.0,
-         "k0_C": 0.0,
-         "kinf_A": 3.372597012e+21,
-         "kinf_B": 4.42,
-         "kinf_C": 0.0,
-         "Fc": 0.8,
-         "N": 1.0,
-         "reactants": [
-            {
-               "species name": "HCN",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "M",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "OH",
-               "coefficient": 1.0
-            }
-         ],
-         "products": [
-            {
-               "species name": "HO2",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "M",
-               "coefficient": 1.0
-            }
-         ],
-         "gas phase": "gas"
-      },
-      {
-         "type": "TERNARY_CHEMICAL_ACTIVATION",
          "name": "NO + O + M -> NO2 + M",
          "k0_A": 32638.0356,
          "k0_B": -1.5,
@@ -1587,6 +1507,35 @@
       },
       {
          "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "N2O5 -> NO2 + NO3",
+         "k0_A": 249000000000000.0,
+         "k0_B": -3.0,
+         "k0_C": -10840.0,
+         "kinf_A": 276000000000000.0,
+         "kinf_B": 0.1,
+         "kinf_C": -10840.0,
+         "Fc": 0.6,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "N2O5",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
          "name": "NO2 + OH + M -> HNO3 + M",
          "k0_A": 652760.712,
          "k0_B": -3.0,
@@ -1624,6 +1573,39 @@
       },
       {
          "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "HNO3 + OH -> NO3 + H2O",
+         "k0_A": 235.7299856,
+         "k0_B": 0.0,
+         "k0_C": 1335.0,
+         "kinf_A": 16.25976132,
+         "kinf_B": 0.0,
+         "kinf_C": 2199.0,
+         "Fc": 1.0,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "HNO3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "OH",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "NO3",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "H2O",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
          "name": "NO2 + HO2 + M -> HO2NO2 + M",
          "k0_A": 72528.96800000001,
          "k0_B": -3.4,
@@ -1654,6 +1636,35 @@
             },
             {
                "species name": "M",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      },
+      {
+         "type": "TERNARY_CHEMICAL_ACTIVATION",
+         "name": "HO2NO2 -> HO2 + NO2",
+         "k0_A": 54486000000000.0,
+         "k0_B": -3.4,
+         "k0_C": -10900.0,
+         "kinf_A": 1904760000000000.0,
+         "kinf_B": -0.3,
+         "kinf_C": -10900.0,
+         "Fc": 0.6,
+         "N": 1.0,
+         "reactants": [
+            {
+               "species name": "HO2NO2",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "HO2",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "NO2",
                "coefficient": 1.0
             }
          ],
@@ -2028,65 +2039,12 @@
             }
          ],
          "gas phase": "gas"
-      },
-      {
-         "type": "PHOTOLYSIS",
-         "name": "jHCL->H",
-         "scaling factor": 1.0,
-         "reactants": [
-            {
-               "species name": "HCL",
-               "coefficient": 1.0
-            }
-         ],
-         "products": [
-            {
-               "species name": "H",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "CL",
-               "coefficient": 1.0
-            }
-         ],
-         "gas phase": "gas"
-      },
-      {
-         "type": "PHOTOLYSIS",
-         "name": "jHBR->BR",
-         "scaling factor": 1.0,
-         "reactants": [
-            {
-               "species name": "HBR",
-               "coefficient": 1.0
-            }
-         ],
-         "products": [
-            {
-               "species name": "BR",
-               "coefficient": 1.0
-            },
-            {
-               "species name": "H",
-               "coefficient": 1.0
-            }
-         ],
-         "gas phase": "gas"
       }
    ],
    "phases": [
       {
          "name": "gas",
          "species": [
-            {
-               "name": "BR"
-            },
-            {
-               "name": "CH3CN"
-            },
-            {
-               "name": "CL"
-            },
             {
                "name": "H"
             },
@@ -2098,15 +2056,6 @@
             },
             {
                "name": "H2O2"
-            },
-            {
-               "name": "HBR"
-            },
-            {
-               "name": "HCL"
-            },
-            {
-               "name": "HCN"
             },
             {
                "name": "HNO3"

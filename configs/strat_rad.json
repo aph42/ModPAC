@@ -14,7 +14,7 @@
   "grid": {
       "Nz"       :  200,
       "spacing"  : "log_pressure_equal",
-      "p_top"    :    0.001
+      "p_top"    :  0.001
   },
   "radiation": {
       "scon"           :  1368.22,
@@ -43,9 +43,7 @@
         "jH2O->OH"     : "jh2o_a",
         "jH2O->H2"     : "jh2o_b",
         "jH2O->2.0H"   : "jh2o_c",
-        "jH2O2->2.0OH" : "jh2o2",
-        "jHCL->H"      : "jhcl",
-        "jHBR->BR"     : "jhbr"
+        "jH2O2->2.0OH" : "jh2o2"
      }
   },
   "dynamics": {

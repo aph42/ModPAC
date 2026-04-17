@@ -10,6 +10,7 @@ O1D + H2O → 2*OH                   ; 1.63E-10*exp( 60./t)
 O1D + N2O → 2*NO                   ; 7.25E-11*exp( 20./t)
 O1D + N2O → N2 + O2                ; 4.63E-11*exp( 20./t)
 O1D + O3 → O2 + O2                 ; 1.20E-10
+O1D + H2 → H + OH                  ; 1.20E-10
 %O1D + CFC11 → 3*CL                 ; 2.02E-10
 %O1D + CFC12 → 2*CL                 ; 1.20E-10
 %O1D + CFC113 → 3*CL                ; 1.50E-10
@@ -29,10 +30,9 @@ O1D + O3 → O2 + O2                 ; 1.20E-10
 %O1D + CH4 → CH3O2 + OH             ; 1.31E-10
 %O1D + CH4 → CH2O + H + HO2         ; 3.50E-11
 %O1D + CH4 → CH2O + H2              ; 9.00E-12
-O1D + H2 → H + OH                  ; 1.20E-10
-O1D + HCL → CL + OH                ; 1.50E-10
-O1D + HBR → BR + OH                ; 1.20E-10
-O1D + HCN → OH                     ; 7.70E-11*exp( 100./t)
+%O1D + HCL → CL + OH                ; 1.50E-10
+%O1D + HBR → BR + OH                ; 1.20E-10
+%O1D + HCN → OH                     ; 7.70E-11*exp( 100./t)
 
 # Odd hydrogen reactions
 H + O2 + M → HO2 + M               ; ko=4.40E-32*(300/t)**1.30, ki=7.50E-11*(300/t)**-0.20, f=0.60
@@ -50,10 +50,12 @@ OH + H2O2 → H2O + HO2              ; 1.80E-12
 H2 + O → OH + H                    ; 1.60E-11*exp( -4570./t)
 HO2 + O → OH + O2                  ; 3.00E-11*exp( 200./t)
 HO2 + O3 → OH + 2*O2               ; 1.00E-14*exp( -490./t)
-HO2 + HO2 → H2O2 + O2              ; 3.0E-13*exp(460/t) + 2.1E-33 * [M] * exp (920/t)) * (1 + 1.4E-21 * [H2O] exp (2200/t))
+%HO2 + HO2 → H2O2 + O2              ; 3.0E-13*exp(460/t) + 2.1E-33 * [M] * exp (920/t)) * (1 + 1.4E-21 * [H2O] exp (2200/t))
+HO2 + HO2 + M → H2O2 + O2 + M      ; 2.1E-33*exp( 920.0/t)
+HO2 + HO2 → H2O2 + O2              ; 3.0E-13*exp( 460.0/t)
 H2O2 + O → OH + HO2                ; 1.40E-12*exp( -2000./t)
-HCN + OH + M → HO2 + M             ; ko=4.28E-33, ki=9.30E-15*(300/t)**-4.42, f=0.80
-CH3CN + OH → HO2                   ; 7.80E-13*exp( -1050./t)
+%HCN + OH + M → HO2 + M             ; ko=4.28E-33, ki=9.30E-15*(300/t)**-4.42, f=0.80
+%CH3CN + OH → HO2                   ; 7.80E-13*exp( -1050./t)
 
 # Odd nitrogen reactions
 N + O2 → NO + O                ;  1.50E-11*exp( -3600./t)
@@ -68,16 +70,20 @@ NO2 + O → NO + O2              ;  5.10E-12*exp( 210./t)
 NO2 + O + M → NO3 + M          ;  ko=2.50E-31*(300/t)**1.80, ki=2.20E-11*(300/t)**0.70, f=0.60
 NO2 + O3 → NO3 + O2            ;  1.20E-13*exp( -2450./t)
 NO2 + NO3 + M → N2O5 + M       ;  ko=2.00E-30*(300/t)**4.40, ki=1.40E-12*(300/t)**0.70, f=0.60
-N2O5 + M → NO2 + NO3 + M       ;  k(NO2 + NO3 + M) * 3.704E26 * exp(-11000./t)
+%N2O5 + M → NO2 + NO3 + M       ;  k(NO2 + NO3 + M) * 3.704E26 * exp(-11000./t)
+N2O5 → NO2 + NO3               ;  ko=2.49E+14*(300/t)**3.0*exp( -10840./t), ki=2.76E+14*(300/t)**-0.1*exp( -10840.0/t), f=0.60
 NO2 + OH + M → HNO3 + M        ;  ko=1.80E-30*(300/t)**3.00, ki=2.80E-11, f=0.60
-HNO3 + OH → NO3 + H2O          ;  k0 + k3[M]/(1 + k3[M]/k2), k0 = 2.4E-14*exp(460/t), k2 = 2.7E-17*exp(2199/t), k3 = 6.5E-34*exp(1335/t)
+%HNO3 + OH → NO3 + H2O          ;  k0 + k3[M]/(1 + k3[M]/k2), k0 = 2.4E-14*exp(460/t), k2 = 2.7E-17*exp(2199/t), k3 = 6.5E-34*exp(1335/t)
+HNO3 + OH → NO3 + H2O          ;  ko=3.91448E-16*exp( 1335.0/t), ki=2.70006E-17*exp( 2199.0/t), f=1.00
+HNO3 + OH → NO3 + H2O          ;  2.40006E-14*exp( 460.0/t)
 NO3 + NO → 2*NO2               ;  1.50E-11*exp( 170./t)
 NO3 + O → NO2 + O2             ;  1.00E-11
 NO3 + OH → HO2 + NO2           ;  2.20E-11
 NO3 + HO2 → OH + NO2 + O2      ;  3.50E-12
 NO2 + HO2 + M → HO2NO2 + M     ;  ko=2.00E-31*(300/t)**3.40, ki=2.90E-12*(300/t)**1.10, f=0.60
 HO2NO2 + OH → H2O + NO2 + O2   ;  1.30E-12*exp( 380./t)
-HO2NO2 + M → HO2 + NO2 + M     ;  k(NO2+HO2+M) * exp(-10900/t)/2.1E-27
+%HO2NO2 + M → HO2 + NO2 + M     ;  k(NO2+HO2+M) * exp(-10900/t)/2.1E-27
+HO2NO2 → HO2 + NO2             ;  ko=5.4486E+13*(300/T)**3.4*exp( -10900.0/t), ki=1.90476E+15*(300/T)**0.3*exp( -10900.0/t), f=0.60
 
 # Odd chlorine reactions
 CL + O3 → CLO + O2             ;  2.30E-11*exp( -200./t)
