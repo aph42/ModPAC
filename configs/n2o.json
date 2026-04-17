@@ -1,0 +1,89 @@
+{
+  "version": "1.0.0",
+  "name": "N2OColumn",
+  "species": [
+    {
+      "name": "M",
+      "is third body": true
+    },
+    {
+      "name": "O1D",
+      "molecular weight [kg mol-1]": 0.0159994,
+      "__description": "excited state atomic oxygen"
+    },
+    {
+      "name": "O2",
+      "__tracer type": "CONSTANT"
+    },
+    {
+      "name": "O3",
+      "molecular weight [kg mol-1]": 0.048,
+      "__absolute tolerance": 1e-12,
+      "__long name": "ozone",
+      "__atoms": 3,
+      "__do advect": true
+    },
+    {
+      "name": "N2",
+      "molecular weight [kg mol-1]": 0.0
+    },
+    {
+      "name": "N2O",
+      "molecular weight [kg mol-1]": 0.0440129,
+      "__description": "nitrous oxide",
+      "__do advect": true
+    },
+    {
+      "name": "H2O",
+      "molecular weight [kg mol-1]":  0.018,
+      "__absolute tolerance": 1e-12,
+      "__long name": "water vapor",
+      "__do advect": false
+    },
+    {
+      "name": "CO2",
+      "molecular weight [kg mol-1]": 0.044,
+      "__absolute tolerance": 1e-12,
+       "__long name": "carbon dioxide"
+    }
+  ],
+  "phases": [
+    {
+      "name": "gas",
+      "species": [
+        "M",
+        "O1D",
+        "O2",
+        "O3",
+        "N2",
+        "N2O",
+        "H2O",
+        "CO2"
+      ]
+    }
+  ],
+  "reactions": [
+      {
+         "type": "PHOTOLYSIS",
+         "name": "jN2O->O1D",
+         "scaling factor": 1.0,
+         "reactants": [
+            {
+               "species name": "N2O",
+               "coefficient": 1.0
+            }
+         ],
+         "products": [
+            {
+               "species name": "O1D",
+               "coefficient": 1.0
+            },
+            {
+               "species name": "N2",
+               "coefficient": 1.0
+            }
+         ],
+         "gas phase": "gas"
+      }
+  ]
+}
