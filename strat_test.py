@@ -52,7 +52,7 @@ def test_strat_mechanism(Nz=200):
    col.CO2[:] = 400e-6
    #return col
    #ts, o0 = col.solve(26*6, 600)
-   ts, o0 = col.solve(144 * 1000, 600, 18)
+   ts, o0 = col.solve(144 * 100, 600, 18)
 
    ds = column.to_pyg(col, ts, o0)
    #dss.append(ds)
@@ -185,5 +185,9 @@ def infer_jn2o(col):
 
    return -col.w[1:-1] * dn2o
 # }}}
+
+def profile_run():
+   import cProfile
+   cProfile.run('test_strat_mechanism()', 'strat_timings')
 
 
