@@ -13,9 +13,9 @@ it works out of the box.
 
 ## Dependencies
 
-    - [MUSICA](https://musica.readthedocs.io/en/stable/) (including [TUV-x](https://github.com/NCAR/tuv-x)) for the chemical solver and photochemical rates
-    - [RRTMG](http://rtweb.aer.com/rrtm_frame.html) for computing radiative heating rates
-    - [pygeode](http://pygeode.github.io/) for organizing and serializing model output
+ - [MUSICA](https://musica.readthedocs.io/en/stable/) (including [TUV-x](https://github.com/NCAR/tuv-x)) for the chemical solver and photochemical rates
+ - [RRTMG](http://rtweb.aer.com/rrtm_frame.html) for computing radiative heating rates
+ - [pygeode](http://pygeode.github.io/) for organizing and serializing model output
 
 ## Configuration
 The model can be configured using external files, or programmatically. These
