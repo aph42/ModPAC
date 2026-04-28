@@ -70,15 +70,15 @@ geographic location.
 
 ## Advection
 
-The advection algorithm is a semi-Lagrangian scheme following Kaas (2008;
-doi:10.1111/j.1600-0870.2007.00293.x). This involves computing origin points
+The advection algorithm is a semi-Lagrangian scheme following [Kaas (2008)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1600-0870.2007.00293.x). 
+This involves computing origin points
 for Lagrangian trajectories that end at each grid point, and spatially
 interpolating the tracer field to these points. Computing the back trajectories
-has been implemented following [Kass
-(2008)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1600-0870.2007.00293.x)
-(though see [McGregor
-1993](https://doi.org/10.1175/1520-0493(1993%29121%3C0221:EDODPF%3E2.0.CO;2) as
-well).
+has been implemented following 
+[Kass (2008)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1600-0870.2007.00293.x)
+(though see 
+[McGregor 1993](https://doi.org/10.1175/1520-0493%281993%29121%3C0221:EDODPF%3E2.0.CO;2)
+as well).
 
 # Numerical Methods
 ## Technical details
@@ -93,7 +93,7 @@ $$ X^\ast_j = w_{jk} X_k. $$
 The weights matrix will have non-zero entries for 4 levels around the origin
 location. This form is then re-normalized to ensure global conservation of the
 the tracer in some sense. Given the exponential decrease in density, however,
-conserving tracer mass itself doesn't make a lot of sense (overle the atmosphere
+conserving tracer mass itself doesn't make a lot of sense (in the real atmosphere
 much of the mass will be transported meridionally). The re-normalization
 provides an estimate of the local divergence which could potentially be used as
 a way to parameterize meridional transport.
