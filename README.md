@@ -47,7 +47,7 @@ have also written some utility files that allow for a more
 compact/human-readable definition of a set of reactions and their rates.
 
 ### To Do:
- - [ ] Incorporate external configuration
+ - [ ] Incorporate parsing of easier-to-read configuration files
 
 ## Photolysis Rates
 Photolysis rates are computed using TUV-x. The calculated rates are then fed
@@ -74,8 +74,11 @@ The advection algorithm is a semi-Lagrangian scheme following Kaas (2008;
 doi:10.1111/j.1600-0870.2007.00293.x). This involves computing origin points
 for Lagrangian trajectories that end at each grid point, and spatially
 interpolating the tracer field to these points. Computing the back trajectories
-has been implemented following Kass (2008) (though see McGregor 1993,
-doi:10.1175/1520-0493(1993)121<0221:EDODPF>2.0.CO;2 as well).
+has been implemented following [Kass
+(2008)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1600-0870.2007.00293.x)
+(though see [McGregor
+1993](https://doi.org/10.1175/1520-0493(1993%29121%3C0221:EDODPF%3E2.0.CO;2) as
+well).
 
 # Numerical Methods
 ## Technical details

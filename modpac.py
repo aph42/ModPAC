@@ -191,8 +191,9 @@ def interpolate_matrix(x_new, x_old, method = 'linear'):
       return L
    # }}}
 
-class Column():
-   '''  A column model of the atmosphere, including radiative transfer, photochemistry using
+class ModPAC():
+   '''  Modular Photochemistry in an Atmospheric Column (ModPAC)
+        A column model of the atmosphere, including radiative transfer, photochemistry using
         the MUSICA and TUVx components from NCAR, and vertical advection.'''
    def __init__(self, configuration):
    # {{{
@@ -630,7 +631,7 @@ class Column():
       Emis = _s(state.emissivity)
       alb  = _s(state.albedo)
 
-      cosz = np.cos(np.deg2rad(state.solar_zenith_angle[j_now]))
+      cosz = np.cos(np.deg2rad(np.min([90., state.solar_zenith_angle[j_now]])))
       cosz = np.asfortranarray(cosz)
 
       lw = rrtmg.rrtmg_lw(pfull, phalf, \
@@ -814,7 +815,7 @@ class Column():
       o3_profile.calculate_layer_densities(grids["height", "km"]) # provide the height grid for layer thicknesses
       
       # calculate photolysis rates
-      sza = np.deg2rad(state.solar_zenith_angle[j_new])
+      sza = np.deg2rad(np.min([90, state.solar_zenith_angle[j_new]]))
       tuvx_output = self.tuvx.run(sza = sza, \
                                   earth_sun_distance = 1.0)
        
@@ -864,7 +865,8 @@ class Column():
    def solve(self, nsteps, dt, output_freq = 1):
    # {{{
       # Output grid
-      nout   = int(nsteps / output_freq) + 1
+      #nout   = int(nsteps / output_freq) + 1
+      nout   = int(np.ceil(nsteps / output_freq)) + 1
       times  = np.arange(nout) * dt * output_freq
 
       s0 = self.get_internal_state(n = 2)
@@ -925,7 +927,7 @@ class Column():
 
          # Test for instabilities
          if np.max(s0.T[j_now]) > 1000.:
-            raise ValueError(f'Temperatures exceeding 1000K produced (step {i}, time {(i + 1) * dt}); instability developing?')
+            raise ValueError(f'Temperatures exceeding 1000K produced (step {i}, day {(i + 1) * dt/86400.:.2f}); instability developing?')
 
          j_old, j_now = j_now, j_old
 
