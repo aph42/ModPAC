@@ -11,7 +11,7 @@ import musica
 import musica.mechanism_configuration as mc
 import musica.tuvx.vTS1
 
-import astr
+from modpac import astr
 
 class Configuration():
    def __init__(self, config_file, config_path):
@@ -833,6 +833,21 @@ class ModPAC():
          getattr(output,tuvx_key)[i_out, :] = jval
 # }}}
 
+   def remove_supersaturation(self,state,j_now):
+       # remove water vapor in excess of supersaturation
+       saturation_vmr = self.calc_saturation_vmr(state,j_now)
+       
+       state.H2O[j_now,:] = np.minimum(state.H2O[j_now,:],saturation_vmr)
+
+   def calc_saturation_vmr(self,state,j_now):
+       # calculate the saturation volume mixing ratio of water vapor
+       C2K = 273.15 # Celsius to Kelvin
+       e_s = 6.109 * np.exp(17.625 * (state.T[j_now,:]-C2K)/(state.T[j_now,:]-C2K+243.04)) # hPa
+       
+       saturation_vmr = e_s / self.pfull # vmr (units must align between e_s and pfull [e.g., hPa])
+       
+       return saturation_vmr
+    
 ### Methods related to solver
    def get_internal_state(self, n = 1):
    # {{{
@@ -903,7 +918,7 @@ class ModPAC():
 
          # Advect species
          self.step_advection(s0, z_org, j_old, j_now, dt)
-
+        
          if self.do_photolysis:
              # Diagnose photolysis rates
              self.compute_photolysis(s0, o0, z_org, j_now, i_out)
@@ -918,6 +933,8 @@ class ModPAC():
             dQ = o0.lw_hr[i_out, :] + o0.sw_hr[i_out, :] + self.dyn_hr[:]
             s0.T[j_now] += dt * dQ / 86400.
 
+         self.remove_supersaturation(s0,j_now)         
+          
          i_step += 1
 
          if i_step >= output_freq:
