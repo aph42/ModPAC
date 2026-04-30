@@ -36,6 +36,7 @@ class Configuration():
       self.chemistry = d['chemistry']
       self.photolysis = d['photolysis']
       self.convection = d['convection']
+      self.humidity = d['humidity']
 # }}}
 
 class ScalarVariable():
@@ -224,6 +225,9 @@ class ModPAC():
 
       # Initialize convection
       self.initialize_convection(**self.cfg.convection)
+
+      # Initialize humidity
+      self.initialize_humidity(**self.cfg.humidity)
 
     # }}} 
 
@@ -841,32 +845,25 @@ class ModPAC():
 
 
 ### Methods related to convection/convective adjustment
-   def initialize_convection(self, *, active = True):
+   def initialize_convection(self, *, active = True, lapse_rate = 'constant'):
    # {{{
       self.__dict__['do_convection'] = active
+      self.__dict__['lapse_rate']    = lapse_rate # 'constant' or 'moist'
 
       self.initialize_var('T_conv', 'K', self.Nz, 300.) # Moist adiabatic temperature profile from Tsfc
 
       self.T_conv[:] = self.calc_moist_adiabat()
-       
-       
-   def remove_supersaturation(self,state,j_now):
-       # remove water vapor in excess of supersaturation
-       saturation_vmr = self.calc_saturation_vmr(state.T[j_now,:],self.pfull)
-       
-       state.H2O[j_now,:] = np.minimum(state.H2O[j_now,:],saturation_vmr)
-    
-   def calc_saturation_vmr(self,T,p):
-       # calculate the saturation volume mixing ratio of water vapor
-       e_s = self.cfg.es_0 * np.exp(17.625 * (T-self.cfg.T0Cel)/(T-self.cfg.T0Cel+243.04)) # hPa
-       
-       saturation_vmr = e_s / p # vmr (units must align between e_s and pfull [e.g., hPa])
-       
-       return saturation_vmr
 
    def moist_adiabatic_lapse_rate(self,T,ws):
-       # dT/dz for a moist adiabat as a function of T (Kelvin) and ws (saturation mass mixing ratio)
-       dTdz_mlr = -self.cfg.g0 / self.cfg.cp * (1 + self.cfg.Lv * ws / (self.cfg.Rd*T))/(1 + self.cfg.Lv**2*ws/(self.cfg.Rv*self.cfg.cp*T**2))
+       if self.lapse_rate == 'moist':
+           # dT/dz for a moist adiabat as a function of T (Kelvin) and ws (saturation mass mixing ratio)
+           dTdz_mlr = -self.cfg.g0 / self.cfg.cp * (1 + self.cfg.Lv * ws / (self.cfg.Rd*T))/(1 + self.cfg.Lv**2*ws/(self.cfg.Rv*self.cfg.cp*T**2))
+       elif self.lapse_rate == 'constant':
+           # hard adjustment to a constant lapse rate
+           dTdz_mlr = -6.5e-3 # dT/dz = -6.5 K/km 
+           
+       else:
+         raise ValueError(f"Lapse rate option '{self.lapse_rate}' unrecognized.")
        
        return dTdz_mlr
     
@@ -890,12 +887,44 @@ class ModPAC():
        T_conv[np.isnan(T_conv)] = 0.
        return T_conv
 
+    
    def convective_adjustment(self,state,j_now):
        # convective adjustment
        # after Thuburn and Craig (2002) in which T_conv sets the minimum temperature
        # T_conv is calculated as a moist adiabat
        state.T[j_now,:] = np.maximum(state.T[j_now,:],self.T_conv)
+    
+
+### Methods related to humidity (remove supersaturation, tropospheric RH)    
+   def initialize_humidity(self, *, active = True, RH_trop = 0.7, z_trop = 10000):
+      self.__dict__['do_humidity'] = active
+ 
+      self.initialize_var('RH_troposphere','',self.Nz, 0.) # Relative humidity
        
+      self.RH_troposphere[:][self.zfull<=z_trop] = RH_trop # relative humidity enforced below z_trop
+      self.RH_troposphere[:][self.zfull>z_trop] = np.nan # no RH constraint above z_trop
+    
+   def relax_humidity(self,state,j_now):
+       # This function does 2 things (both of which depend on saturation_vmr):
+       # 1) remove water vapor in excess of supersaturation
+       # 2) enforce the specified relative humidity profile from self.RH_troposphere
+
+       saturation_vmr = self.calc_saturation_vmr(state.T[j_now,:],self.pfull)
+ 
+       # remove water vapor in excess of supersaturation
+       state.H2O[j_now,:] = np.minimum(state.H2O[j_now,:],saturation_vmr)
+
+       # enforce RH
+       idx_trop = ~np.isnan(self.RH_troposphere) # indices to overwrite
+       state.H2O[j_now,idx_trop] = (saturation_vmr*self.RH_troposphere)[idx_trop]
+          
+   def calc_saturation_vmr(self,T,p):
+       # calculate the saturation volume mixing ratio of water vapor
+       e_s = self.cfg.es_0 * np.exp(17.625 * (T-self.cfg.T0Cel)/(T-self.cfg.T0Cel+243.04)) # hPa
+       
+       saturation_vmr = e_s / p # vmr (units must align between e_s and pfull [e.g., hPa])
+       
+       return saturation_vmr
     
 ### Methods related to solver
    def get_internal_state(self, n = 1):
@@ -982,10 +1011,11 @@ class ModPAC():
             dQ = o0.lw_hr[i_out, :] + o0.sw_hr[i_out, :] + self.dyn_hr[:]
             s0.T[j_now] += dt * dQ / 86400.
 
-         self.remove_supersaturation(s0,j_now)
-
          if self.do_convection:
              self.convective_adjustment(s0,j_now)
+
+         if self.do_humidity:
+             self.relax_humidity(s0,j_now)
           
          i_step += 1
 
