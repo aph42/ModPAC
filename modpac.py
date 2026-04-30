@@ -34,7 +34,8 @@ class Configuration():
       self.dynamics = d['dynamics']
       self.radiation = d['radiation']
       self.chemistry = d['chemistry']
-      self.photolysis = d['photolysis']       
+      self.photolysis = d['photolysis']
+      self.convection = d['convection']
 # }}}
 
 class ScalarVariable():
@@ -220,7 +221,11 @@ class ModPAC():
 
       # Initialize photolysis 
       self.initialize_photolysis(**self.cfg.photolysis)
-   # }}} 
+
+      # Initialize convection
+      self.initialize_convection(**self.cfg.convection)
+
+    # }}} 
 
    def __setattr__(self, name, value):
    # {{{
@@ -375,6 +380,7 @@ class ModPAC():
       #self.__dict__['zadv'] = np.concatenate([[z_bot], zfull[::-1], [z_top]])
       self.__dict__['zadv'] = self.zfull[::-1]
    # }}}
+
 
    def get_courant(self, dt):
    # {{{ 
@@ -833,20 +839,63 @@ class ModPAC():
          getattr(output,tuvx_key)[i_out, :] = jval
 # }}}
 
+
+### Methods related to convection/convective adjustment
+   def initialize_convection(self, *, active = True):
+   # {{{
+      self.__dict__['do_convection'] = active
+
+      self.initialize_var('T_conv', 'K', self.Nz, 300.) # Moist adiabatic temperature profile from Tsfc
+
+      self.T_conv[:] = self.calc_moist_adiabat()
+       
+       
    def remove_supersaturation(self,state,j_now):
        # remove water vapor in excess of supersaturation
-       saturation_vmr = self.calc_saturation_vmr(state,j_now)
+       saturation_vmr = self.calc_saturation_vmr(state.T[j_now,:],self.pfull)
        
        state.H2O[j_now,:] = np.minimum(state.H2O[j_now,:],saturation_vmr)
-
-   def calc_saturation_vmr(self,state,j_now):
+    
+   def calc_saturation_vmr(self,T,p):
        # calculate the saturation volume mixing ratio of water vapor
-       C2K = 273.15 # Celsius to Kelvin
-       e_s = 6.109 * np.exp(17.625 * (state.T[j_now,:]-C2K)/(state.T[j_now,:]-C2K+243.04)) # hPa
+       e_s = self.cfg.es_0 * np.exp(17.625 * (T-self.cfg.T0Cel)/(T-self.cfg.T0Cel+243.04)) # hPa
        
-       saturation_vmr = e_s / self.pfull # vmr (units must align between e_s and pfull [e.g., hPa])
+       saturation_vmr = e_s / p # vmr (units must align between e_s and pfull [e.g., hPa])
        
        return saturation_vmr
+
+   def moist_adiabatic_lapse_rate(self,T,ws):
+       # dT/dz for a moist adiabat as a function of T (Kelvin) and ws (saturation mass mixing ratio)
+       dTdz_mlr = -self.cfg.g0 / self.cfg.cp * (1 + self.cfg.Lv * ws / (self.cfg.Rd*T))/(1 + self.cfg.Lv**2*ws/(self.cfg.Rv*self.cfg.cp*T**2))
+       
+       return dTdz_mlr
+    
+   def calc_moist_adiabat(self):
+       # calculate a moist adiabat as a function of altitude
+       # begin at the specified surface temperature Tsfc and surface pressure and integrate dT/dz|mlr upwards
+       print(self.Tsfc)
+       ws_0 = (self.cfg.Rd / self.cfg.Rv) * self.calc_saturation_vmr(self.Tsfc,self.cfg.p0) # mmr at surface
+       
+       T_conv = np.zeros(self.Nz)
+       T_conv[-1] = self.Tsfc
+       dTdz_mlr_zi = self.moist_adiabatic_lapse_rate(self.Tsfc,ws_0)
+       
+       for zi in np.arange(self.Nz-2,0,step=-1):
+           # integrate the moist adiabat from the surface upwards
+           dz = self.zfull[zi] - self.zfull[zi+1]
+           T_conv[zi] = T_conv[zi+1] + dTdz_mlr_zi * dz
+           ws_zi = (self.cfg.Rd / self.cfg.Rv) * self.calc_saturation_vmr(T_conv[zi],self.pfull[zi]) # mmr
+           dTdz_mlr_zi = self.moist_adiabatic_lapse_rate(T_conv[zi],ws_zi)
+
+       T_conv[np.isnan(T_conv)] = 0.
+       return T_conv
+
+   def convective_adjustment(self,state,j_now):
+       # convective adjustment
+       # after Thuburn and Craig (2002) in which T_conv sets the minimum temperature
+       # T_conv is calculated as a moist adiabat
+       state.T[j_now,:] = np.maximum(state.T[j_now,:],self.T_conv)
+       
     
 ### Methods related to solver
    def get_internal_state(self, n = 1):
@@ -933,7 +982,10 @@ class ModPAC():
             dQ = o0.lw_hr[i_out, :] + o0.sw_hr[i_out, :] + self.dyn_hr[:]
             s0.T[j_now] += dt * dQ / 86400.
 
-         self.remove_supersaturation(s0,j_now)         
+         self.remove_supersaturation(s0,j_now)
+
+         if self.do_convection:
+             self.convective_adjustment(s0,j_now)
           
          i_step += 1
 

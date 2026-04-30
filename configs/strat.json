@@ -5,11 +5,13 @@
       {
          "name": "H",
          "molecular weight [kg mol-1]": 0.0010074,
+         "__do advect": true,
          "__absolute tolerance": 1e-12
       },
       {
          "name": "H2",
          "molecular weight [kg mol-1]": 0.0020148,
+         "__do advect": true,
          "__absolute tolerance": 1e-12
       },
       {
@@ -21,23 +23,27 @@
       {
          "name": "H2O2",
          "molecular weight [kg mol-1]": 0.0340136,
+         "__do advect": true,
          "__absolute tolerance": 1e-12,
          "__description": "hydrogen peroxide"
       },
       {
          "name": "HNO3",
          "molecular weight [kg mol-1]": 0.0630123,
+         "__do advect": true,
          "__description": "nitric acid"
       },
       {
          "name": "HO2",
          "molecular weight [kg mol-1]": 0.03307754409115893,
+         "__do advect": true,
          "__absolute tolerance": 1e-12,
          "__description": "hydroperoxyl radical"
       },
       {
          "name": "HO2NO2",
          "molecular weight [kg mol-1]": 0.0790117,
+         "__do advect": true,
          "__absolute tolerance": 1e-12,
          "__description": "pernitric acid"
       },
@@ -48,7 +54,8 @@
       },
       {
          "name": "N",
-         "molecular weight [kg mol-1]": 0.0140067
+         "molecular weight [kg mol-1]": 0.0140067,
+         "__do advect": true
       },
       {
          "name": "N2",
@@ -58,7 +65,7 @@
          "name": "N2O",
          "molecular weight [kg mol-1]": 0.0440129,
          "__description": "nitrous oxide",
-         "__do advect": true
+         "__do advect": true 
       },
       {
          "name": "N2O5",
@@ -81,17 +88,20 @@
       {
          "name": "NO3",
          "molecular weight [kg mol-1]": 0.06186298085408304,
-         "__description": "nitrate radical"
+         "__description": "nitrate radical",
+         "__do advect": true
       },
       {
          "name": "O",
          "molecular weight [kg mol-1]": 0.0159994,
+         "__do advect": true,
          "__absolute tolerance": 1e-12,
          "__description": "ground state atomic oxygen"
       },
       {
          "name": "O1D",
          "molecular weight [kg mol-1]": 0.0159994,
+         "__do advect": true, 
          "__absolute tolerance": 1e-12,
          "__description": "excited state atomic oxygen"
       },
@@ -108,12 +118,14 @@
       {
          "name": "OH",
          "molecular weight [kg mol-1]": 0.0170068,
+         "__do advect": true,
          "__absolute tolerance": 1e-12,
          "__description": "hydroxyl radical"
       },
       {
          "name": "CO2",
          "molecular weight [kg mol-1]": 0.044,
+         "__do advect": true,
          "__absolute tolerance": 1e-12,
          "__long name": "carbon dioxide"
       }
