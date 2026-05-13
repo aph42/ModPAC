@@ -30,6 +30,7 @@
   },
   "photolysis": {
      "mechanism" :"ts1_tsmlt",
+     "parameterize_jNO": true,
      "mapping": {
         "jO2->2.0O"    : "jo2_b",
         "jO3->O1D"     : "jo3_a",
