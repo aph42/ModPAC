@@ -1,3 +1,4 @@
+import os
 import json
 import datetime
 
@@ -12,7 +13,7 @@ import musica
 import musica.mechanism_configuration as mc
 import musica.tuvx.vTS1
 
-from modpac import astr
+import astr
 
 class Configuration():
    def __init__(self, config_file, config_path):
@@ -766,7 +767,19 @@ class ModPAC():
           self.add_output('jno', 's-1', self.Nz)
        
       # initialize photolysis 
-      self.__dict__['tuvx_mechanism_file'] = musica.utils.find_config_path() + '/tuvx/' + mechanism + '.json'
+      tuvx_config_path = os.path.dirname(musica.utils.find_config_path())
+      tuvx_config_path = f'{tuvx_config_path}/configs/tuvx'
+      self.__dict__['tuvx_mechanism_file'] = f'{tuvx_config_path}/{mechanism}.json'
+
+
+      # Read in mechanism file
+      with open(self.tuvx_mechanism_file) as f:
+         config = json.load(f)
+
+      # Remove photolysis reactions that are not specified by mechanism
+      #rct = [r for r in config['photolysis']['reactions'] if r['name'] in self.micm_to_tuvx.values()]
+
+      #config['photolysis']['reactions'] = rct
 
       # Set up grids
       grids = musica.tuvx.GridMap()
@@ -792,17 +805,23 @@ class ModPAC():
       # Set up radiators
       radiators = musica.tuvx.RadiatorMap() # Note: radiators automatically includes air, O2, and O3 without being specified
       radiators["aerosol"] = musica.tuvx.vTS1.radiator("aerosol", grids["height", "km"], grids["wavelength", "nm"])
-       
-      # Create TUV-x instance with v5.4 configuration file
-      self.__dict__['tuvx'] = musica.tuvx.TUVX(
-            grid_map     = grids,
-            profile_map  = profiles,
-            radiator_map = radiators,
-            config_path  = self.tuvx_mechanism_file,
-        )
-# }}}      
+      
+      # Change path to tuvx config so that relative paths in configuration file work (ugh)
+      original_cwd = os.getcwd()
+      os.chdir(tuvx_config_path)
 
-       
+      # Create TUV-x instance with v5.4 configuration file
+      try:
+         self.__dict__['tuvx'] = musica.tuvx.TUVX(
+               grid_map     = grids,
+               profile_map  = profiles,
+               radiator_map = radiators,
+               config_string  = json.dumps(config)
+           )
+      finally:
+          os.chdir(original_cwd)
+# }}}
+        
    def compute_photolysis(self, state, output, z_org, j_new, i_out):
 # {{{
       # update ozone and temperature, then calculate photolysis rates using TUV-x
@@ -944,8 +963,10 @@ class ModPAC():
       self.initialize_var('T_conv', 'K', self.Nz, 300.) # Moist adiabatic temperature profile from Tsfc
 
       self.T_conv[:] = self.calc_moist_adiabat()
+   # }}}
 
    def moist_adiabatic_lapse_rate(self,T,ws):
+   # {{{
        if self.lapse_rate == 'moist':
            # dT/dz for a moist adiabat as a function of T (Kelvin) and ws (saturation mass mixing ratio)
            dTdz_mlr = -self.cfg.g0 / self.cfg.cp * (1 + self.cfg.Lv * ws / (self.cfg.Rd*T))/(1 + self.cfg.Lv**2*ws/(self.cfg.Rv*self.cfg.cp*T**2))
@@ -957,8 +978,10 @@ class ModPAC():
          raise ValueError(f"Lapse rate option '{self.lapse_rate}' unrecognized.")
        
        return dTdz_mlr
-    
+   # }}}
+
    def calc_moist_adiabat(self):
+# {{{
        # calculate a moist adiabat as a function of altitude
        # begin at the specified surface temperature Tsfc and surface pressure and integrate dT/dz|mlr upwards
        print(self.Tsfc)
@@ -977,25 +1000,29 @@ class ModPAC():
 
        T_conv[np.isnan(T_conv)] = 0.
        return T_conv
-
+# }}}
     
    def convective_adjustment(self,state,j_now):
+   # {{{
        # convective adjustment
        # after Thuburn and Craig (2002) in which T_conv sets the minimum temperature
        # T_conv is calculated as a moist adiabat
        state.T[j_now,:] = np.maximum(state.T[j_now,:],self.T_conv)
-    
+   # }}}
 
 ### Methods related to humidity (remove supersaturation, tropospheric RH)    
    def initialize_humidity(self, *, active = True, RH_trop = 0.7, z_trop = 10000):
+   # {{{
       self.__dict__['do_humidity'] = active
  
       self.initialize_var('RH_troposphere','',self.Nz, 0.) # Relative humidity
        
       self.RH_troposphere[:][self.zfull<=z_trop] = RH_trop # relative humidity enforced below z_trop
       self.RH_troposphere[:][self.zfull>z_trop] = np.nan # no RH constraint above z_trop
-    
+   # }}}
+
    def relax_humidity(self,state,j_now):
+   # {{{
        # This function does 2 things (both of which depend on saturation_vmr):
        # 1) remove water vapor in excess of supersaturation
        # 2) enforce the specified relative humidity profile from self.RH_troposphere
@@ -1008,15 +1035,18 @@ class ModPAC():
        # enforce RH
        idx_trop = ~np.isnan(self.RH_troposphere) # indices to overwrite
        state.H2O[j_now,idx_trop] = (saturation_vmr*self.RH_troposphere)[idx_trop]
-          
+   # }}}
+
    def calc_saturation_vmr(self,T,p):
+   # {{{
        # calculate the saturation volume mixing ratio of water vapor
        e_s = self.cfg.es_0 * np.exp(17.625 * (T-self.cfg.T0Cel)/(T-self.cfg.T0Cel+243.04)) # hPa
        
        saturation_vmr = e_s / p # vmr (units must align between e_s and pfull [e.g., hPa])
        
        return saturation_vmr
-    
+   # }}}
+
 ### Methods related to solver
    def get_internal_state(self, n = 1):
    # {{{
