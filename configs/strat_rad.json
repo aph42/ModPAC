@@ -51,6 +51,7 @@
      }
   },
   "dynamics": {
+     "kappa_zz" : 1e-4
   },
   "convection": {
       "lapse_rate"  : "constant"

@@ -6,7 +6,7 @@ from scipy.sparse.linalg import spsolve
 
 import pygeode as pyg
 
-import column
+import modpac
 
 # import adiabat
 from rrtm import astr
@@ -310,6 +310,81 @@ def test_advection_step(C = 0.2, Nz = 11, w0 = 0.02):
 
    #return s0, col
 # }}} 
+
+def test_diffusion(Tf = 100., shape = 'box'):
+# {{{
+   c = modpac.Configuration('adv.json', 'configs/')
+
+   c.dynamics['kappa_zz'] = 1e-2
+
+   col = modpac.ModPAC(c)
+
+   z0 = 20000.
+   Dz = 2000.
+
+   if shape == 'gaussian':
+      col.H2O[:] = np.exp(-(col.zfull - z0)**2 / (2 * Dz**2))
+   elif shape == 'hanning':
+      iz0 = np.argmin((col.zfull - z0 - Dz)**2)
+      iz1 = np.argmin((col.zfull - z0 + Dz)**2)
+      col.H2O[iz0:iz1] = np.hanning(iz1 - iz0)
+   elif shape == 'box':
+      iz0 = np.argmin((col.zfull - z0 - Dz)**2)
+      iz1 = np.argmin((col.zfull - z0 + Dz)**2)
+      col.H2O[iz0:iz1] = 1.
+   else:
+      raise ValueError(f'Unrecognized shape "{shape}".')
+
+   # 30 day period for testing
+   #period = 30. * 86400.
+
+   #dz = np.min(col.zfull[:-1] - col.zfull[1:])
+   
+   #dt = C * dz / wp
+   dt = 3600.
+
+   #if onestep:
+      #Tf = dt
+      #nsteps = 1
+   #else:
+      #Tf = periods * period
+   nsteps = int(Tf * 86400. / dt)
+
+   #dt = Tf / nsteps
+   #C = wp * dt / dz
+
+   print(f'Integrating {Tf} days, {nsteps} steps.')
+
+   print(col.kappa_zz)
+
+   ts, o0 = col.solve(nsteps, dt)
+
+   ds = modpac.to_pyg(col, ts, o0)
+
+   cm = plt.cm.Blues
+   cm.set_over('0.1')
+   cm.set_under('0.9')
+
+   ch = pyg.clfdict(cdelt = 0.2, min = 0., style = 'seq', \
+                    ndiv=5, nl = 0, extend = 'both', cmap = plt.cm.Blues)
+
+   ch = pyg.clfdict(cdelt = 0.002, style = 'div', \
+                    ndiv=5, nl = 0, extend = 'both', cmap = plt.cm.Blues)
+
+   plt.ioff()
+
+   #ax = pyg.showvar(ds.H2O - ds.H2O(si_time = 0), **ch)
+
+   #pyg.vplot(z_low, fmt = 'C1', axes = ax.axes[0], lbly=False)
+   #pyg.vplot(z_upp, fmt = 'C1', axes = ax.axes[0], lbly=False)
+
+   #ax.axes[0].setp(title = 'Tracer')
+   #pyg.showlines([z_low, z_upp], fig=2)
+   ax = pyg.showlines([ds.H2O(i_time = i, zfull=(4000, 34000)) for i in [0,1,2,-1]])
+
+   plt.ion()
+   ax.render(2)
+# }}}
 
 def test_reaction():
 # {{{

@@ -361,7 +361,7 @@ class ModPAC():
    # }}}
 
 ### Methods related to dynamics/advection
-   def initialize_dynamics(self, *, active = True):
+   def initialize_dynamics(self, *, active = True, kappa_zz = 0.):
    # {{{
       self.__dict__['do_dynamics'] = active
 
@@ -382,11 +382,12 @@ class ModPAC():
 
       self.initialize_scalar('omega', 'd-1', 2 * np.pi / (86400. * 840.))
 
+      self.__dict__['kappa_zz'] = kappa_zz
+
       # Reference grid for semi-lagrangian advection interpolation
       #self.__dict__['zadv'] = np.concatenate([[z_bot], zfull[::-1], [z_top]])
       self.__dict__['zadv'] = self.zfull[::-1]
    # }}}
-
 
    def get_courant(self, dt):
    # {{{ 
@@ -563,6 +564,31 @@ class ModPAC():
          v[j_now, :] = self.advect_quantity(C, D, Del, v[j_old, ::-1])[::-1]
    # }}}
 
+   def step_diffusion(self, state, j_now, dt):
+   # {{{
+      N = self.Nz
+
+      Dl = np.zeros(N - 1)
+      Dc = np.zeros(N)
+      Dr = np.zeros(N - 1)
+
+      Dx = np.diff(self.zfull)
+
+      Dr[1:  ] =  1 / (Dx[:-1]**2)
+      Dc[1:-1] = -2 / (Dx[1:] * Dx[:-1])
+      Dl[ :-1] =  1 / (Dx[1:]**2)
+
+      Del = sparse.diags_array([Dl, Dc, Dr], offsets = [-1, 0, 1], shape = (N, N), format = 'csr')
+
+      Ld = self.kappa_zz * dt * Del
+
+      state.T[j_now, :] += Ld @ state.T[j_now, :]
+
+      for s in self.diffused:
+         v = state.columns[s]
+         v[j_now, :] += Ld @ v[j_now, :]
+   # }}}
+
 ### Methods related to radiative transfer
    def initialize_radiation(self, *, active = True, scon = 1368.22, zenith = 'fixed_specified', **kwargs):
    # {{{
@@ -677,7 +703,7 @@ class ModPAC():
    # }}}
 
 ### Methods related to chemistry
-   def initialize_chemistry(self, *, mechanism, active = True, **kwargs):
+   def initialize_chemistry(self, *, mechanism = '', active = False, **kwargs):
    # {{{  
       self.__dict__['do_chemistry'] = active
 
@@ -711,6 +737,7 @@ class ModPAC():
 
       self.__dict__['species'] = species_list
       self.__dict__['advected'] = advected_list
+      self.__dict__['diffused'] = species_list.copy()
 
       if active:
          # We only need the solver if chemistry is active
@@ -747,7 +774,7 @@ class ModPAC():
          state.columns[s][j_now, :] = mstate.concentrations[i::stride] / nafull
    # }}}
 
-   def initialize_photolysis(self, *, mechanism, mapping = {}, active=True, parameterize_jNO = True):
+   def initialize_photolysis(self, *, mechanism = '', mapping = {}, active = False, parameterize_jNO = False):
 # {{{
       # tuv-x height coordinates are bottom up
       self.__dict__['do_photolysis'] = active
@@ -984,7 +1011,6 @@ class ModPAC():
 # {{{
        # calculate a moist adiabat as a function of altitude
        # begin at the specified surface temperature Tsfc and surface pressure and integrate dT/dz|mlr upwards
-       print(self.Tsfc)
        ws_0 = (self.cfg.Rd / self.cfg.Rv) * self.calc_saturation_vmr(self.Tsfc,self.cfg.p0) # mmr at surface
        
        T_conv = np.zeros(self.Nz)
@@ -1132,6 +1158,11 @@ class ModPAC():
             dQ = o0.lw_hr[i_out, :] + o0.sw_hr[i_out, :] + self.dyn_hr[:]
             s0.T[j_now] += dt * dQ / 86400.
 
+         # Add diffusion 
+         if self.kappa_zz > 0.:
+            self.step_diffusion(s0, j_now, dt)
+
+         # Adjust state: convection and humidity
          if self.do_convection:
              self.convective_adjustment(s0,j_now)
 

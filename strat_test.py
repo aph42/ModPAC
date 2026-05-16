@@ -13,14 +13,17 @@ import modpac
 
 import xarray as xr
 
-def test_strat_mechanism(ndays=200, Nz=120):
+def test_strat_mechanism(ndays=200, Nz=200, kappa = 0.):
 # {{{
    c = modpac.Configuration('strat_rad.json', 'configs/')
    c.radiation['active'] = True
    c.chemistry['active'] = True
    c.photolysis['active'] = True
    c.grid['Nz'] = Nz
-   print(c.grid)
+
+   c.dynamics['kappa_zz'] = kappa#1e-2
+
+   print(c.dynamics['kappa_zz'])
 
    #c.radiation['zenith'] = 'fixed_specified'
    #c.radiation['solar_zenith_angle'] = 54.
@@ -87,11 +90,13 @@ def test_strat_mechanism(ndays=200, Nz=120):
    return col, ds
 # }}}
 
-def plot_noy(ds):
+def plot_noy(ds, fig=3):
 # {{{
    pfull = pyg.Pres(1e3*pyg.exp(-ds.zfull / 7e3)[:])
 
    ds = ds.replace_axes(zfull = pfull)(pres = (300, 1))
+
+   prk = pyg.open('/data/QOSM/park_noy_plot.nc')
 
    NOx = ds.NO + ds.NO2
    NOy = ds.NO + ds.NO2 + ds.HNO3 + 2*ds.N2O5
@@ -101,7 +106,8 @@ def plot_noy(ds):
    axn = pyg.plot.AxesWrapper()
    ax  = pyg.plot.AxesWrapper()
 
-   pyg.vplot(1e9*ds.N2O, 'o',  axes = axn, mew = 1., ms = 5., mec = '0.4', mfc = 'w', label = 'N2O')
+   pyg.vplot(1e9*ds.N2O,  'o',  axes = axn, mew = 1., ms = 5., mec = '0.4', mfc = 'w', label = 'N2O')
+   pyg.vplot(prk.N2O, 'o',  axes = axn, mew = 1., ms = 5., mec = '0.4', mfc = '0.4', label = 'N2O (Park et al.)')
 
    axn.setp(xscale = 'log', xlim = (4, 4e2))
    axn.setp_xaxis(major_formatter = plt.LogFormatter(), \
@@ -111,10 +117,18 @@ def plot_noy(ds):
    pyg.vplot(1e9*NOx,    '--', axes = ax, lw = 2., c = '0.6', label = 'NOx')
    pyg.vplot(1e9*NOy,    '-',  axes = ax, lw = 2., c = '0.8', label = 'NOy')
                                          
-   pyg.vplot(1e9*ds.NO,   'o-', axes = ax, c = 'r',  ms = 5., label = 'NO')
-   pyg.vplot(1e9*ds.NO2,  'd-', axes = ax, c = 'g',  ms = 5., label = 'NO2')
-   pyg.vplot(1e9*ds.HNO3, 's-', axes = ax, c = 'b',  ms = 5., label = 'HNO3')
-   pyg.vplot(2e9*ds.N2O5, 'p-', axes = ax, c = 'C1', ms = 5., label = '2xN2O5')
+   pyg.vplot(1e9*ds.NO,   'o-', axes = ax, c = 'r',  ms = 4., label = 'NO')
+   pyg.vplot(1e9*ds.NO2,  'd-', axes = ax, c = 'g',  ms = 4., label = 'NO2')
+   pyg.vplot(1e9*ds.HNO3, 's-', axes = ax, c = 'b',  ms = 4., label = 'HNO3')
+   pyg.vplot(2e9*ds.N2O5, 'p-', axes = ax, c = 'C1', ms = 4., label = '2xN2O5')
+
+   pyg.vplot(prk.NOx, '--', axes = ax, lw = 1., c = '0.2')
+   pyg.vplot(prk.NOy,  '-', axes = ax, lw = 1., c = '0.4')
+                                     
+   pyg.vplot(prk.NO,   'o', axes = ax, c = 'r',  ms = 6.)
+   pyg.vplot(prk.NO2,  'd', axes = ax, c = 'g',  ms = 6.)
+   pyg.vplot(prk.HNO3, 's', axes = ax, c = 'b',  ms = 6.)
+   pyg.vplot(prk.N2O5, 'p', axes = ax, c = 'C1', ms = 6.)
 
    ax.setp(xscale = 'log', xlim = (1e-4, 3e1))
    ax.setp_xaxis(major_formatter = plt.LogFormatter(), \
@@ -126,17 +140,21 @@ def plot_noy(ds):
 
    plt.ion()
 
-   ax.render(4)
+   ax.render(fig)
 
 # }}}
 
-def test_n2o_column(Nz=200):
+def test_n2o_column(Nz=200, kappa = 0.):
 # {{{
    c = modpac.Configuration('n2o_rad.json', 'configs/')
    c.radiation['active'] = False
    c.chemistry['active'] = True
    c.photolysis['active'] = True
    c.grid['Nz'] = Nz
+
+   c.dynamics['kappa_z'] = kappa#1e-2
+
+   print(c.dynamics['kappa_z'])
 
    ref = pyg.open('/data/QOSM/basic_state_from_rce.nc')
    prk = pyg.open('/data/QOSM/park_noy_plot.nc')
@@ -189,6 +207,9 @@ def solve_steady_n2o(col, n2o_0 = 3.26e-7):
 # {{{
    s0 = col.get_internal_state(n = 1)
    o0 = col.create_output_state(1)
+
+   #p_org = col.cfg.p0 * np.exp(-col.z_full / col.cfg.H)
+   #nafull = p_org * 100 / (col.cfg.R * state.T[0, :])
 
    col.compute_photolysis(s0, o0, col.zfull, 0, 0)
 

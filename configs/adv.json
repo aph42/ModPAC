@@ -8,8 +8,11 @@
       "cp"   :  1004,
       "Rd"   :   287,
       "R"    :     8.314,
-      "Av"   : 6.022e23,
-      "g0"   :     9.81
+      "Av"   :  6.022e23,
+      "g0"   :  9.81,
+      "Lv"   :  2.5e6,
+      "Rv"   :  461.5,
+      "es_0" :  6.109
   },
   "grid": {
       "Nz"       :  200,
@@ -26,6 +29,16 @@
       "active" : false,
       "mechanism" : "chapman"
   },
+  "photolysis": {
+      "active" : false
+  },
+  "convection": {
+      "active" : false
+  },
+  "humidity": {
+      "active" : false
+  },
   "dynamics": {
+      "kappa_zz" : 1e-8
   }
 }
