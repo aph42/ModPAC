@@ -1,4 +1,6 @@
 figs
+MA
+tests/timings
 
 .*.swp
 __pycache__

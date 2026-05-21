@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "name": "H2O profile test bed",
+  "constants": {
+      "T0Cel":  273.15,
+      "p0"   :  1000,
+      "H"    :  7000,
+      "cp"   :  1004,
+      "Rd"   :  287,
+      "R"    :  8.314,
+      "Av"   :  6.022e23,
+      "g0"   :  9.81,
+      "Lv"   :  2.5e6,
+      "Rv"   :  461.5,
+      "es_0" :  6.109
+  },
+  "grid": {
+      "Nz"       :  200,
+      "spacing"  : "log_pressure_equal",
+      "p_top"    :    0.001
+  },
+  "radiation": {
+      "scon"                   :  1368.22,
+      "zenith"                 : "fixed_specified",
+      "initial_date"           : "2000-01-01",
+      "latitude"               :  0,
+      "solar_zenith_angle"     :  54
+  },
+  "chemistry": {
+     "mechanism" : "h2o"
+  },
+  "photolysis": {
+     "active"  : false
+  },
+  "dynamics": {
+  },
+  "convection": {
+      "lapse_rate"  : "constant"
+  },
+  "humidity":   {
+      "RH_trop"  : 0.7,
+      "z_trop"   : 10000
+  }      
+}
