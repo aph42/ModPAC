@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from scipy import sparse
+from scipy import sparse, special
 from scipy.sparse.linalg import spsolve
 
 import pygeode as pyg
@@ -105,8 +105,8 @@ def interpolate_matrix(x_new, x_old, method = 'linear'):
 
 def test_oscillation(C = 0.2, shape = 'gaussian', periods = 3, onestep = False):
 # {{{
-   c = column.Configuration('adv.json', 'configs/')
-   col = column.Column(c)
+   c = modpac.Configuration('adv.json', '..')
+   col = modpac.ModPAC(c)
 
    z0 = 20000.
    Dz = 2000.
@@ -132,6 +132,9 @@ def test_oscillation(C = 0.2, shape = 'gaussian', periods = 3, onestep = False):
    col.w[1:-1] = 0e-2# + 1e-2 * (col.zhalf[1:-1] / col.z_top)
    col.wp[1:-1] = wp
    col.omega = 2*np.pi / period
+   col.advected.append('H2O')
+
+
    dz = np.min(col.zfull[:-1] - col.zfull[1:])
    
    dt = C * dz / wp
@@ -150,7 +153,7 @@ def test_oscillation(C = 0.2, shape = 'gaussian', periods = 3, onestep = False):
 
    ts, o0 = col.solve(nsteps, dt)
 
-   ds = column.to_pyg(col, ts, o0)
+   ds = modpac.to_pyg(col, ts, o0)
 
    # Lower boundary
    z_low = (z0 - Dz) + wp / col.omega * pyg.sin(col.omega * ds.time * 86400.)
@@ -206,7 +209,7 @@ def test_oscillation(C = 0.2, shape = 'gaussian', periods = 3, onestep = False):
 
 def plot_origins(dt = 2000.):
 # {{{
-   c = column.Configuration('adv.json', 'configs/')
+   c = column.Configuration('adv.json', '..')
    col = column.Column(c)
 
    col.w[1:-1] = 2e-2 + 2e-2 * col.zhalf[1:-1] / col.z_top
@@ -241,7 +244,7 @@ def plot_origins(dt = 2000.):
 
 def test_advection_step(C = 0.2, Nz = 11, w0 = 0.02):
 # {{{
-   c = column.Configuration('adv.json', 'configs/')
+   c = column.Configuration('adv.json', '..')
    c.grid['Nz'] = Nz
    col = column.Column(c)
 
@@ -313,9 +316,9 @@ def test_advection_step(C = 0.2, Nz = 11, w0 = 0.02):
 
 def test_diffusion(Tf = 100., shape = 'box'):
 # {{{
-   c = modpac.Configuration('adv.json', 'configs/')
+   c = modpac.Configuration('adv.json', '..')
 
-   c.dynamics['kappa_zz'] = 1e-2
+   c.dynamics['kappa_zz'] = 1e-1
 
    col = modpac.ModPAC(c)
 
@@ -324,14 +327,20 @@ def test_diffusion(Tf = 100., shape = 'box'):
 
    if shape == 'gaussian':
       col.H2O[:] = np.exp(-(col.zfull - z0)**2 / (2 * Dz**2))
-   elif shape == 'hanning':
-      iz0 = np.argmin((col.zfull - z0 - Dz)**2)
-      iz1 = np.argmin((col.zfull - z0 + Dz)**2)
-      col.H2O[iz0:iz1] = np.hanning(iz1 - iz0)
+
+      def analytic(z, t, kappa):
+         T = kappa * t / Dz**2 
+         return (1 + T) ** (-0.5) * np.exp(-(z - z0)**2 / (2 * Dz**2 * (1 + T)))
+
    elif shape == 'box':
       iz0 = np.argmin((col.zfull - z0 - Dz)**2)
       iz1 = np.argmin((col.zfull - z0 + Dz)**2)
       col.H2O[iz0:iz1] = 1.
+
+      def analytic(z, t, kappa):
+         tdenom = np.sqrt(4 * kappa * t)
+         return 0.5 * (special.erf((z - z0 + Dz) / tdenom) \
+                       - special.erf((z - z0 - Dz) / tdenom))
    else:
       raise ValueError(f'Unrecognized shape "{shape}".')
 
@@ -380,7 +389,20 @@ def test_diffusion(Tf = 100., shape = 'box'):
 
    #ax.axes[0].setp(title = 'Tracer')
    #pyg.showlines([z_low, z_upp], fig=2)
-   ax = pyg.showlines([ds.H2O(i_time = i, zfull=(4000, 34000)) for i in [0,1,2,-1]])
+   ts = [0, nsteps * dt]
+
+   pcol = ds.H2O(zfull = (4000, 36000.))
+
+   ax = pyg.plot.AxesWrapper((4.1, 3.6))
+
+   i = 0
+   for t in ts:
+      clr = f'C{i}'
+      pyg.vplot(pcol(time = t), c = clr, lw = 1., ls = '--', axes = ax)
+      ax.plot(analytic(pcol.zfull[:], t, col.kappa_zz), pcol.zfull[:], clr, alpha = 0.6, lw = 2., label = f'{t / 86400.} d')
+      i += 1
+
+   ax.legend(loc = 'best', frameon = False)
 
    plt.ion()
    ax.render(2)
@@ -388,7 +410,7 @@ def test_diffusion(Tf = 100., shape = 'box'):
 
 def test_reaction():
 # {{{
-   c = column.Configuration('mcm_test.json', 'configs/')
+   c = column.Configuration('mcm_test.json', '..')
    c.radiation['active'] = False
    col = column.Column(c)
 
@@ -477,7 +499,7 @@ def test_radiation_profile():
 # {{{
    dsr = pyg.open('/data/RO/sample_rrtm_profile.nc')
 
-   c = column.Configuration('mcm_test.json', 'configs/')
+   c = column.Configuration('mcm_test.json', '..')
    c.grid['spacing'] = 'specified_pressure'
    c.grid['Nz'] = len(dsr.phalf)
    c.grid['ptop'] = dsr.phalf[0]
@@ -519,7 +541,7 @@ def test_radiation_profile():
 
 def test_chapman(Nz=200):
 # {{{
-   c = column.Configuration('chapman_rad.json', 'configs/')
+   c = column.Configuration('chapman_rad.json', '..')
    c.radiation['active'] = True
    c.chemistry['active'] = True
    c.photolysis['active'] = True

@@ -4,7 +4,8 @@
   "species": [
     {
       "name": "M",
-      "is third body": true
+      "is third body": true,
+      "__tracer type": "CONSTANT"
     },
     {
       "name": "O1D",
@@ -21,11 +22,12 @@
       "__absolute tolerance": 1e-12,
       "__long name": "ozone",
       "__atoms": 3,
-      "__do advect": true
+      "__tracer type": "CONSTANT"
     },
     {
       "name": "N2",
-      "molecular weight [kg mol-1]": 0.0
+      "molecular weight [kg mol-1]": 0.0,
+      "__tracer type": "CONSTANT"
     },
     {
       "name": "N2O",
@@ -38,13 +40,14 @@
       "molecular weight [kg mol-1]":  0.018,
       "__absolute tolerance": 1e-12,
       "__long name": "water vapor",
-      "__do advect": false
+      "__tracer type": "CONSTANT"
     },
     {
       "name": "CO2",
       "molecular weight [kg mol-1]": 0.044,
       "__absolute tolerance": 1e-12,
-       "__long name": "carbon dioxide"
+       "__long name": "carbon dioxide",
+      "__tracer type": "CONSTANT"
     }
   ],
   "phases": [

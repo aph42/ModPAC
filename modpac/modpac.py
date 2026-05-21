@@ -3,197 +3,12 @@ import json
 import datetime
 
 import numpy as np
-from scipy import sparse
-from scipy.sparse.linalg import spsolve
-import scipy.special
 
 from rrtm import rrtmg
 
 import musica
 import musica.mechanism_configuration as mc
 import musica.tuvx.vTS1
-
-import astr
-
-class Configuration():
-   def __init__(self, config_file, config_path):
-# {{{
-      self.config_file = config_file
-      self.config_path = config_path
-
-      # Read global configuration file
-      with open(config_path + config_file, 'r') as f:
-         d = json.load(f)
-
-      self.name = d['name']
-      self.version = d['version']
-
-      # Initialize constants
-      for k, v in d['constants'].items():
-         self.__dict__[k] = v
-         
-      self.grid = d['grid']
-      self.dynamics = d['dynamics']
-      self.radiation = d['radiation']
-      self.chemistry = d['chemistry']
-      self.photolysis = d['photolysis']
-      self.convection = d['convection']
-      self.humidity = d['humidity']
-# }}}
-
-class ScalarVariable():
-   def __init__(self, name, unit, initial_value):
-   # {{{
-      self.name = name
-      self.value =  initial_value
-      self.unit = unit
-   # }}}
-
-class ColumnVariable():
-   def __init__(self, name, unit, Nz, initial_value, prognostic = False, output = False):
-   # {{{
-      self.name = name
-      self.Nz = Nz
-
-      if type(initial_value) == np.ndarray:
-         dtype = initial_value.dtype
-      else:
-         dtype = type(initial_value)
-      self.values = np.ones(Nz, dtype)
-      self.values[:] = initial_value
-      self.unit = unit
-      self.prognostic = prognostic
-      self.output = output
-   # }}}
-
-class SpeciesVariable(ColumnVariable):
-   def __init__(self, name, unit, Nz, initial_value, advect = False, prognostic = False, output = False, **properties):
-   # {{{
-      ColumnVariable.__init__(self, name, unit, Nz, initial_value, prognostic, output)
-
-      self.advect = advect
-
-      if advect:
-         self.surface_flux = 0.
-         self.TOA_flux = 0.
-
-      self.properties = properties
-   # }}}
-
-class State():
-   def __init__(self, columns, scalars, steps = 1):
-   # {{{
-      self.__dict__['columns'] = {}
-      self.__dict__['scalars'] = {}
-
-      for name, c in columns.items():
-         self.columns[name] = np.zeros((steps, c.Nz))
-         self.columns[name][:, :] = c.values.reshape(1, -1)
-
-      for name, s in scalars.items():
-         self.scalars[name] = np.zeros(steps)
-         self.scalars[name][:] = s.value
-   # }}}
-
-   def __setattr__(self, name, value):
-   # {{{
-      if name in self.columns:
-         self.columns[name][:] = value
-
-      elif name in self.scalars:
-         self.scalars[name][:] = value
-
-      else:
-         raise ValueError(f'{self} has no attribute {name}.')
-   # }}}
-
-   def __getattr__(self, name):
-   # {{{
-      if name in self.columns:
-         return self.columns[name][:]
-      elif name in self.scalars:
-         return self.scalars[name][:]
-      else:
-         raise ValueError(f'{self} has no attribute {name}.')
-   # }}}
-
-def interpolate_matrix(x_new, x_old, method = 'linear'):
-   # {{{
-      ''' Constructs a CSR sparse matrix that, when applied to a vector
-      of quantities defined at locations x_old, yields interpolated values
-      at x_new. x_old and x_new must be sorted. '''
-
-      ip = x_old.searchsorted(x_new)
-      iL = np.where(ip == 0.)[0]
-      iR = np.where(ip == len(x_old))[0]
-
-      ip[iL] = 1
-      ip[iR] = len(x_old) - 1
-
-      i0 = ip - 1
-
-      dx = x_old[ip] - x_old[i0]
-      tn = (x_new - x_old[i0]) / dx
-      tn[iL] = 0.
-      tn[iR] = 1.
-
-      otn = 1 - tn
-
-      N = len(x_new)
-      M = len(x_old)
-
-      if method == 'linear':
-         order = 2
-         entries = np.zeros(N * order, 'd')
-         indptr = order * np.arange(N + 1)
-         cols = np.zeros(N * order, 'i')
-         cols[::order]  = i0
-         cols[1::order] = ip
-
-         entries[::order] = otn
-         entries[1::order] = tn
-
-         L = sparse.csr_array((entries, cols, indptr), shape = (N, M))
-      elif method == 'cubic':
-         Dl = np.zeros(M - 1)
-         Dc = np.zeros(M)
-         Dr = np.zeros(M - 1)
-
-         Dr[0] = 1 / (x_old[-1] - x_old[-2])
-         Dc[-1] = 1 / (x_old[1] - x_old[0])
-         Dr[1:] = 1 / (x_old[2:] - x_old[:-2])
-         Dl[:-1] = -Dr[1:]
-         Dc[0] = -Dr[0]
-         Dl[-1] = -Dc[-1]
-
-         Del = sparse.diags_array([Dl, Dc, Dr], offsets = [-1, 0, 1], shape = (M,M), format = 'csr')
-
-         order = 2
-         Cdata = np.zeros(N * order, 'd')
-         Ddata = np.zeros(N * order, 'd')
-         indptr = order * np.arange(N + 1)
-         cols = np.zeros(N * order, 'i')
-         cols[::order]  = i0
-         cols[1::order] = ip
-
-         Cdata[::order] = otn**3 + 3*otn**2*tn
-         Cdata[1::order] = tn**3 + 3*tn**2*otn
-
-         Ddata[::order] = dx*otn**2*tn
-         Ddata[1::order] = -dx*tn**2*otn
-
-         C = sparse.csr_array((Cdata, cols, indptr), shape = (N, M))
-         D = sparse.csr_array((Ddata, cols, indptr), shape = (N, M))
-
-         L = C + D @ Del
-
-         N = L.sum(0).reshape(-1, 1)
-         L = L / N
-      else:
-         raise ValueError(f'Unrecognized method {method}.')
-
-      return L
-   # }}}
 
 class ModPAC():
    '''  Modular Photochemistry in an Atmospheric Column (ModPAC)
@@ -272,32 +87,36 @@ class ModPAC():
 
    def initialize_var(self, name, unit, Nz, initial_value, grid = False):
    # {{{
+      from . import state
       if grid:
          if name in self.grid:
             raise ValueError(f'{name} has already been initialized.')
          
-         self.grid[name] = ColumnVariable(name, unit, Nz, initial_value)
+         self.grid[name] = state.ColumnVariable(name, unit, Nz, initial_value)
       else:
          if name in self.variables:
             raise ValueError(f'{name} has already been initialized.')
          
-         self.variables[name] = ColumnVariable(name, unit, Nz, initial_value)
+         self.variables[name] = state.ColumnVariable(name, unit, Nz, initial_value)
    # }}}
 
    def add_output(self, name, unit, Nz):
    # {{{
+      from . import state
       if name in self.output_variables:
          raise ValueError(f'{name} has already been defined as an output variable.')
       
-      self.output_variables[name] = ColumnVariable(name, unit, Nz, 0., output = True)
+      self.output_variables[name] = state.ColumnVariable(name, unit, Nz, 0., output = True)
    # }}}
 
    def initialize_scalar(self, name, unit, initial_value):
    # {{{
+      from . import state
+
       if name in self.scalars:
          raise ValueError(f'{name} has already been initialized.')
       
-      self.scalars[name] = ScalarVariable(name, unit, initial_value)
+      self.scalars[name] = state.ScalarVariable(name, unit, initial_value)
    # }}}
 
    def initialize_grid(self, *, spacing = 'log_pressure_equal', Nz = 200, p_top = 0.1, **kwargs):
@@ -363,6 +182,7 @@ class ModPAC():
 ### Methods related to dynamics/advection
    def initialize_dynamics(self, *, active = True, kappa_zz = 0.):
    # {{{
+      from . import dynamics
       self.__dict__['do_dynamics'] = active
 
       self.initialize_var('T', 'K', self.Nz, 300.) # Prognostic, advected
@@ -383,6 +203,7 @@ class ModPAC():
       self.initialize_scalar('omega', 'd-1', 2 * np.pi / (86400. * 840.))
 
       self.__dict__['kappa_zz'] = kappa_zz
+      self.__dict__['L_diffusion'] = dynamics.make_diffusion_operator(self.zfull)
 
       # Reference grid for semi-lagrangian advection interpolation
       #self.__dict__['zadv'] = np.concatenate([[z_bot], zfull[::-1], [z_top]])
@@ -431,123 +252,11 @@ class ModPAC():
       return zorg
    # }}}
 
-   def build_advection_matrix(self, z_org):
-   # {{{
-      ''' Constructs matrices to build weights for advection interpolation. 
-       Returns a tuple of three matrices, C, D, and Del; the weights for shape-preserving
-       interpolation require a further diagonal matrix T to eliminate overshoot and can
-       be calculated as C + D @ T @ Del.'''
-
-      ip = self.zadv.searchsorted(z_org)
-      iL = np.where(ip == 0.)[0]
-      iR = np.where(ip == len(self.zadv))[0]
-
-      ip[iL] = 1
-      ip[iR] = len(self.zadv) - 1
-
-      i0 = ip - 1
-
-      dx = self.zadv[ip] - self.zadv[i0]
-      tn = (z_org - self.zadv[i0]) / dx
-      tn[iL] = 0.
-      tn[iR] = 1.
-
-      otn = 1 - tn
-
-      N = len(z_org)
-      M = len(self.zadv)
-
-      Dl = np.zeros(M - 1)
-      Dc = np.zeros(M)
-      Dr = np.zeros(M - 1)
-
-      Dx = np.diff(self.zadv)
-
-      Dr[1:  ] =  1 / (2 * Dx[:-1])
-      Dc[1:-1] = (Dx[1:] - Dx[:-1]) / (2 * Dx[1:] * Dx[:-1])
-      Dl[ :-1] = -1 / (2 * Dx[1:])
-
-      Del = sparse.diags_array([Dl, Dc, Dr], offsets = [-1, 0, 1], shape = (M,M), format = 'csr')
-
-      order = 2
-      Cdata = np.zeros(N * order, 'd')
-      Ddata = np.zeros(N * order, 'd')
-      indptr = order * np.arange(N + 1)
-      cols = np.zeros(N * order, 'i')
-      cols[::order]  = i0
-      cols[1::order] = ip
-
-      Cdata[::order] = otn**3 + 3*otn**2*tn
-      Cdata[1::order] = tn**3 + 3*tn**2*otn
-
-      Ddata[::order] = dx*otn**2*tn
-      Ddata[1::order] = -dx*tn**2*otn
-
-      C = sparse.csr_array((Cdata, cols, indptr), shape = (N, M))
-      D = sparse.csr_array((Ddata, cols, indptr), shape = (N, M))
-
-      return C, D, Del
-   # }}}
-
-   def advect_quantity(self, C, D, Del, X):
-   # {{{
-      ''' Carry out advection of a given field X, given the components of the
-      weights matrix C, D, and Del from build_advection_matrix().  Calculates
-      shape-preserving modifications for this field. Normalization (mass
-      conservation) is turned off for accuracy reasons. Flux boundary
-      conditions are not yet implemented. The array X is oriented in increasing
-      height.'''
-
-      # Compute shape-preserving modifications
-      T = np.ones(self.Nz)
-
-      def fmt(a): return ' '.join([f'{d:5.1f}' for d in a])
-
-      # One-sided estimates at every grid point
-      d0 = (X[1:] - X[:-1]) / (self.zadv[1:] - self.zadv[:-1])
-
-      # Initial derivatives for the interpolation splines
-      m = np.zeros(self.Nz)
-      m[1:-1] = 0.5 * (d0[1:] + d0[:-1])
-      m[0] = d0[0]
-      m[-1] = d0[-1]
-
-      # Find indices of local extrema, and indices of complement.
-      # Adjacent indices are tested for overshoot, so last element is omitted in latter.
-      ext = (d0[1:] * d0[:-1] <= 0.)
-      exti = np.where(ext)[0] + 1
-      extn = np.concatenate([[0], np.where(~ext)[0] + 1])
-
-      # Set slope at any extrema to zero
-      m[exti] = 0
-      T[exti] = 0.
-
-      # Where the quantity tau < 1, we need to rescale the slopes
-      tau = 3 * np.abs(d0) / np.sqrt(m[:-1]**2 + m[1:]**2 + 1e-32)
-      nmt = np.where(tau < 1)[0]
-
-      T[nmt]     *= tau[nmt]
-      T[nmt + 1] *= tau[nmt]
-
-      # Convert to matrix to incorporate into interpolation operator
-      T = sparse.diags_array([T], offsets = [0], shape = (self.Nz,self.Nz), format = 'csr')
-
-      # Compute full interpolation operator
-      L = (C + D @ T @ Del)
-
-      # Normalize weights (this would enforce mass conservation, but 
-      # comes at the cost of significant loss of accuracy, so its left off)
-      #N = L.sum(0)
-      #iN = np.where(N > 0.3)[0]
-      #L[1:-1, :] = L[1:-1, :] / N[1:-1].reshape(-1, 1)
-
-      # Apply interpolation
-      return L @ X
-   # }}}
-
    def step_advection(self, state, z_org, j_old, j_now, dt):
    # {{{
-      C, D, Del = self.build_advection_matrix(z_org[::-1])
+      from . import dynamics
+
+      C, D, Del = dynamics.build_advection_matrix(self.zadv, z_org[::-1])
 
       # Construct interpolation matrix for potential temperature 
       # (no shape-preserving adjustments are made, though we could think about that)
@@ -560,27 +269,14 @@ class ModPAC():
       state.T[j_now, :] = (L @ Theta[::-1])[::-1] / self.Exner
 
       for s in self.advected:
+         if self.variables[s].fixed: continue
          v = state.columns[s]
-         v[j_now, :] = self.advect_quantity(C, D, Del, v[j_old, ::-1])[::-1]
+         v[j_now, :] = dynamics.advect_quantity(self.zadv, C, D, Del, v[j_old, ::-1])[::-1]
    # }}}
 
    def step_diffusion(self, state, j_now, dt):
    # {{{
-      N = self.Nz
-
-      Dl = np.zeros(N - 1)
-      Dc = np.zeros(N)
-      Dr = np.zeros(N - 1)
-
-      Dx = np.diff(self.zfull)
-
-      Dr[1:  ] =  1 / (Dx[:-1]**2)
-      Dc[1:-1] = -2 / (Dx[1:] * Dx[:-1])
-      Dl[ :-1] =  1 / (Dx[1:]**2)
-
-      Del = sparse.diags_array([Dl, Dc, Dr], offsets = [-1, 0, 1], shape = (N, N), format = 'csr')
-
-      Ld = self.kappa_zz * dt * Del
+      Ld = self.kappa_zz * dt * self.L_diffusion
 
       state.T[j_now, :] += Ld @ state.T[j_now, :]
 
@@ -592,6 +288,7 @@ class ModPAC():
 ### Methods related to radiative transfer
    def initialize_radiation(self, *, active = True, scon = 1368.22, zenith = 'fixed_specified', **kwargs):
    # {{{
+      from . import astr
       self.__dict__['do_radiation'] = active
 
       # Astronomical settings
@@ -697,6 +394,7 @@ class ModPAC():
 
    def set_zenith_angle(self, state, j_now, t):
    # {{{
+      from . import astr
       if self.zenith == 'diurnal_cycle':
          local_hour = np.mod(t / 3600., 24.)
          state.solar_zenith_angle[j_now] = astr.zenith_from_declination(self.latitude, self.declination, local_hour)
@@ -705,12 +403,14 @@ class ModPAC():
 ### Methods related to chemistry
    def initialize_chemistry(self, *, mechanism = '', active = False, **kwargs):
    # {{{  
+      from . import state
+
       self.__dict__['do_chemistry'] = active
 
       # Regardless of whether chemistry is active, read in the mechanism
       # to initialize species
       parser = mc.Parser()
-      mechanism_file = self.cfg.config_path + mechanism + '.json'
+      mechanism_file = self.cfg.config_root + f'/mechanisms/{mechanism}.json'
       self.__dict__['mechanism'] = parser.parse(mechanism_file)
 
       species_list = []
@@ -730,10 +430,13 @@ class ModPAC():
          else: 
             advect = False
 
+         fixed = properties.pop('__tracer type', False)
+         if fixed == 'CONSTANT': fixed = True
+
          if name in self.variables:
             raise ValueError(f'{name} has already been initialized.')
          
-         self.variables[name] = SpeciesVariable(name, 'vmr', self.Nz, 0., advect, **properties)
+         self.variables[name] = state.SpeciesVariable(name, 'vmr', self.Nz, 0., advect, fixed, **properties)
 
       self.__dict__['species'] = species_list
       self.__dict__['advected'] = advected_list
@@ -771,7 +474,8 @@ class ModPAC():
       # Read out resulting concentrations
       for s, i in sp.items():
          # convert back from mol m-3 to vmr
-         state.columns[s][j_now, :] = mstate.concentrations[i::stride] / nafull
+         if not self.variables[s].fixed:
+            state.columns[s][j_now, :] = mstate.concentrations[i::stride] / nafull
    # }}}
 
    def initialize_photolysis(self, *, mechanism = '', mapping = {}, active = False, parameterize_jNO = False):
@@ -851,6 +555,7 @@ class ModPAC():
         
    def compute_photolysis(self, state, output, z_org, j_new, i_out):
 # {{{
+      from . import photochem
       # update ozone and temperature, then calculate photolysis rates using TUV-x
       # TUV-x height coordinates are bottom-up  
 
@@ -896,89 +601,9 @@ class ModPAC():
 
       if self.parameterize_jNO:
          micm_key = f'PHOTO.jNO->N'
-         jval = self.calc_jNO(state,sza,j_new)
+         jval = photochem.calc_jNO(self, state, sza, j_new)
          self.MICMstate.set_user_defined_rate_parameters({micm_key:jval})
          getattr(output,'jno')[i_out, :] = jval
-
-   def slant_column(self,state,sza,n_air,varname,j_new):
-      dz = -(self.zhalf[1:] - self.zhalf[:-1])*100 # cm
-      return np.cumsum(getattr(state,varname)[j_new,:]*n_air*dz)/np.cos(sza) # molec cm-2
-
-   def calc_jNO(self,state,sza,j_new):
-      # calculate jNO as in Minschwaner et al., 1993 
-      # "A new calculation of nitric oxide photolysis in the stratosphere, mesosphere, and lower thermosphere"
-      
-      # this uses an "offline" approach to calculating jNO 
-      # i.e., other radiative fluxes from TUV are not considered
-      # this approach follows Tomazelli et al., 2025 ("Impact of the overlapping O2 Schumann-Runge and Herzberg continua with Schumann-Runge bands on photolysis rate coefficients")
-      
-      # INPUTS:
-      n_air = self.pfull * 100 / (self.cfg.R * state.T[j_new,:]) * self.cfg.Av * 1e-6 # molec cm-3
-       
-      N_O2 = self.slant_column(state,sza,n_air,'O2',j_new) # molec cm-2
-      N_O3 = self.slant_column(state,sza,n_air,'O3',j_new) # molec cm-2
-      N_NO = self.slant_column(state,sza,n_air,'NO',j_new) # molec cm-2
-      na_N2 = state.N2[j_new,:]*n_air                      # molec cm-3
-      
-      N_NO = np.reshape(N_NO,(self.Nz,1,1))
-      N_O2 = np.reshape(N_O2,(self.Nz,1,1))
-      N_O3 = np.reshape(N_O3,(self.Nz,1,1))
-      na_N2 = np.reshape(na_N2,(self.Nz,1,1))
-
-      nb = 3 # number of Schumann-Runge bands
-      ns = 6 # number of points within each band
-       
-      dlam  = np.array([2.3,1.5,1.5]) # nm, spectral width
-      Iobar = np.array([3.98e11,2.21e11,2.30e11]) # photons cm-2 nm-1 s-1
-      
-      dlam = np.reshape(dlam,(1,nb,1))
-      Iobar = np.reshape(Iobar,(1,nb,1))
-      
-      sigma_O2 = np.array([[1.12e-23, 2.45e-23, 7.19e-23, 3.04e-22, 1.75e-21, 1.11e-20],
-                           [1.35e-22, 2.99e-22, 7.33e-22, 3.07e-21, 1.69e-20, 1.66e-19],
-                           [2.97e-22, 5.83e-22, 2.05e-21, 8.19e-21, 4.80e-20, 2.66e-19]])
-      
-      wNO_1    = np.array([[0.00e+00, 5.12e-02, 1.36e-01, 1.65e-01, 1.41e-01, 4.50e-02], 
-                           [0.00e+00, 0.00e+00, 1.93e-03, 9.73e-02, 9.75e-02, 3.48e-02], 
-                           [4.50e-02, 1.80e-01, 2.25e-01, 2.25e-01, 1.80e-01, 4.50e-02]])
-      
-      sigma_NO_1=np.array([[0.00e+00, 1.32e-18, 6.35e-19, 7.09e-19, 2.18e-19, 4.67e-19],
-                           [0.00e+00, 0.00e+00, 3.05e-21, 5.76e-19, 2.29e-18, 2.21e-18],
-                           [1.80e-18, 1.50e-18, 5.01e-19, 7.20e-20, 6.72e-20, 1.49e-21]])
-                            
-      
-      wNO_2    = np.array([[0.00e+00, 5.68e-03, 1.52e-02, 1.83e-02, 1.57e-02, 5.00e-03], 
-                           [0.00e+00, 0.00e+00, 2.14e-04, 1.08e-02, 1.08e-02, 3.86e-03],
-                           [5.00e-03, 2.00e-02, 2.50e-02, 2.50e-02, 2.00e-02, 5.00e-03]])
-      
-      sigma_NO_2=np.array([[0.00e+00, 4.41e-17, 4.45e-17, 4.50e-17, 2.94e-17, 4.35e-17],
-                           [0.00e+00, 0.00e+00, 3.20e-21, 5.71e-17, 9.09e-17, 6.00e-17],
-                           [1.40e-16, 1.52e-16, 7.00e-17, 2.83e-17, 2.73e-17, 6.57e-18]])
-      
-      sigma_O2   = np.reshape(sigma_O2,   (1,nb,ns))
-      wNO_1      = np.reshape(wNO_1,      (1,nb,ns))
-      sigma_NO_1 = np.reshape(sigma_NO_1, (1,nb,ns))
-      wNO_2      = np.reshape(wNO_2,      (1,nb,ns))
-      sigma_NO_2 = np.reshape(sigma_NO_2, (1,nb,ns))
-      
-      D = 1.65e9 # s-1, rate of spontaneous predissociation
-      A = 5.1e7 # s-1, rate of spontaneous emission
-      kq = 1.5e-9 # cm3 s-1, quenching rate constant
-      P = D/(A+D+kq*na_N2) # probability of predissociation
-      P = np.reshape(P,(self.Nz,1,1))
-      
-      sigma_O3 = np.array([4.80e-19,6.88e-19,7.29e-19]) # cm2 molec-1
-      sigma_O3 = np.reshape(sigma_O3,(1,nb,1))
-      # Ackerman et al., 1971
-      # via https://www.uv-vis-spectral-atlas-mainz.org/uvvis/cross_sections/Ozone/O3_Ackerman(1971)_298K_116.5-735nm(int-c).txt
-      
-      TO3 = np.exp(-N_O3*sigma_O3) # transmission by O3
-      
-      jNO_band = dlam * Iobar * TO3 * P * np.exp(-sigma_O2*N_O2) * (wNO_1*sigma_NO_1*np.exp(-sigma_NO_1*N_NO) + wNO_2*sigma_NO_2*np.exp(-sigma_NO_2*N_NO))
-
-      jNO = np.sum(jNO_band,(1,2)) # s-1
-       
-      return jNO
 # }}}
     
 ### Methods related to convection/convective adjustment
@@ -1065,9 +690,16 @@ class ModPAC():
 
    def calc_saturation_vmr(self,T,p):
    # {{{
-       # calculate the saturation volume mixing ratio of water vapor
-       e_s = self.cfg.es_0 * np.exp(17.625 * (T-self.cfg.T0Cel)/(T-self.cfg.T0Cel+243.04)) # hPa
-       
+       Tc = T - self.cfg.T0Cel
+
+       # calculate the saturation volume mixing ratio of water vapor over l
+       #e_s = self.cfg.es_0 * np.exp(17.625 * Tc/(Tc + 243.04)) # hPa
+       e_sv = 6.112 * np.exp(17.67 * Tc / (Tc + 243.5))
+
+       e_si = 0.01 * np.exp(43.494 - (6545.8 / (Tc + 278.))) / (Tc + 868)**2
+
+       e_s = np.minimum(e_sv, e_si)
+
        saturation_vmr = e_s / p # vmr (units must align between e_s and pfull [e.g., hPa])
        
        return saturation_vmr
@@ -1076,12 +708,14 @@ class ModPAC():
 ### Methods related to solver
    def get_internal_state(self, n = 1):
    # {{{
-      return State(self.variables, self.scalars, n)
+      from . import state
+      return state.State(self.variables, self.scalars, n)
    # }}}
 
    def create_output_state(self, n = 1):
    # {{{
-      return State(self.variables | self.output_variables, self.scalars, n)
+      from . import state
+      return state.State(self.variables | self.output_variables, self.scalars, n)
    # }}}
 
    def save_state(self, state, output, j_state, i_out):
@@ -1104,6 +738,8 @@ class ModPAC():
 
    def solve(self, nsteps, dt, output_freq = 1):
    # {{{
+      from . import dynamics
+
       # Output grid
       #nout   = int(nsteps / output_freq) + 1
       nout   = int(np.ceil(nsteps / output_freq)) + 1
@@ -1184,54 +820,4 @@ class ModPAC():
 
       return times, o0
    # }}}
-
-import pygeode as pyg
-def to_pyg(col, ts, out, init = None):
-# {{{
-   time = pyg.Yearless(ts / 86400., units = 'days', startdate = dict(year = 1, day = 0))
-   pfull = pyg.Pres(col.pfull, name = 'pfull')
-   phalf = pyg.Pres(col.phalf, name = 'phalf')
-   zfull = pyg.Height(col.zfull, name = 'zfull')
-   zhalf = pyg.Height(col.zhalf, name = 'zhalf')
-
-   def add_var(name, values, unit):
-      if values.shape[1] == col.Nz:
-         axs = (time, zfull,)
-      elif values.shape[1] == col.Nz + 1:
-         axs = (time, zhalf,)
-      else:
-         raise ValueError(f'Variable {name} has unrecognized length.')
-
-      v = pyg.Var(axs, name = name, values = values[:].copy())
-      v.units = unit
-      return v
-
-   def add_scalar(name, values, unit):
-      axs = (time, )
-      v = pyg.Var(axs, name = name, values = values[:].copy())
-      v.units = unit
-      return v
-
-   vs = []
-   for name, vals in out.columns.items():
-      if init is None:
-         v = vals
-      else:
-         v = vals - init.columns[name][:]
-
-      vs.append(add_var(name, v, ''))#col.variables[name].unit))
-
-   for name, vals in out.scalars.items():
-      if init is None:
-         v = vals
-      else:
-         v = vals - init.columns[name][:]
-
-      vs.append(add_scalar(name, v, ''))
-
-   #for name, var in col.output_variables.items():
-      #vs.append(add_var(name, var))
-
-   return pyg.asdataset(vs)
-# }}}
 
