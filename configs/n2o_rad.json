@@ -38,9 +38,10 @@
   "dynamics": {
   },
   "convection": {
-      "lapse_rate"  : "constant"
+      "active"  : false
   },
   "humidity":   {
+      "active"   : false,
       "RH_trop"  : 0.7,
       "z_trop"   : 10000
   }      

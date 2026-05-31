@@ -15,7 +15,7 @@ import xarray as xr
 
 def test_strat_mechanism(ndays=200, Nz=200, kappa = 0.):
 # {{{
-   c = modpac.Configuration('strat_rad.json', '..')
+   c = modpac.Configuration('strat_rad')
    c.radiation['active'] = True
    c.chemistry['active'] = True
    c.photolysis['active'] = True
@@ -153,22 +153,20 @@ def plot_noy(ds, fig=3):
 
 def test_n2o_column(Nz=200, kappa = 0.):
 # {{{
-   c = modpac.Configuration('n2o_rad.json', '..')
+   c = modpac.Configuration('n2o_rad')
    c.radiation['active'] = True
    c.chemistry['active'] = True
    c.photolysis['active'] = True
-   c.convection['active'] = True
-   c.humidity['active'] = True
+   #c.convection['active'] = True
+   #c.humidity['active'] = True
    c.grid['Nz'] = Nz
 
-   c.dynamics['kappa_zz'] = kappa#1e-2
-
-   print(c.dynamics['kappa_zz'])
+   c.dynamics['kappa_zz'] = kappa
 
    ref = pyg.open('/data/QOSM/basic_state_from_rce.nc')
    prk = pyg.open('/data/QOSM/park_noy_plot.nc')
 
-   col = modpac.ModPAC(c)
+   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/{name}')
 
    pfull = 1000. * np.exp(-col.zfull / col.cfg.H)
    phalf = 1000. * np.exp(-col.zhalf / col.cfg.H)
@@ -188,8 +186,6 @@ def test_n2o_column(Nz=200, kappa = 0.):
 
    col.O3[:] = to_col(ref.O3, pf)
 
-   col.N2O[:] = to_col(prk.N2O*1e-9, pf)
-
    col.H2O[:] = 0.02 / 0.622 * np.exp(-col.zfull[:]/2000) # approximate profile with 2 km scale height
    col.H2O[col.H2O < 4e-6] = 4e-6
 
@@ -200,16 +196,18 @@ def test_n2o_column(Nz=200, kappa = 0.):
    col.w[-1] = 0.
    col.wp[:] =  0.
 
+   #col.N2O[:] = to_col(prk.N2O*1e-9, pf)
+   col.N2O[:] = solve_steady_n2o(col)
+
    col.T[:] = to_col(ref.T, pf)
    col.Tsfc = 300.
 
-   print(col.advected)
-   for name, var in col.variables.items():
-      if hasattr(var, 'fixed') and var.fixed: print(name)
+   for sp in col.species:
+      col.columns[sp].fixed: print(sp)
 
-   ts, o0 = col.solve(8 * 1000, 3*3600)
+   o0 = col.solve(8 * 100, 3*3600, write_output = False, restart_file = '/data/QOSM/n2o_rad.json_2026-05-31/n2o_rad.json_2026-05-31_restart_000000799.nc')
 
-   ds = modpac.to_pyg(col, ts, o0)
+   ds = modpac.to_pyg(col, o0)
 
    return col, ds
 # }}}
@@ -217,9 +215,9 @@ def test_n2o_column(Nz=200, kappa = 0.):
 def solve_steady_n2o(col, n2o_0 = 3.26e-7, jn2o = None):
 # {{{
    if jn2o is None:
-      s0 = col.get_internal_state(n = 1)
-      o0 = col.create_output_state(1)
-      jn2o = o0.columns['jn2o'][0, :]
+      s0 = col.create_internal_state(n = 1)
+      o0 = col.create_output_state(np.arange(1))
+      jn2o = o0.jn2o[0, :]
 
    #p_org = col.cfg.p0 * np.exp(-col.z_full / col.cfg.H)
    #nafull = p_org * 100 / (col.cfg.R * state.T[0, :])
@@ -227,13 +225,43 @@ def solve_steady_n2o(col, n2o_0 = 3.26e-7, jn2o = None):
    col.compute_photolysis(s0, o0, col.zfull, 0, 0)
 
    wfull = np.interp(col.zfull[::-1], col.zhalf[::-1], col.w[::-1])[::-1]
+   #wfull = np.interp(col.zfull, col.zhalf, col.w)
 
-   dz = np.diff(col.zhalf)
+   dt = jn2o / np.sqrt(wfull**2 + 1e-12)
 
-   tau = np.cumsum(jn2o / np.sqrt(wfull**2 + 1e-12) * dz)
-   tau -= tau[-1]
+   #tau = np.cumsum(dt, col.zfull[:])
+   #print(dt.shape, col.zfull[:].shape, tau)
 
+   #dz = np.diff(col.zhalf)
+   dz = np.diff(col.zfull)
+
+   tau = np.cumulative_sum((dt[1:] * dz), include_initial = True)
+   tau = -tau[-1] + tau
+
+   #tau = np.cumsum(dt * dz)
+   #tau -= tau[-1]
+
+   #return tau
    return n2o_0 * np.exp(-tau)
+# }}}
+
+def plot_n2o(col, ds, fig = 5):
+# {{{
+   plt.ioff()
+
+   n2i = ds.N2O(si_time = 0)
+   n2f = ds.N2O(si_time = -1)
+
+   n2s = solve_steady_n2o(col)
+
+   n2s = pyg.Var((ds.zfull,), values = n2s, name = 'n2o')
+
+   ax = pyg.showlines([n2i, n2f, n2s], labels = ['init', 'final', 'steady'])
+   #ax = pyg.showlines([n2s], labels = ['init', 'final', 'steady'])
+
+   plt.ion()
+
+   ax.render(fig)
 # }}}
 
 def infer_jn2o(col):
@@ -256,7 +284,7 @@ def infer_jn2o(col):
 
 def test_h2o_column(ndays = 200, Nz=200, kappa = 0.):
 # {{{
-   c = modpac.Configuration('h2o_rad.json', '..')
+   c = modpac.Configuration('h2o_rad')
    c.radiation['active'] = True
    c.grid['Nz'] = Nz
 
@@ -268,6 +296,7 @@ def test_h2o_column(ndays = 200, Nz=200, kappa = 0.):
    prk = pyg.open('/data/QOSM/park_noy_plot.nc')
 
    col = modpac.ModPAC(c)
+   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/{name}')
 
    pfull = 1000. * np.exp(-col.zfull / col.cfg.H)
    phalf = 1000. * np.exp(-col.zhalf / col.cfg.H)
@@ -299,15 +328,71 @@ def test_h2o_column(ndays = 200, Nz=200, kappa = 0.):
    col.T[:] = to_col(ref.T, pf)
    col.Tsfc = 300.
 
-   print(col.advected)
-   for name, var in col.variables.items():
+   for name, var in col.columns.items():
       if hasattr(var, 'fixed') and var.fixed: print(name)
 
-   ts, o0 = col.solve(8 * ndays, 3*3600)
+   return col
 
-   ds = modpac.to_pyg(col, ts, o0)
+   o0 = col.solve(8 * ndays, 3*3600)
+
+   ds = modpac.to_pyg(col, o0)
 
    return col, ds
+# }}}
+
+def test_restart(Nz=200):
+# {{{
+   c = modpac.Configuration('h2o_rad')
+   c.radiation['active'] = True
+   c.grid['Nz'] = Nz
+
+   c.dynamics['kappa_zz'] = 1e-2
+
+   print(f"kappa: {c.dynamics['kappa_zz']}")
+
+   ref = pyg.open('/data/QOSM/basic_state_from_rce.nc')
+   prk = pyg.open('/data/QOSM/park_noy_plot.nc')
+
+   col = modpac.ModPAC(c)
+   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/{name}')
+
+   pfull = 1000. * np.exp(-col.zfull / col.cfg.H)
+   phalf = 1000. * np.exp(-col.zhalf / col.cfg.H)
+   pf = pyg.Pres(pfull)
+   ph = pyg.Pres(phalf)
+
+   def to_col(var, pr):
+      vi = var.interpolate('pres', pr, inx = pyg.log(var.pres), outx = pyg.log(pr), d_above = 0., d_below = 0.)
+      return vi[:]
+
+   # mixing ratio
+   col.M[:] = 1.
+   col.O2[:] = 0.21
+   col.N2[:] = 0.78
+   col.CO2[:] = 400e-6
+
+   col.O3[:] = to_col(ref.O3, pf)
+
+   col.H2O[:] = 0.02 / 0.622 * np.exp(-col.zfull[:]/2000) # approximate profile with 2 km scale height
+   col.H2O[col.H2O < 4e-6] = 4e-6
+
+   # Better idea is to solve analytically for N2O given w, a lower boundary value, and a calculation of jn2o
+   col.w[:] = to_col(ref.w, ph) * 1e-3
+   col.w[col.w < 0] = 1e-5
+   col.w[0] = 0.
+   col.w[-1] = 0.
+   col.wp[:] =  0.
+
+   col.T[:] = to_col(ref.T, pf)
+   col.Tsfc = 300.
+
+   ndays = 100
+
+   o0 = col.solve(    8 * ndays, 3*3600, write_output = True,  restart = None)
+   o1 = col.solve(    8 * ndays, 3*3600, write_output = True,  restart = 'latest')
+   o2 = col.solve(2 * 8 * ndays, 3*3600, write_output = False, restart = None)
+
+   return o0, o1, o2
 # }}}
 
 def profile_run():

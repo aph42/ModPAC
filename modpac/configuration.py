@@ -1,14 +1,22 @@
-import json
+import os
 
 class Configuration():
-   def __init__(self, config_file, config_root):
+   def __init__(self, config_basename, config_root = None):
 # {{{
-      self.config_file = config_file
+      if config_root == None:
+         from modpac import modpac_root
+         config_root = f'{modpac_root}'
+
+      self.config_basename = config_basename
+      self.config_file = config_basename + '.json'
       self.config_root = config_root
 
-      # Read global configuration file
-      with open(f'{config_root}/configs/{config_file}', 'r') as f:
-         d = json.load(f)
+      file_base = f'{self.config_root}/configs/{self.config_file}'
+
+      if os.path.exists(file_base):
+         d = self.from_json(file_base)
+      else:
+         raise ValueError(f"No configuration file {file_base} found.")
 
       self.name = d['name']
       self.version = d['version']
@@ -24,6 +32,24 @@ class Configuration():
       self.photolysis = d['photolysis']
       self.convection = d['convection']
       self.humidity = d['humidity']
+# }}}
+
+   def from_json(self, filename):
+# {{{
+      import json
+
+      # Read global configuration file
+      with open(filename, 'r') as f:
+         d = json.load(f)
+
+      return d
+# }}}
+
+   #def to_toml(self, out_file):
+# {{{
+      #with open(out_file, 'w') as f:
+         #yaml.
+
 # }}}
 
 # Todo: serialize

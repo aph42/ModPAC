@@ -14,16 +14,22 @@ class ModPAC():
    '''  Modular Photochemistry in an Atmospheric Column (ModPAC)
         A column model of the atmosphere, including radiative transfer, photochemistry using
         the MUSICA and TUVx components from NCAR, and vertical advection.'''
-   def __init__(self, configuration):
+   def __init__(self, configuration, name_template = "{config_file}", output_path_template = "{name}/{rundate}"):
    # {{{
       self.__dict__['grid'] = {}
 
-      self.__dict__['variables'] = {}
+      self.__dict__['columns'] = {}
       self.__dict__['scalars'] = {}
 
-      self.__dict__['output_variables'] = {}
+      self.__dict__['output_columns'] = {}
 
       self.__dict__['cfg'] = configuration
+
+      # Used to generate filenames for output/restart files
+      self.__dict__['name_template'] = name_template
+      self.__dict__['output_path_template'] = output_path_template
+      self.__dict__['output_file_template'] = '{outpath}/{runname}_{i0:05d}.nc'
+      self.__dict__['restart_file_template'] =  '{outpath}/{runname}_restart_{i1:05d}.nc'
 
       # Initialize grid
       self.initialize_grid(**self.cfg.grid)
@@ -53,14 +59,14 @@ class ModPAC():
       if name in self.grid:
          self.grid[name].values[:] = value
 
-      elif name in self.variables:
-         self.variables[name].values[:] = value
+      elif name in self.columns:
+         self.columns[name].values[:] = value
 
       elif name in self.scalars:
          self.scalars[name].value = value
 
-      elif name in self.output_variables:
-         self.output_variables[name].values[:] = value
+      elif name in self.output_columns:
+         self.output_columns[name].values[:] = value
 
       elif name in self.__dict__.keys():
          raise ValueError(f'{name} is read-only.')
@@ -72,41 +78,53 @@ class ModPAC():
    def __getattr__(self, name):
    # {{{
       if name in self.grid:
-         return self.grid[name].values[:]
-      elif name in self.variables:
-         return self.variables[name].values[:]
+         return self.grid[name]
+      elif name in self.columns:
+         return self.columns[name]
       elif name in self.scalars:
          return self.scalars[name].value
-      elif name in self.output_variables:
-         return self.output_variables[name].values[:]
+      elif name in self.output_columns:
+         return self.output_columns[name]
       elif name in self.__dict__.keys():
          return self.__dict__[name]
       else:
          raise ValueError(f'{self} has no attribute {name}.')
    # }}}
 
-   def initialize_var(self, name, unit, Nz, initial_value, grid = False):
+   def __getitem__(self, name):
+   # {{{
+      if name in self.grid:
+         return self.grid[name]
+      elif name in self.columns:
+         return self.columns[name]
+      elif name in self.scalars:
+         return self.scalars[name].value
+      else:
+         raise ValueError(f'{self} has no variable {name}. You may be trying to unpack a ModPAC instance as a tuple.')
+   # }}}
+
+   def initialize_var(self, name, unit, Nz, initial_value, grid = False, attributes = {}):
    # {{{
       from . import state
       if grid:
          if name in self.grid:
             raise ValueError(f'{name} has already been initialized.')
          
-         self.grid[name] = state.ColumnVariable(name, unit, Nz, initial_value)
+         self.grid[name] = state.ColumnVariable(name, unit, Nz, initial_value, attributes = attributes)
       else:
-         if name in self.variables:
+         if name in self.columns:
             raise ValueError(f'{name} has already been initialized.')
          
-         self.variables[name] = state.ColumnVariable(name, unit, Nz, initial_value)
+         self.columns[name] = state.ColumnVariable(name, unit, Nz, initial_value, attributes = attributes)
    # }}}
 
    def add_output(self, name, unit, Nz):
    # {{{
       from . import state
-      if name in self.output_variables:
+      if name in self.output_columns:
          raise ValueError(f'{name} has already been defined as an output variable.')
       
-      self.output_variables[name] = state.ColumnVariable(name, unit, Nz, 0., output = True)
+      self.output_columns[name] = state.ColumnVariable(name, unit, Nz, 0., output = True)
    # }}}
 
    def initialize_scalar(self, name, unit, initial_value):
@@ -127,6 +145,7 @@ class ModPAC():
        - 'log_pressure_equal' (default). Specify p_top, the pressure at the top of the domain in hPa, and
             the number of levels.
        - 'specified_pressure'. Provide arrays for phalf and pfull. '''
+
 
       # Grid must run from the top of the atmosphere down for RRTMG to work
       if spacing == 'log_pressure_equal':
@@ -170,11 +189,15 @@ class ModPAC():
       self.__dict__['p_bot'] = p_bot
       self.__dict__['z_top'] = z_top
       self.__dict__['z_bot'] = z_bot
+      
+      attr_dict = dict(H = self.cfg.H, p0 = self.cfg.p0)
 
-      self.initialize_var('zhalf', 'm', self.Nz + 1, zhalf, grid = True)
-      self.initialize_var('zfull', 'm', self.Nz, zfull, grid = True)
-      self.initialize_var('phalf', 'Pa', self.Nz + 1, phalf, grid = True) 
-      self.initialize_var('pfull', 'Pa', self.Nz, pfull, grid = True) # DEBUG: pfull inherits units of cfg.p0 from json file, default hPa
+      self.initialize_var('zhalf', 'm',  self.Nz + 1,  zhalf, grid = True, attributes = dict(long_name = 'Log-pressure height of level interfaces', **attr_dict))
+      self.initialize_var('zfull', 'm',  self.Nz,      zfull, grid = True, attributes = dict(long_name = 'Log-pressure height of level midpoints',  **attr_dict))
+
+      # DEBUG: pfull inherits units of cfg.p0 from json file, default hPa
+      self.initialize_var('phalf', 'Pa', self.Nz + 1,  phalf, grid = True, attributes = dict(long_name = 'Pressure of level midpoints')) 
+      self.initialize_var('pfull', 'Pa', self.Nz,      pfull, grid = True, attributes = dict(long_name = 'Pressure of level midpoints'))
 
       self.initialize_var('vmask', '1', Nz, 1., grid = True)
    # }}}
@@ -268,10 +291,11 @@ class ModPAC():
       # Advect potential temperature then convert back to temperature
       state.T[j_now, :] = (L @ Theta[::-1])[::-1] / self.Exner
 
-      for s in self.advected:
-         if self.variables[s].fixed: continue
-         v = state.columns[s]
-         v[j_now, :] = dynamics.advect_quantity(self.zadv, C, D, Del, v[j_old, ::-1])[::-1]
+      for s in self.species:
+         sp = self.columns[s]
+         if sp.advect and not sp.fixed:
+            v = state.column_values[s]
+            v[j_now, :] = dynamics.advect_quantity(self.zadv, C, D, Del, v[j_old, ::-1])[::-1]
    # }}}
 
    def step_diffusion(self, state, j_now, dt):
@@ -280,9 +304,11 @@ class ModPAC():
 
       state.T[j_now, :] += Ld @ state.T[j_now, :]
 
-      for s in self.diffused:
-         v = state.columns[s]
-         v[j_now, :] += Ld @ v[j_now, :]
+      for s in self.species:
+         sp = self.columns[s]
+         if sp.advect and not sp.fixed:
+            v = state.column_values[s]
+            v[j_now, :] += Ld @ v[j_now, :]
    # }}}
 
 ### Methods related to radiative transfer
@@ -304,6 +330,8 @@ class ModPAC():
       if zenith == 'fixed_specified':
          # Zenith angle fixed and explicitly set
          self.solar_zenith_angle = kwargs.get('solar_zenith_angle', 0.)
+
+         self.__dict__['initial_date'] = kwargs.get('initial_date', '2000-01-01')
 
       elif zenith == 'fixed_computed':
          # Zenith angle fixed, computed from latitude and initial date and (local) time
@@ -346,7 +374,7 @@ class ModPAC():
    def compute_radiation(self, state, output, j_now, i_out):
    # {{{
       # Helper function to reshape grid arrays
-      def _g(v): return np.asfortranarray(v.reshape(1, -1).copy(), 'd')
+      def _g(v): return np.asfortranarray(v[:].reshape(1, -1).copy(), 'd')
 
       # Helper function to reshape column arrays
       def _c(v): return np.asfortranarray(v[j_now, :].reshape(1, -1).copy(), 'd')
@@ -414,33 +442,34 @@ class ModPAC():
       self.__dict__['mechanism'] = parser.parse(mechanism_file)
 
       species_list = []
-      advected_list = []
 
       for sp in self.mechanism.species:
-         properties = {'molecular_weight': sp.molecular_weight_kg_mol}
-         properties.update(sp.other_properties)
+         if sp.molecular_weight_kg_mol is None:
+            molecular_weight = 0
+         else:
+            molecular_weight = sp.molecular_weight_kg_mol
+
+         attributes = {'molecular_weight': molecular_weight}
+         attributes.update(sp.other_properties)
 
          name = sp.name
          species_list.append(name)
 
-         advect = properties.pop('__do advect', False)
+         advect = attributes.pop('__do advect', False)
          if advect == 'true': 
             advect = True
-            advected_list.append(name)
          else: 
             advect = False
 
-         fixed = properties.pop('__tracer type', False)
+         fixed = attributes.pop('__tracer type', False)
          if fixed == 'CONSTANT': fixed = True
 
-         if name in self.variables:
+         if name in self.columns:
             raise ValueError(f'{name} has already been initialized.')
          
-         self.variables[name] = state.SpeciesVariable(name, 'vmr', self.Nz, 0., advect, fixed, **properties)
+         self.columns[name] = state.SpeciesVariable(name, 'vmr', self.Nz, 0., advect, fixed, attributes = attributes)
 
       self.__dict__['species'] = species_list
-      self.__dict__['advected'] = advected_list
-      self.__dict__['diffused'] = species_list.copy()
 
       if active:
          # We only need the solver if chemistry is active
@@ -466,7 +495,7 @@ class ModPAC():
       sp = self.MICMstate.get_species_ordering()
       for s, i in sp.items():
          # convert from vmr to mol m-3
-         v = musica._musica.VectorDouble(state.columns[s][j_now, :] * nafull)
+         v = musica._musica.VectorDouble(state.column_values[s][j_now, :] * nafull)
          mstate.concentrations[i::stride] = v
          
       self.MICMsolver.solve(self.MICMstate, dt)
@@ -474,8 +503,8 @@ class ModPAC():
       # Read out resulting concentrations
       for s, i in sp.items():
          # convert back from mol m-3 to vmr
-         if not self.variables[s].fixed:
-            state.columns[s][j_now, :] = mstate.concentrations[i::stride] / nafull
+         if not self.columns[s].fixed:
+            state.column_values[s][j_now, :] = mstate.concentrations[i::stride] / nafull
    # }}}
 
    def initialize_photolysis(self, *, mechanism = '', mapping = {}, active = False, parameterize_jNO = False):
@@ -645,7 +674,7 @@ class ModPAC():
        for zi in np.arange(self.Nz-2,0,step=-1):
            # integrate the moist adiabat from the surface upwards
            dz = self.zfull[zi] - self.zfull[zi+1]
-           T_conv[zi] = T_conv[zi+1] + dTdz_mlr_zi * dz
+           T_conv[zi] = max(100, T_conv[zi+1] + dTdz_mlr_zi * dz)
            ws_zi = (self.cfg.Rd / self.cfg.Rv) * self.calc_saturation_vmr(T_conv[zi],self.pfull[zi]) # mmr
            dTdz_mlr_zi = self.moist_adiabatic_lapse_rate(T_conv[zi],ws_zi)
 
@@ -706,25 +735,61 @@ class ModPAC():
    # }}}
 
 ### Methods related to solver
-   def get_internal_state(self, n = 1):
+   def create_internal_state(self, n = 1):
    # {{{
       from . import state
-      return state.State(self.variables, self.scalars, n)
+      return state.State(self.columns, self.scalars, n)
    # }}}
 
-   def create_output_state(self, n = 1):
+   def create_output_state(self, times, initial_date = None):
    # {{{
       from . import state
-      return state.State(self.variables | self.output_variables, self.scalars, n)
+      if initial_date is None:
+         initial_date = self.initial_date
+
+      return state.OutputState(self.columns | self.output_columns, self.scalars, times, initial_date = initial_date)
    # }}}
 
    def save_state(self, state, output, j_state, i_out):
    # {{{
       for c in state.columns: 
-         output.columns[c][i_out, :] = state.columns[c][j_state, :]
+         output.column_values[c][i_out, :] = state.column_values[c][j_state, :]
 
       for s in state.scalars: 
-         output.scalars[s][i_out] = state.scalars[s][j_state]
+         output.scalar_values[s][i_out] = state.scalar_values[s][j_state]
+   # }}}
+
+   def build_output_path(self):
+   # {{{
+      dtnow = datetime.datetime.now()
+      params = dict(config_file = self.cfg.config_basename, 
+                    rundate     = dtnow.strftime("%Y-%m-%d"),
+                    runtime     = dtnow.strftime("%H:%M:%S"))
+
+      name = self.name_template.format(**params)
+
+      params['name'] = name
+
+      path = self.output_path_template.format(**params)
+
+      return path, name
+   # }}}
+
+   def find_latest_restart(self, outpath, runname):
+   # {{{
+      import glob
+
+      restart_template = f'{outpath}/{runname}_restart*.nc'
+
+      restarts = glob.glob(restart_template)
+      
+      if restarts is None or len(restarts) == 0:
+         print("No restarts found.")
+         return None
+
+      restarts.sort()
+
+      return restarts[-1]
    # }}}
 
    def update_externals(self, state, j_now, t):
@@ -736,40 +801,77 @@ class ModPAC():
       self.set_zenith_angle(state, j_now, t)
    # }}}
 
-   def solve(self, nsteps, dt, output_freq = 1):
+   def solve(self, nsteps, dt, output_freq = 1, write_output = False, restart = None):
    # {{{
       from . import dynamics
 
+      outpath, runname = self.build_output_path()
+
+      print(f"Running integration '{runname}' for {nsteps} timesteps.")
+
+      dt_start = datetime.datetime.now()
+
+      # Create internal state vector
+      s0 = self.create_internal_state(n = 2)
+
       # Output grid
-      #nout   = int(nsteps / output_freq) + 1
-      nout   = int(np.ceil(nsteps / output_freq)) + 1
-      times  = np.arange(nout) * dt * output_freq
+      if nsteps % output_freq != 0:
+         raise ValueError(f"The number of steps ({nsteps}) must be a multiple of the output frequency ({output_freq}).")
 
-      s0 = self.get_internal_state(n = 2)
-      o0 = self.create_output_state(nout)
+      # Initialization
+      if restart == 'latest':
+         restart = self.find_latest_restart(outpath, runname)
 
-      i = 0
+      if restart is None:
+         print(f"Starting new integration.")
+
+         # Starting a new integration
+         j_old, j_now = 0, 1
+
+         i0 = 0
+         t0 = 0
+
+         # For an initial run, include the initial timestep in the output
+         nout   = nsteps // output_freq + 1
+         times  = t0 + np.arange(nout) * dt * output_freq
+      else:
+         # Read restart file
+         attrs = s0.from_netcdf(restart)
+
+         j_old = attrs.get('j_old', 0)
+         j_now = attrs.get('j_now', 1)
+
+         t0 = attrs.get('t0', 0)
+         i0 = attrs.get('i1', 0) 
+
+         print(f"Starting from restart file {restart}, timestep {i0}.")
+
+         # For a restart, do not include the initial timestep in the output
+         nout   = nsteps // output_freq
+         times  = t0 + (1 + np.arange(nout)) * dt * output_freq
+
+      o0 = self.create_output_state(times)
+
       i_step = 0
       i_out = 0
 
-      j_old, j_now = 0, 1
+      if restart is None:
+         # Calculate relevant rates for initial conditions
+         # (only used for outputting initial state in new runs)
+         self.update_externals(s0, j_old, i0 * dt)
 
-      # Calculate relevant rates for initial conditions
-      # (only used for output)
-      self.update_externals(s0, j_old, 0. * dt)
+         if self.do_photolysis:
+            self.compute_photolysis(s0, o0, self.zfull, j_old, i_out)
 
-      if self.do_photolysis:
-         self.compute_photolysis(s0, o0, self.zfull, j_old, i_out)
+         if self.do_radiation:
+            self.compute_radiation(s0, o0, j_old, i_out)
 
-      if self.do_radiation:
-         self.compute_radiation(s0, o0, j_old, i_out)
+         self.save_state(s0, o0, j_old, i_out)
 
-      self.save_state(s0, o0, j_old, i_out)
+         i_out += 1
 
-      i_out += 1
-
-      for i in range(nsteps):
-         if i % 500 == 0: print(f"Step {i}, day {(i + 1) * dt / 86400}.")
+      for i in range(i0, i0 + nsteps):
+         if i % 500 == 0: print(f"Step {i:>5d}, day {(i * dt) / 86400:>8.1f}.")
 
          # Update externally varying parameters
          self.update_externals(s0, j_now, (i + 1) * dt)
@@ -800,10 +902,10 @@ class ModPAC():
 
          # Adjust state: convection and humidity
          if self.do_convection:
-             self.convective_adjustment(s0,j_now)
+             self.convective_adjustment(s0, j_now)
 
          if self.do_humidity:
-             self.relax_humidity(s0,j_now)
+             self.relax_humidity(s0, j_now)
           
          i_step += 1
 
@@ -814,10 +916,42 @@ class ModPAC():
 
          # Test for instabilities
          if np.max(s0.T[j_now]) > 1000.:
-            raise ValueError(f'Temperatures exceeding 1000K produced (step {i}, day {(i + 1) * dt/86400.:.2f}); instability developing?')
+            raise ValueError(f'Temperatures exceeding 1000K produced (step {i}, day {((i + 1) * dt)/86400.:.2f}); instability developing?')
 
          j_old, j_now = j_now, j_old
 
-      return times, o0
+      dt_end = datetime.datetime.now()
+
+      if write_output:
+         if not os.path.exists(outpath):
+            print(f'Output path {outpath} does not exist. Creating directories.')
+            os.makedirs(outpath)
+
+         from modpac import __version__
+
+         run_attrs = dict(description = f'Output produced by ModPac version {__version__}',
+                          start_wallclock = dt_start.isoformat(),
+                          end_wallclock = dt_end.isoformat())
+
+         # Write restart
+         i = i + 1
+         rs_attrs = dict(t0 = t0 + i*dt, 
+                         i0 = i0, 
+                         i1 = i, 
+                         j_old = j_old, 
+                         j_now = j_now)
+
+         rs_attrs.update(run_attrs)
+
+         rfn = self.restart_file_template.format(outpath = outpath, runname = runname, **rs_attrs)
+         print(f'Writing restart file {rfn}.')
+         s0.to_netcdf(self, rfn, attributes = rs_attrs, precision = 'exact')
+
+         # Write output file
+         ofn = self.output_file_template.format(outpath = outpath, runname = runname, **rs_attrs)
+         print(f'Writing output to {ofn}.')
+         o0.to_netcdf(self, ofn, attributes = run_attrs)
+
+      return o0
    # }}}
 

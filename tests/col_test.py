@@ -105,7 +105,7 @@ def interpolate_matrix(x_new, x_old, method = 'linear'):
 
 def test_oscillation(C = 0.2, shape = 'gaussian', periods = 3, onestep = False):
 # {{{
-   c = modpac.Configuration('adv.json', '..')
+   c = modpac.Configuration('adv')
    col = modpac.ModPAC(c)
 
    z0 = 20000.
@@ -132,8 +132,6 @@ def test_oscillation(C = 0.2, shape = 'gaussian', periods = 3, onestep = False):
    col.w[1:-1] = 0e-2# + 1e-2 * (col.zhalf[1:-1] / col.z_top)
    col.wp[1:-1] = wp
    col.omega = 2*np.pi / period
-   col.advected.append('H2O')
-
 
    dz = np.min(col.zfull[:-1] - col.zfull[1:])
    
@@ -151,9 +149,9 @@ def test_oscillation(C = 0.2, shape = 'gaussian', periods = 3, onestep = False):
 
    print(f'Integrating {Tf / 86400.} days, {nsteps} steps.')
 
-   ts, o0 = col.solve(nsteps, dt)
+   o0 = col.solve(nsteps, dt)
 
-   ds = modpac.to_pyg(col, ts, o0)
+   ds = modpac.to_pyg(col, o0)
 
    # Lower boundary
    z_low = (z0 - Dz) + wp / col.omega * pyg.sin(col.omega * ds.time * 86400.)
@@ -244,7 +242,7 @@ def plot_origins(dt = 2000.):
 
 def test_advection_step(C = 0.2, Nz = 11, w0 = 0.02):
 # {{{
-   c = column.Configuration('adv.json', '..')
+   c = column.Configuration('adv')
    c.grid['Nz'] = Nz
    col = column.Column(c)
 
@@ -316,7 +314,7 @@ def test_advection_step(C = 0.2, Nz = 11, w0 = 0.02):
 
 def test_diffusion(Tf = 100., shape = 'box'):
 # {{{
-   c = modpac.Configuration('adv.json', '..')
+   c = modpac.Configuration('adv')
 
    c.dynamics['kappa_zz'] = 1e-1
 
@@ -366,9 +364,9 @@ def test_diffusion(Tf = 100., shape = 'box'):
 
    print(col.kappa_zz)
 
-   ts, o0 = col.solve(nsteps, dt)
+   o0 = col.solve(nsteps, dt)
 
-   ds = modpac.to_pyg(col, ts, o0)
+   ds = modpac.to_pyg(col, o0)
 
    cm = plt.cm.Blues
    cm.set_over('0.1')
@@ -410,7 +408,7 @@ def test_diffusion(Tf = 100., shape = 'box'):
 
 def test_reaction():
 # {{{
-   c = column.Configuration('mcm_test.json', '..')
+   c = column.Configuration('mcm_test')
    c.radiation['active'] = False
    col = column.Column(c)
 
@@ -423,9 +421,9 @@ def test_reaction():
    taus[150:] = 0.
    col.MICMstate.set_user_defined_rate_parameters({'LOSS.O3loss': taus})
 
-   ts, o0 = col.solve(400, 2000.)
+   o0 = col.solve(400, 2000.)
 
-   ds = column.to_pyg(col, ts, o0)
+   ds = column.to_pyg(col, o0)
 
    plt.ioff()
    ax = pyg.showlines([ds.O3(i_time = t) for t in [0, 100, 200, 400]])
