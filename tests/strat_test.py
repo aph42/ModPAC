@@ -28,7 +28,7 @@ def test_strat_mechanism(ndays=200, Nz=200, kappa = 0.):
    #c.radiation['zenith'] = 'fixed_specified'
    #c.radiation['solar_zenith_angle'] = 54.
 
-   col = modpac.ModPAC(c)
+   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/strat_full/{rundate}/')
 
    pfull = 1000. * np.exp(-col.zfull / col.cfg.H)
    phalf = 1000. * np.exp(-col.zhalf / col.cfg.H)
@@ -68,13 +68,12 @@ def test_strat_mechanism(ndays=200, Nz=200, kappa = 0.):
    #col.w[5:-5] = 0.0003
    col.wp[:] =  0. + 0j
 
-   col.N2O[:] = to_col(prk.N2O, pf) *1e-9
-   col.variables['N2O'].fixed = True
-
    col.O3[:] = to_col(ref.O3, pf)
-   col.variables['O3'].fixed = True
+   #col.variables['O3'].fixed = True
 
-   #col.N2O[:] = solve_steady_n2o(col)
+   col.N2O[:] = solve_steady_n2o(col)
+   #col.N2O[:] = to_col(prk.N2O, pf) *1e-9
+   #col.variables['N2O'].fixed = True
 
    #col.w[5:-5] = 0.
 
@@ -85,12 +84,14 @@ def test_strat_mechanism(ndays=200, Nz=200, kappa = 0.):
    #dss = []
    #for c in [400e-6]:
    col.CO2[:] = 400e-6
+
+   return col
    #return col
    #ts, o0 = col.solve(26*6, 600)
-   ts, o0 = col.solve(24 * ndays, 6*600, 1)
+   o0 = col.solve(24 * ndays, 6*600, 1, write_output = True)
    #ts, o0 = col.solve(112, 3*600, 1)
 
-   ds = modpac.to_pyg(col, ts, o0)
+   ds = modpac.to_pyg(col, o0)
    #dss.append(ds)
 
    #pyg.showvar(ds.T, fig=3)
@@ -151,7 +152,7 @@ def plot_noy(ds, fig=3):
 
 # }}}
 
-def test_n2o_column(Nz=200, kappa = 0.):
+def test_n2o_column(days = 100, Nz=200, kappa = 0.):
 # {{{
    c = modpac.Configuration('n2o_rad')
    c.radiation['active'] = True
@@ -196,6 +197,7 @@ def test_n2o_column(Nz=200, kappa = 0.):
    col.w[-1] = 0.
    col.wp[:] =  0.
 
+   #col.N2O[:] = 3.26e-7
    #col.N2O[:] = to_col(prk.N2O*1e-9, pf)
    col.N2O[:] = solve_steady_n2o(col)
 
@@ -205,7 +207,8 @@ def test_n2o_column(Nz=200, kappa = 0.):
    for sp in col.species:
       col.columns[sp].fixed: print(sp)
 
-   o0 = col.solve(8 * 100, 3*3600, write_output = False, restart_file = '/data/QOSM/n2o_rad.json_2026-05-31/n2o_rad.json_2026-05-31_restart_000000799.nc')
+   #o0 = col.solve(8 * 100, 3*3600, write_output = False, restart_file = '/data/QOSM/n2o_rad.json_2026-05-31/n2o_rad.json_2026-05-31_restart_000000799.nc')
+   o0 = col.solve(8 * days, 3*3600, write_output = False)
 
    ds = modpac.to_pyg(col, o0)
 
@@ -250,16 +253,54 @@ def plot_n2o(col, ds, fig = 5):
    plt.ioff()
 
    n2i = ds.N2O(si_time = 0)
-   n2f = ds.N2O(si_time = -1)
+   n2f = ds.N2O(s_time = 200)
 
    n2s = solve_steady_n2o(col)
 
    n2s = pyg.Var((ds.zfull,), values = n2s, name = 'n2o')
 
-   ax = pyg.showlines([n2i, n2f, n2s], labels = ['init', 'final', 'steady'])
+   ns = [ds.N2O(s_time = t) for t in [0, 50, 100, 150, 200]] + [n2s]
+   ax = pyg.showlines(ns)
+   #ax = pyg.showlines([n2i, n2f, n2s], labels = ['init', 'final', 'steady'])
    #ax = pyg.showlines([n2s], labels = ['init', 'final', 'steady'])
 
    plt.ion()
+
+   ax.render(fig)
+# }}}
+
+def plot_basicstate(ds, times = None, fig=1):
+# {{{
+   ref = pyg.open('/data/QOSM/basic_state_from_rce.nc')
+   prk = pyg.open('/data/QOSM/park_noy_plot.nc')
+
+   pres = pyg.Pres(1000 * np.exp(-ds.zfull[:] / 7e3))
+
+   if times is None:
+      # Default to last 200 days
+      times = (ds.time[-1] - 200, ds.time[-1])
+
+   dst = ds(m_time = times).replace_axes(zfull = pres)
+
+   plt.ioff()
+
+   psize = (3.5, 3)
+
+   axt = pyg.showlines([dst.T, ref.T], fmts = ['C0', 'k'], labels = ['run', 'reference'], size = psize)
+   axt.setp(title = 'T', xlim = (180, 320))
+
+   axo3 = pyg.showlines([1e6*dst.O3, 1e6*ref.O3], fmts = ['C0', 'k'], labels = ['run', 'reference'], size = psize)
+   axo3.setp(title = 'O3', xlim = (0, 11.))
+
+   axh2o = pyg.showlines([1e6*dst.H2O], fmts = ['C0'], labels = ['run'], size = psize)
+   axh2o.setp(title = 'H2O', xlim = (2, 2e2), xscale = 'log')
+
+   axn2o = pyg.showlines([1e9 * dst.N2O, prk.N2O], fmts = ['C0', 'k'], labels = ['run', 'Park et al. 2017'], size = psize)
+   axn2o.setp(title = 'N2O', xlim = (1, 450), xscale = 'log')
+
+   plt.ion()
+
+   ax = pyg.plot.grid([[axt, axo3], [axh2o, axn2o]])
 
    ax.render(fig)
 # }}}
@@ -296,7 +337,7 @@ def test_h2o_column(ndays = 200, Nz=200, kappa = 0.):
    prk = pyg.open('/data/QOSM/park_noy_plot.nc')
 
    col = modpac.ModPAC(c)
-   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/{name}')
+   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/{name}_eq')
 
    pfull = 1000. * np.exp(-col.zfull / col.cfg.H)
    phalf = 1000. * np.exp(-col.zhalf / col.cfg.H)
@@ -331,9 +372,7 @@ def test_h2o_column(ndays = 200, Nz=200, kappa = 0.):
    for name, var in col.columns.items():
       if hasattr(var, 'fixed') and var.fixed: print(name)
 
-   return col
-
-   o0 = col.solve(8 * ndays, 3*3600)
+   o0 = col.solve(8 * ndays, 3*3600, write_output = True, restart = 'latest')
 
    ds = modpac.to_pyg(col, o0)
 

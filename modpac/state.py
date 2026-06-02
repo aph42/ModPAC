@@ -40,7 +40,6 @@ def ntype_to_NCtype(ntype, precision):
       return 'i2'
 # }}}
 
-
 class Variable():
 # {{{ Variable class definition
    def __init__(self, name, units, dtype, attributes = {}):
@@ -48,7 +47,7 @@ class Variable():
       self.name = name
       self.units = units
       self.dtype = dtype
-      self.ntype = guess_NC_type(dtype)
+      self.ntype = guess_ntype(dtype)
 
       self.attributes = attributes.copy()
    # }}}

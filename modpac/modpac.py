@@ -196,10 +196,10 @@ class ModPAC():
       self.initialize_var('zfull', 'm',  self.Nz,      zfull, grid = True, attributes = dict(long_name = 'Log-pressure height of level midpoints',  **attr_dict))
 
       # DEBUG: pfull inherits units of cfg.p0 from json file, default hPa
-      self.initialize_var('phalf', 'Pa', self.Nz + 1,  phalf, grid = True, attributes = dict(long_name = 'Pressure of level midpoints')) 
-      self.initialize_var('pfull', 'Pa', self.Nz,      pfull, grid = True, attributes = dict(long_name = 'Pressure of level midpoints'))
+      self.initialize_var('phalf', 'hPa', self.Nz + 1,  phalf, grid = True, attributes = dict(long_name = 'Pressure of level midpoints')) 
+      self.initialize_var('pfull', 'hPa', self.Nz,      pfull, grid = True, attributes = dict(long_name = 'Pressure of level midpoints'))
 
-      self.initialize_var('vmask', '1', Nz, 1., grid = True)
+      #self.initialize_var('vmask', '1', Nz, 1., grid = True, attributes = dict(long_name = 'Mask for fixing a component of the column (1 = fully prognostic, 0 = fixed).')
    # }}}
 
 ### Methods related to dynamics/advection
@@ -208,13 +208,13 @@ class ModPAC():
       from . import dynamics
       self.__dict__['do_dynamics'] = active
 
-      self.initialize_var('T', 'K', self.Nz, 300.) # Prognostic, advected
+      self.initialize_var('T',  'K',     self.Nz,     300., attributes = dict(long_name = 'Temperature', standard_name = 'air_temperature'))
 
-      self.initialize_var('w', 'm s-1', self.Nz + 1, 0.02) # not prognostic
+      self.initialize_var('w',  'm s-1', self.Nz + 1, 0.02, attributes = dict(long_name = 'Log-pressure vertical velocity', standard_name = 'upward_air_velocity'))
       self.w[0] = 0.
       self.w[self.Nz] = 0.
 
-      self.initialize_var('wp', 'm s-1', self.Nz + 1, 0j) # not prognostic
+      self.initialize_var('wp', 'm s-1', self.Nz + 1, 0j,   attributes = dict(long_name = 'Anomalous log-pressure vertical velocity')) # not prognostic
       self.wp[0] = 0.
       self.wp[self.Nz] = 0.
 

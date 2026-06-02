@@ -127,11 +127,13 @@ def test_oscillation(C = 0.2, shape = 'gaussian', periods = 3, onestep = False):
    # 30 day period for testing
    period = 30. * 86400.
 
+   w0 = 0.2e-3
    wp = 2e-2
 
-   col.w[1:-1] = 0e-2# + 1e-2 * (col.zhalf[1:-1] / col.z_top)
+   col.w[1:-1] = w0 # + 1e-2 * (col.zhalf[1:-1] / col.z_top)
    col.wp[1:-1] = wp
    col.omega = 2*np.pi / period
+   col.H2O.advect = True
 
    dz = np.min(col.zfull[:-1] - col.zfull[1:])
    
@@ -154,8 +156,8 @@ def test_oscillation(C = 0.2, shape = 'gaussian', periods = 3, onestep = False):
    ds = modpac.to_pyg(col, o0)
 
    # Lower boundary
-   z_low = (z0 - Dz) + wp / col.omega * pyg.sin(col.omega * ds.time * 86400.)
-   z_upp = (z0 + Dz) + wp / col.omega * pyg.sin(col.omega * ds.time * 86400.)
+   z_low = (z0 - Dz) + wp / col.omega * pyg.sin(col.omega * ds.time * 86400.) + w0 * ds.time * 86400
+   z_upp = (z0 + Dz) + wp / col.omega * pyg.sin(col.omega * ds.time * 86400.) + w0 * ds.time * 86400
 
    plt.ioff()
 
