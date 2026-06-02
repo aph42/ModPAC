@@ -9,6 +9,7 @@ import numpy as np
 
 def slant_column(constituent, dz, sza, n_air):
 # {{{
+   sza = np.min([np.pi/2,sza]) # clip above 90 deg
    return np.cumsum(constituent * n_air * dz) / np.cos(sza) # molec cm-2
 # }}}
 
