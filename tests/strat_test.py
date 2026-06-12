@@ -28,15 +28,17 @@ def test_strat_mechanism(ndays=200, Nz=200, kappa = 0.):
    #c.radiation['zenith'] = 'fixed_specified'
    #c.radiation['solar_zenith_angle'] = 54.
 
-   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/strat_full/{rundate}/')
+   col = modpac.ModPAC(c, output_path_template = 'data/QOSM/strat_full/{rundate}/')
 
    pfull = 1000. * np.exp(-col.zfull / col.cfg.H)
    phalf = 1000. * np.exp(-col.zhalf / col.cfg.H)
    pf = pyg.Pres(pfull)
    ph = pyg.Pres(phalf)
 
-   ref = pyg.open('/data/QOSM/basic_state_from_rce.nc')
-   prk = pyg.open('/data/QOSM/park_noy_plot.nc')
+   ref = pyg.open('data/QOSM/basic_state_from_rce.nc')
+   prk = pyg.open('data/QOSM/park_noy_plot.nc')
+   conv = pyg.open('data/QOSM/conv_profile.nc')
+   gps = pyg.open('data/QOSM/ref_gps_blended.nc')
 
    # mixing ratio 
    col.M[:] = 1.
@@ -44,19 +46,22 @@ def test_strat_mechanism(ndays=200, Nz=200, kappa = 0.):
    col.N2[:] = 0.78
    col.O1D[:] = 1e-15
    col.O[:] = 1e-15
-   col.O3[:] = 0.1e-6   # np.interp(col.zfull[::-1], -col.cfg.H * np.log(dsr.pfull[::-1] / col.cfg.p0), dsr.o3[::-1])[::-1] 
-   col.H2O[:] = 0.02 / 0.622 * np.exp(-col.zfull[:]/2000) # approximate profile with 2 km scale height
-   col.H2O[col.H2O < 6e-6] = 6e-6
    col.HO2[:] = 1e-10
    col.H[:] = 1e-10
    col.H2[:] = 1e-9
    col.H2O2[:] = 1e-11
    col.HO2NO2[:] = 1e-14
+   col.NO2[:] = 50e-12 # 
+   col.NO[:]  = 50e-12 # 
+   # col.HCL[:] = 6e-11 # BS05 at 15 km
 
    def to_col(var, pr):
       vi = var.interpolate('pres', pr, inx = pyg.log(var.pres), outx = pyg.log(pr), d_above = 0., d_below = 0.)
       return vi[:]
 
+   col.O3[:] = to_col(gps.O3,pf) # 20e-9
+   col.H2O[:] = to_col(conv.H2O,pf)
+    
    # Better idea is to solve analytically for N2O given w, a lower boundary value, and a calculation of jn2o
    col.w[:] = to_col(ref.w, ph) * 1e-3
    col.w[col.w < 0] = 6e-5
@@ -68,7 +73,7 @@ def test_strat_mechanism(ndays=200, Nz=200, kappa = 0.):
    #col.w[5:-5] = 0.0003
    col.wp[:] =  0. + 0j
 
-   col.O3[:] = to_col(ref.O3, pf)
+   # col.O3[:] = to_col(ref.O3, pf)
    #col.variables['O3'].fixed = True
 
    col.N2O[:] = solve_steady_n2o(col)
@@ -85,10 +90,13 @@ def test_strat_mechanism(ndays=200, Nz=200, kappa = 0.):
    #for c in [400e-6]:
    col.CO2[:] = 400e-6
 
+   col.T_conv[:]   = to_col(conv.T  ,pf)
+   col.H2O_conv[:] = to_col(conv.H2O,pf)
+    
    return col
    #return col
    #ts, o0 = col.solve(26*6, 600)
-   o0 = col.solve(24 * ndays, 6*600, 1, write_output = True)
+   o0 = col.solve(24 * ndays, 1200, 1, write_output = True)
    #ts, o0 = col.solve(112, 3*600, 1)
 
    ds = modpac.to_pyg(col, o0)
@@ -104,7 +112,7 @@ def plot_noy(ds, fig=3):
 
    ds = ds.replace_axes(zfull = pfull)(pres = (300, 1))
 
-   prk = pyg.open('/data/QOSM/park_noy_plot.nc')
+   prk = pyg.open('data/QOSM/park_noy_plot.nc')
 
    NOx = ds.NO + ds.NO2
    NOy = ds.NO + ds.NO2 + ds.HNO3 + 2*ds.N2O5
@@ -164,10 +172,10 @@ def test_n2o_column(days = 100, Nz=200, kappa = 0.):
 
    c.dynamics['kappa_zz'] = kappa
 
-   ref = pyg.open('/data/QOSM/basic_state_from_rce.nc')
-   prk = pyg.open('/data/QOSM/park_noy_plot.nc')
+   ref = pyg.open('data/QOSM/basic_state_from_rce.nc')
+   prk = pyg.open('data/QOSM/park_noy_plot.nc')
 
-   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/{name}')
+   col = modpac.ModPAC(c, output_path_template = 'data/QOSM/{name}')
 
    pfull = 1000. * np.exp(-col.zfull / col.cfg.H)
    phalf = 1000. * np.exp(-col.zhalf / col.cfg.H)
@@ -333,11 +341,11 @@ def test_h2o_column(ndays = 200, Nz=200, kappa = 0.):
 
    print(f"kappa: {c.dynamics['kappa_zz']}")
 
-   ref = pyg.open('/data/QOSM/basic_state_from_rce.nc')
-   prk = pyg.open('/data/QOSM/park_noy_plot.nc')
+   ref = pyg.open('data/QOSM/basic_state_from_rce.nc')
+   prk = pyg.open('data/QOSM/park_noy_plot.nc')
 
    col = modpac.ModPAC(c)
-   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/{name}_eq')
+   col = modpac.ModPAC(c, output_path_template = 'data/QOSM/{name}_eq')
 
    pfull = 1000. * np.exp(-col.zfull / col.cfg.H)
    phalf = 1000. * np.exp(-col.zhalf / col.cfg.H)
@@ -389,11 +397,11 @@ def test_restart(Nz=200):
 
    print(f"kappa: {c.dynamics['kappa_zz']}")
 
-   ref = pyg.open('/data/QOSM/basic_state_from_rce.nc')
-   prk = pyg.open('/data/QOSM/park_noy_plot.nc')
+   ref = pyg.open('data/QOSM/basic_state_from_rce.nc')
+   prk = pyg.open('data/QOSM/park_noy_plot.nc')
 
    col = modpac.ModPAC(c)
-   col = modpac.ModPAC(c, output_path_template = '/data/QOSM/{name}')
+   col = modpac.ModPAC(c, output_path_template = 'data/QOSM/{name}')
 
    pfull = 1000. * np.exp(-col.zfull / col.cfg.H)
    phalf = 1000. * np.exp(-col.zhalf / col.cfg.H)

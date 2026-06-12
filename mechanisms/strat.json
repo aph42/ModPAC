@@ -18,6 +18,7 @@
          "name": "H2O",
          "molecular weight [kg mol-1]": 0.0180142,
          "__do advect": true,
+         "__do convect": true,
          "__absolute tolerance": 1e-12
       },
       {
@@ -65,7 +66,8 @@
          "name": "N2O",
          "molecular weight [kg mol-1]": 0.0440129,
          "__description": "nitrous oxide",
-         "__do advect": true 
+         "__do advect": true,
+         "__do convect": true
       },
       {
          "name": "N2O5",
@@ -77,13 +79,15 @@
          "name": "NO",
          "molecular weight [kg mol-1]": 0.0300061,
          "__description": "nitric oxide",
-         "__do advect": true
+         "__do advect": true,
+         "__do convect": true
       },
       {
          "name": "NO2",
          "molecular weight [kg mol-1]": 0.045803364407376784,
          "__description": "nitrogen dioxide",
-         "__do advect": true
+         "__do advect": true,
+         "__do convect": true
       },
       {
          "name": "NO3",
@@ -113,7 +117,8 @@
          "name": "O3",
          "molecular weight [kg mol-1]": 0.0479982,
          "__description": "ozone",
-         "__do advect": true
+         "__do advect": true,
+         "__do convect": true 
       },
       {
          "name": "OH",

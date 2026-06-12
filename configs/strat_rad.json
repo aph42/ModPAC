@@ -54,10 +54,7 @@
      "kappa_zz" : 1e-4
   },
   "convection": {
-      "lapse_rate"  : "constant"
   },
   "humidity":   {
-      "RH_trop"  : 0.7,
-      "z_trop"   : 10000
   }      
 }

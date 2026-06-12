@@ -140,13 +140,14 @@ ColumnVariable.__pos__      = wrap_npfunc(np.ndarray.__pos__, "The value unchang
 
 class SpeciesVariable(ColumnVariable):
 # {{{ SpeciesVariable class definition
-   def __init__(self, name, unit, Nz, initial_value, advect = False, fixed = False, output = False, attributes = {}):
+   def __init__(self, name, unit, Nz, initial_value, advect = False, fixed = False, convect = False, output = False, attributes = {}):
    # {{{
       ColumnVariable.__init__(self, name, unit, Nz, initial_value, output, attributes)
 
       self.advect  = advect
       self.diffuse = advect
       self.fixed  = fixed
+      self.convect = convect
 
       if advect:
          self.surface_flux = 0.

@@ -394,7 +394,7 @@ class ModPAC():
       Emis = _s(state.emissivity)
       alb  = _s(state.albedo)
 
-      cosz = np.cos(np.deg2rad(np.min([90., state.solar_zenith_angle[j_now]])))
+      cosz = np.cos(np.deg2rad(state.solar_zenith_angle[j_now]))
       cosz = np.asfortranarray(cosz)
 
       lw = rrtmg.rrtmg_lw(pfull, phalf, \
@@ -461,13 +461,19 @@ class ModPAC():
          else: 
             advect = False
 
+         convect = attributes.pop('__do convect', False)
+         if convect == 'true': 
+            convect = True
+         else: 
+            convect = False
+
          fixed = attributes.pop('__tracer type', False)
          if fixed == 'CONSTANT': fixed = True
 
          if name in self.columns:
             raise ValueError(f'{name} has already been initialized.')
          
-         self.columns[name] = state.SpeciesVariable(name, 'vmr', self.Nz, 0., advect, fixed, attributes = attributes)
+         self.columns[name] = state.SpeciesVariable(name, 'vmr', self.Nz, 0., advect, fixed, convect, attributes = attributes)
 
       self.__dict__['species'] = species_list
 
@@ -611,7 +617,8 @@ class ModPAC():
       o3_profile.calculate_layer_densities(grids["height", "km"]) # provide the height grid for layer thicknesses
       
       # calculate photolysis rates
-      sza = np.deg2rad(np.min([90, state.solar_zenith_angle[j_new]]))
+      #sza = np.deg2rad(np.min([90, state.solar_zenith_angle[j_new]]))
+      sza = np.deg2rad(state.solar_zenith_angle[j_new])
       tuvx_output = self.tuvx.run(sza = sza, \
                                   earth_sun_distance = 1.0)
        
@@ -636,72 +643,46 @@ class ModPAC():
 # }}}
     
 ### Methods related to convection/convective adjustment
-   def initialize_convection(self, *, active = True, lapse_rate = 'constant'):
+   def initialize_convection(self, *, active = True):
    # {{{
       self.__dict__['do_convection'] = active
-      self.__dict__['lapse_rate']    = lapse_rate # 'constant' or 'moist'
 
-      self.initialize_var('T_conv', 'K', self.Nz, 300.) # Moist adiabatic temperature profile from Tsfc
+      self.initialize_var('T_conv','K',self.Nz, np.nan) # Moist adiabatic temperature profile from Tsfc
+      self.initialize_scalar('z_conv','m',np.nan) # top of convective adjustment
 
-      self.T_conv[:] = self.calc_moist_adiabat()
-   # }}}
 
-   def moist_adiabatic_lapse_rate(self,T,ws):
-   # {{{
-       if self.lapse_rate == 'moist':
-           # dT/dz for a moist adiabat as a function of T (Kelvin) and ws (saturation mass mixing ratio)
-           dTdz_mlr = -self.cfg.g0 / self.cfg.cp * (1 + self.cfg.Lv * ws / (self.cfg.Rd*T))/(1 + self.cfg.Lv**2*ws/(self.cfg.Rv*self.cfg.cp*T**2))
-       elif self.lapse_rate == 'constant':
-           # hard adjustment to a constant lapse rate
-           dTdz_mlr = -6.5e-3 # dT/dz = -6.5 K/km 
-           
-       else:
-         raise ValueError(f"Lapse rate option '{self.lapse_rate}' unrecognized.")
-       
-       return dTdz_mlr
-   # }}}
-
-   def calc_moist_adiabat(self):
-# {{{
-       # calculate a moist adiabat as a function of altitude
-       # begin at the specified surface temperature Tsfc and surface pressure and integrate dT/dz|mlr upwards
-       ws_0 = (self.cfg.Rd / self.cfg.Rv) * self.calc_saturation_vmr(self.Tsfc,self.cfg.p0) # mmr at surface
-       
-       T_conv = np.zeros(self.Nz)
-       T_conv[-1] = self.Tsfc
-       dTdz_mlr_zi = self.moist_adiabatic_lapse_rate(self.Tsfc,ws_0)
-       
-       for zi in np.arange(self.Nz-2,0,step=-1):
-           # integrate the moist adiabat from the surface upwards
-           dz = self.zfull[zi] - self.zfull[zi+1]
-           T_conv[zi] = max(100, T_conv[zi+1] + dTdz_mlr_zi * dz)
-           ws_zi = (self.cfg.Rd / self.cfg.Rv) * self.calc_saturation_vmr(T_conv[zi],self.pfull[zi]) # mmr
-           dTdz_mlr_zi = self.moist_adiabatic_lapse_rate(T_conv[zi],ws_zi)
-
-       T_conv[np.isnan(T_conv)] = 0.
-       return T_conv
-# }}}
-    
-   def convective_adjustment(self,state,j_now):
+   def convective_adjustment(self, state, j_now):
    # {{{
        # convective adjustment
        # after Thuburn and Craig (2002) in which T_conv sets the minimum temperature
        # T_conv is calculated as a moist adiabat
-       state.T[j_now,:] = np.maximum(state.T[j_now,:],self.T_conv)
+
+       T_deficit = state.T[j_now,:] - self.T_conv
+       # T_deficit = np.mean(self.column_values['T'][i_out-nday:i_out+1,:],axis=0) - self.T_conv
+       
+       idx = np.where(T_deficit < 0)[0]
+       state.z_conv[j_now] = self.zfull[idx[0]] if idx.size > 0 else np.nan
+               
+       state.T[j_now,:] = np.maximum(state.T[j_now,:], self.T_conv)
+
+       # Convectively adjust flagged species
+       for s in self.species:
+         sp = self.columns[s]
+         if sp.convect and not sp.fixed:
+            v = state.column_values[s]
+            v[j_now, :] = np.where(self.zfull<=state.z_conv[j_now], sp[:], v[j_now,:])
    # }}}
 
 ### Methods related to humidity (remove supersaturation, tropospheric RH)    
-   def initialize_humidity(self, *, active = True, RH_trop = 0.7, z_trop = 10000):
+   def initialize_humidity(self, *, active = True):
    # {{{
       self.__dict__['do_humidity'] = active
  
-      self.initialize_var('RH_troposphere','',self.Nz, 0.) # Relative humidity
+      self.initialize_var('H2O_conv','vmr',self.Nz, np.nan) # convective water vapor profile
        
-      self.RH_troposphere[:][self.zfull<=z_trop] = RH_trop # relative humidity enforced below z_trop
-      self.RH_troposphere[:][self.zfull>z_trop] = np.nan # no RH constraint above z_trop
-   # }}}
+       # }}}
 
-   def relax_humidity(self,state,j_now):
+   def remove_supersat(self,state,j_now):
    # {{{
        # This function does 2 things (both of which depend on saturation_vmr):
        # 1) remove water vapor in excess of supersaturation
@@ -712,10 +693,9 @@ class ModPAC():
        # remove water vapor in excess of supersaturation
        state.H2O[j_now,:] = np.minimum(state.H2O[j_now,:],saturation_vmr)
 
-       # enforce RH
-       idx_trop = ~np.isnan(self.RH_troposphere) # indices to overwrite
-       state.H2O[j_now,idx_trop] = (saturation_vmr*self.RH_troposphere)[idx_trop]
-   # }}}
+   #     # relax tropospheric humidity
+   #     state.H2O[j_now,:] = np.where(self.zfull<=state.z_conv[j_now],self.H2O_conv,state.H2O[j_now,:])
+   # # }}}
 
    def calc_saturation_vmr(self,T,p):
    # {{{
@@ -900,12 +880,12 @@ class ModPAC():
          if self.kappa_zz > 0.:
             self.step_diffusion(s0, j_now, dt)
 
-         # Adjust state: convection and humidity
+         # Convectively adjust temperature and flagged species
          if self.do_convection:
              self.convective_adjustment(s0, j_now)
 
          if self.do_humidity:
-             self.relax_humidity(s0, j_now)
+             self.remove_supersat(s0, j_now)
           
          i_step += 1
 
